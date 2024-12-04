@@ -9,4 +9,15 @@
     <string name="stats_screen">Stats"</string>
     <string name="settings_screen">Settings"</string>
 
+    // Welcome Screen Text
+    <string name="welcome_title">Welcome to GymHealth!</string>
+    <string name="welcome_subtitle">Your journey with fitness starts here.</string>
+
+    // Workout Main Screen Text
+    <string name="my_workouts_title">My Workouts</string>
+
+    //Button Descriptions
+    <string name="run_workout">Run Workout</string>
+    <string name="view_options">More Options</string>
+
 </resources>

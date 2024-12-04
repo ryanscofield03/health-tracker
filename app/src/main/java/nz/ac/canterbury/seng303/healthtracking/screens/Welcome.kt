@@ -20,12 +20,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
-import nz.ac.canterbury.seng303.healthtracking.ui.theme.primaryFont
 
 @Composable
 fun Welcome(modifier: Modifier = Modifier, navController: NavController) {
@@ -45,25 +42,16 @@ fun Welcome(modifier: Modifier = Modifier, navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Welcome to GymHealth!",
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontFamily = primaryFont,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                fontSize = 45.sp
-            ),
+            text = stringResource(R.string.welcome_title),
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(16.dp)
         )
-        Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "Your journey to fitness starts here.",
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontFamily = primaryFont,
-                textAlign = TextAlign.Center
-            ),
+            text = stringResource(R.string.welcome_subtitle),
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Icon(
             modifier = Modifier
                 .size(100.dp),

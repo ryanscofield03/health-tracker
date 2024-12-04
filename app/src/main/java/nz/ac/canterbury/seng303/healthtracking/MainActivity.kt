@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -61,11 +64,11 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
                     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-                    if (currentDestination != "Welcome") {
+                    if (currentDestination != stringResource(R.string.workout_screen)) {
                         NavigationBar {
                             tabBarItems.forEachIndexed {index, item ->
                                 NavigationBarItem(
-                                    label = { Text(text = item.title)},
+                                    label = { Text(text = item.title, style = MaterialTheme.typography.labelSmall)},
                                     selected = selectedTabIndex == index,
                                     onClick = { navController.navigate(item.title); selectedTabIndex = index },
                                     icon = {
@@ -79,11 +82,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }) { innerPadding ->
+                    val padding = PaddingValues(8.dp, 48.dp, 8.dp, 128.dp)
                     NavHost(
                         navController = navController,
                         startDestination = "Welcome",
                         modifier = Modifier
-                            .fillMaxHeight()
+                            .fillMaxSize()
                     ) {
                         composable("Welcome") {
                             Welcome(
@@ -91,7 +95,7 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                        composable("Workout"){ WorkoutMain() }
+                        composable(route = "Workout"){ WorkoutMain(modifier = Modifier.padding(padding)) }
                         composable("Eat"){ EatMain() }
                         composable("Sleep"){ SleepMain() }
                         composable("Stats"){ StatsMain() }
