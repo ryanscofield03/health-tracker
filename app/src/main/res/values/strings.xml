@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">HealthTracking</string>
+
+    // Navigation Titles
+    <string name="welcome_screen">Welcome"</string>
+    <string name="workout_screen">Workout"</string>
+    <string name="eat_screen">Eat"</string>
+    <string name="sleep_screen">Sleep"</string>
+    <string name="stats_screen">Stats"</string>
+    <string name="settings_screen">Settings"</string>
+
 </resources>

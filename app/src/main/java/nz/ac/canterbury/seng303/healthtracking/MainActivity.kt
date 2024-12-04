@@ -7,14 +7,38 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import nz.ac.canterbury.seng303.healthtracking.screens.Home
-import nz.ac.canterbury.seng303.healthtracking.screens.WelcomeScreen
+import nz.ac.canterbury.seng303.healthtracking.screens.eat.EatMain
+import nz.ac.canterbury.seng303.healthtracking.screens.Welcome
+import nz.ac.canterbury.seng303.healthtracking.screens.settings.SettingsMain
+import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
+import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
+
+data class TabBarItem (
+    val title: String,
+    val icon: ImageVector
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +47,38 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
+                val workoutTab = TabBarItem(title = stringResource(R.string.workout_screen), icon = ImageVector.vectorResource(id = R.drawable.workout))
+                val eatTab = TabBarItem(title = stringResource(R.string.eat_screen), icon = ImageVector.vectorResource(id = R.drawable.eat))
+                val sleepTab = TabBarItem(title = stringResource(R.string.sleep_screen), icon = ImageVector.vectorResource(id = R.drawable.sleep))
+                val historyTab = TabBarItem(title = stringResource(R.string.stats_screen), icon = ImageVector.vectorResource(id = R.drawable.stats))
+                val settingsTab = TabBarItem(title = stringResource(R.string.settings_screen), icon = Icons.Filled.Settings)
+                val tabBarItems: List<TabBarItem> = listOf(workoutTab, eatTab, sleepTab, historyTab, settingsTab)
+
+                var selectedTabIndex by rememberSaveable {
+                    mutableIntStateOf(0)
+                }
+
+                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
+                    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+                    if (currentDestination != "Welcome") {
+                        NavigationBar {
+                            tabBarItems.forEachIndexed {index, item ->
+                                NavigationBarItem(
+                                    label = { Text(text = item.title)},
+                                    selected = selectedTabIndex == index,
+                                    onClick = { navController.navigate(item.title); selectedTabIndex = index },
+                                    icon = {
+                                        Icon(
+                                            imageVector = item.icon,
+                                            contentDescription = title.toString()
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }) { innerPadding ->
                     NavHost(
                         navController = navController,
                         startDestination = "Welcome",
@@ -31,14 +86,16 @@ class MainActivity : ComponentActivity() {
                             .fillMaxHeight()
                     ) {
                         composable("Welcome") {
-                            WelcomeScreen(
+                            Welcome(
                                 modifier = Modifier.padding(innerPadding),
                                 navController = navController
                             )
                         }
-                        composable("Home") {
-                            Home(navController = navController)
-                        }
+                        composable("Workout"){ WorkoutMain() }
+                        composable("Eat"){ EatMain() }
+                        composable("Sleep"){ SleepMain() }
+                        composable("Stats"){ StatsMain() }
+                        composable("Settings"){ SettingsMain() }
                     }
                 }
             }

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,12 +28,19 @@ import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.primaryFont
 
 @Composable
-fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun Welcome(modifier: Modifier = Modifier, navController: NavController) {
+    val workoutString = stringResource(R.string.workout_screen)
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color(0xFF923E3E))
-            .padding(16.dp),
+            .padding(16.dp)
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDrag = { PointerInputChange, Offset -> },
+                    onDragEnd = { navController.navigate(workoutString)}
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -58,13 +66,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
         Icon(
             modifier = Modifier
-                .size(100.dp)
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { PointerInputChange, Offset -> },
-                        onDragEnd = { navController.navigate("Home")}
-                    )
-                },
+                .size(100.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.arrow_right),
             contentDescription = "arrow_right"
         )
