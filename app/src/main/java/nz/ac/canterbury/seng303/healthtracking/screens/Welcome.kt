@@ -30,7 +30,6 @@ fun Welcome(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF923E3E))
             .padding(16.dp)
             .pointerInput(Unit) {
                 detectDragGestures(

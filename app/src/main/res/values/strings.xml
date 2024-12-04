@@ -20,4 +20,8 @@
     <string name="run_workout">Run Workout</string>
     <string name="view_options">More Options</string>
 
+    //Button labels
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+
 </resources>

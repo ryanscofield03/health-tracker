@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
                     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-                    if (currentDestination != stringResource(R.string.workout_screen)) {
+                    if (currentDestination != stringResource(R.string.welcome_screen)) {
                         NavigationBar {
                             tabBarItems.forEachIndexed {index, item ->
                                 NavigationBarItem(
