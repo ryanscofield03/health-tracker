@@ -3,25 +3,28 @@ package nz.ac.canterbury.seng303.healthtracking.daos
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
+import androidx.room.Upsert
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
+import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 
 /**
  * DAO for workouts, this allows CRUD operations on workouts in DB
  */
 @Dao
 interface WorkoutDao {
-    @Insert
-    suspend fun insert(workout: Workout)
+    @Upsert
+    suspend fun upsertWorkout(workout: Workout)
 
-    @Update
-    suspend fun update(workout: Workout)
+    @Upsert
+    suspend fun upsertWorkoutExerciseCrossRef(crossRef: WorkoutExerciseCrossRef)
 
     @Delete
-    suspend fun delete(workout: Workout)
+    suspend fun deleteWorkout(workout: Workout)
+
+    @Query("DELETE FROM WorkoutExerciseCrossRef WHERE workoutId = :workoutId AND exerciseId = :exerciseId")
+    suspend fun deleteWorkoutExerciseCrossRef(workoutId: Long, exerciseId: Long)
 
     @Query("SELECT * FROM workout")
-    fun getAllNotes(): LiveData<List<Workout>>
+    fun getAllWorkouts(): LiveData<List<Workout>>
 }
