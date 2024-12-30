@@ -7,11 +7,12 @@ import androidx.room.RoomDatabase
 import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
+import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 
 /**
  * Class for instantiating and getting the app's database as singleton
  */
-@Database(entities = [Workout::class, Exercise::class], version = 1)
+@Database(entities = [Workout::class, Exercise::class, WorkoutExerciseCrossRef::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
 
@@ -25,7 +26,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

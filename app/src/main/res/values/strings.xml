@@ -16,9 +16,18 @@
     // Workout Main Screen Text
     <string name="my_workouts_title">My Workouts</string>
 
+    // Workout Add Text
+    <string name="workout_name">Workout Name</string>
+    <string name="enter_workout_name">Enter workout name</string>
+    <string name="workout_description">Description</string>
+    <string name="enter_workout_description">Enter a short description</string>
+
     //Button Descriptions
     <string name="run_workout">Run Workout</string>
+    <string name="add_workout">Add New Workout</string>
     <string name="view_options">More Options</string>
+    <string name="add_exercise">Add New Exercise</string>
+    <string name="save_workout">Save Workout</string>
 
     //Button labels
     <string name="edit">Edit</string>

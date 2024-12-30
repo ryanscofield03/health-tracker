@@ -5,11 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,17 +33,21 @@ import nz.ac.canterbury.seng303.healthtracking.screens.Welcome
 import nz.ac.canterbury.seng303.healthtracking.screens.settings.SettingsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
 import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
-
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 data class TabBarItem (
     val title: String,
     val icon: ImageVector
 )
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private val workoutViewModel: WorkoutViewModel by koinViewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -96,7 +98,16 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
-                        composable(route = "Workout"){ WorkoutMain(modifier = Modifier.padding(padding)) }
+                        composable(route = "Workout") {
+                            WorkoutMain(
+                                modifier = Modifier.padding(padding),
+                                navController = navController)
+                        }
+                        composable(route = "AddWorkout") {
+                            AddWorkout(
+                                navController = navController, viewModel = AddWorkoutViewModel(workoutViewModel)
+                            )
+                        }
                         composable("Eat"){ EatMain() }
                         composable("Sleep"){ SleepMain() }
                         composable("Stats"){ StatsMain() }
