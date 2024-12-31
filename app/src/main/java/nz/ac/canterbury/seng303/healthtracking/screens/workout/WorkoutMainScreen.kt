@@ -33,11 +33,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
+import nz.ac.canterbury.seng303.healthtracking.entities.Workout
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 
 @Composable
-fun WorkoutMain(modifier: Modifier = Modifier, navController: NavController) {
+fun WorkoutMain(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    workoutLiveData: LiveData<List<Workout>>
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -57,7 +64,8 @@ fun WorkoutMain(modifier: Modifier = Modifier, navController: NavController) {
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            itemsIndexed(listOf(1, 2, 3)) { index, _ ->
+            val workoutList: List<Workout> = if (workoutLiveData.value != null) workoutLiveData.value!! else listOf()
+            itemsIndexed(workoutList) { index, workout ->
                 WorkoutCard(
                     modifier = Modifier.padding(bottom = 12.dp),
                     id = index

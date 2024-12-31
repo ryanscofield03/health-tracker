@@ -33,12 +33,14 @@ import nz.ac.canterbury.seng303.healthtracking.screens.Welcome
 import nz.ac.canterbury.seng303.healthtracking.screens.settings.SettingsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
 import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddExercise
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
+
 data class TabBarItem (
     val title: String,
     val icon: ImageVector
@@ -53,6 +55,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
+                val addWorkoutViewModel = AddWorkoutViewModel(workoutViewModel)
 
                 val workoutTab = TabBarItem(title = stringResource(R.string.workout_screen), icon = ImageVector.vectorResource(id = R.drawable.workout))
                 val eatTab = TabBarItem(title = stringResource(R.string.eat_screen), icon = ImageVector.vectorResource(id = R.drawable.eat))
@@ -101,11 +104,22 @@ class MainActivity : ComponentActivity() {
                         composable(route = "Workout") {
                             WorkoutMain(
                                 modifier = Modifier.padding(padding),
-                                navController = navController)
+                                navController = navController,
+                                workoutLiveData = workoutViewModel.allWorkouts
+                            )
                         }
                         composable(route = "AddWorkout") {
                             AddWorkout(
-                                navController = navController, viewModel = AddWorkoutViewModel(workoutViewModel)
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                viewModel = addWorkoutViewModel
+                            )
+                        }
+                        composable(route = "AddExercise") {
+                            AddExercise(
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                viewModel = addWorkoutViewModel
                             )
                         }
                         composable("Eat"){ EatMain() }

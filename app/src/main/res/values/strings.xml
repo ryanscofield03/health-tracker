@@ -22,15 +22,20 @@
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
 
+    // Exercise Add Text
+    <string name="exercise_name">Exercise Name</string>
+
     //Button Descriptions
     <string name="run_workout">Run Workout</string>
     <string name="add_workout">Add New Workout</string>
     <string name="view_options">More Options</string>
-    <string name="add_exercise">Add New Exercise</string>
+    <string name="add_exercise">Add An Exercise</string>
     <string name="save_workout">Save Workout</string>
 
     //Button labels
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="next">Continue</string>
 </resources>

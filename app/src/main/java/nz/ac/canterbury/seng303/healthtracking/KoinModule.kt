@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng303.healthtracking
 
 import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
+import nz.ac.canterbury.seng303.healthtracking.database.AppDatabase
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import org.koin.android.ext.koin.androidContext
