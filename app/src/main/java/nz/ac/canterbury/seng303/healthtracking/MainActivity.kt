@@ -35,6 +35,7 @@ import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
 import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddExercise
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.ScheduleWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
@@ -117,6 +118,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "AddExercise") {
                             AddExercise(
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                viewModel = addWorkoutViewModel
+                            )
+                        }
+                        composable(route = "ScheduleWorkout") {
+                            ScheduleWorkout(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
                                 viewModel = addWorkoutViewModel

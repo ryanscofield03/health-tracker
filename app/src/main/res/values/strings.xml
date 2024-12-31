@@ -13,16 +13,14 @@
     <string name="welcome_title">Welcome to GymHealth!</string>
     <string name="welcome_subtitle">Your journey with fitness starts here.</string>
 
-    // Workout Main Screen Text
+    // Workout Screens Text
     <string name="my_workouts_title">My Workouts</string>
-
-    // Workout Add Text
+    <string name="build_workout">Build Your Workout</string>
     <string name="workout_name">Workout Name</string>
     <string name="enter_workout_name">Enter workout name</string>
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
-
-    // Exercise Add Text
+    <string name="schedule_workout">Schedule Your Workout</string>
     <string name="exercise_name">Exercise Name</string>
 
     //Button Descriptions

@@ -37,7 +37,7 @@ fun AddWorkout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.add_workout),
+            text = stringResource(id = R.string.build_workout),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -60,7 +60,7 @@ fun AddWorkout(
         )
 
         Button(
-            onClick = { navController.navigate("addExercise") },
+            onClick = { navController.navigate("AddExercise") },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
@@ -78,7 +78,7 @@ fun AddWorkout(
         }
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = { navController.navigate("ScheduleWorkout") },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
