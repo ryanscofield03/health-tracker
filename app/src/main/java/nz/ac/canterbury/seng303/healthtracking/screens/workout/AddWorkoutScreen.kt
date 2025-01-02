@@ -71,7 +71,7 @@ fun AddWorkout(
             Text(stringResource(id = R.string.add_exercise))
         }
 
-        LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.8f)) {
+        LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.6f)) {
             items (viewModel.exercises) { exercise ->
                 Text(text = exercise, modifier = Modifier.padding(8.dp))
             }
@@ -86,7 +86,19 @@ fun AddWorkout(
             ),
             shape = MaterialTheme.shapes.small
         ) {
-            Text(stringResource(id = R.string.next))
+            Text(stringResource(id = R.string.schedule))
+        }
+
+        Button(
+            onClick = { /* TODO */ },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+            ),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(stringResource(id = R.string.save))
         }
     }
 }

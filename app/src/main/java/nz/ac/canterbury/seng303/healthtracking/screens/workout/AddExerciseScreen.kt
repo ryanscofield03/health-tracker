@@ -68,7 +68,7 @@ fun AddExercise(
             ),
             shape = MaterialTheme.shapes.small
         ) {
-            Text(stringResource(id = R.string.save))
+            Text(stringResource(id = R.string.add))
         }
     }
 }
