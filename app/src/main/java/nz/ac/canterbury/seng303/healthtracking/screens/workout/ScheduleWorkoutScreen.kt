@@ -25,6 +25,16 @@ import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import java.time.DayOfWeek
 
+val daysOfWeek = listOf(
+    DayOfWeek.MONDAY to R.string.monday,
+    DayOfWeek.TUESDAY to R.string.tuesday,
+    DayOfWeek.WEDNESDAY to R.string.wednesday,
+    DayOfWeek.THURSDAY to R.string.thursday,
+    DayOfWeek.FRIDAY to R.string.friday,
+    DayOfWeek.SATURDAY to R.string.saturday,
+    DayOfWeek.SUNDAY to R.string.sunday
+)
+
 @Composable
 fun ScheduleWorkout(
     modifier: Modifier,
@@ -53,21 +63,20 @@ fun ScheduleWorkout(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-
-        ToggleDayButton(selectedDays, stringResource(id = R.string.monday), DayOfWeek.MONDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.tuesday), DayOfWeek.TUESDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.wednesday), DayOfWeek.WEDNESDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.thursday), DayOfWeek.THURSDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.friday), DayOfWeek.FRIDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.saturday), DayOfWeek.SATURDAY)
-        ToggleDayButton(selectedDays, stringResource(id = R.string.sunday), DayOfWeek.SUNDAY)
+        daysOfWeek.forEach { (day, stringResId) ->
+            ToggleDayButton(
+                dayName = stringResource(id = stringResId),
+                toggle = { viewModel.toggleScheduledDay(day) },
+                isSelected = { viewModel.scheduledDays.contains(day) }
+            )
+        }
 
         Spacer(modifier = Modifier.height(25.dp))
 
         Button(
             onClick =
             {
-                /* TODO */
+                navController.navigate("addWorkout")
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -83,19 +92,19 @@ fun ScheduleWorkout(
 
 @Composable
 fun ToggleDayButton(
-    selectedDays: MutableList<DayOfWeek>,
     dayName: String,
-    dayOfWeek: DayOfWeek
+    toggle: () -> Unit,
+    isSelected: () -> Boolean
 ){
     Button(
-        onClick = { if (selectedDays.contains(dayOfWeek)) selectedDays.remove(dayOfWeek) else selectedDays.add(dayOfWeek) },
+        onClick = { toggle() },
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         shape = MaterialTheme.shapes.small,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if (selectedDays.contains(dayOfWeek)) 1f else 0.2f),
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (selectedDays.contains(dayOfWeek)) 1f else 0.7f)
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if (isSelected()) 1f else 0.2f),
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = if (isSelected()) 1f else 0.7f)
         )) {
         Text(text = dayName)
     }
