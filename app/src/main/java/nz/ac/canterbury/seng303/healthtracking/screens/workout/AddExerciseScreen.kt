@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
+import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 
 @Composable
@@ -36,7 +37,7 @@ fun AddExercise(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var search by rememberSaveable {
+        var name by rememberSaveable {
             mutableStateOf("")
         }
 
@@ -47,8 +48,8 @@ fun AddExercise(
         )
 
         OutlinedTextField(
-            value = search,
-            onValueChange = { search = it },
+            value = name,
+            onValueChange = { name = it },
             label = { Text(stringResource(id = R.string.exercise_name)) },
             placeholder = { Text("Enter or search an exercise name") },
             modifier = Modifier.fillMaxWidth()
@@ -57,8 +58,8 @@ fun AddExercise(
         Button(
             onClick =
             {
-                viewModel.addExercise(search)
-                search = ""
+                val exercise = Exercise(name = name)
+                viewModel.addExercise(exercise)
                 navController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth(),
@@ -69,6 +70,20 @@ fun AddExercise(
             shape = MaterialTheme.shapes.small
         ) {
             Text(stringResource(id = R.string.add))
+        }
+        Button(
+            onClick =
+            {
+                navController.popBackStack()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+            ),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(stringResource(id = R.string.cancel))
         }
     }
 }

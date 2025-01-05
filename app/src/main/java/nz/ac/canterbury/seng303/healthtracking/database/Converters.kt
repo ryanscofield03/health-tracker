@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng303.healthtracking.database
 
 import androidx.room.TypeConverter
+import java.time.DayOfWeek
 
 /**
  * Used to convert data types that are not handled by Room into strings for Room to write into DB
@@ -25,5 +26,15 @@ class Converters {
     @TypeConverter
     fun toFloatList(value: String?): List<Float>? {
         return value?.split(",")?.map { it.toFloat() }
+    }
+
+    @TypeConverter
+    fun fromDaysList(value: List<DayOfWeek>): String {
+        return value.joinToString(separator = ",")
+    }
+
+    @TypeConverter
+    fun toDaysList(value: String): List<DayOfWeek> {
+        return value.split(",").map { DayOfWeek.of(it.toInt()) }
     }
 }

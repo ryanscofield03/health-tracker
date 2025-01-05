@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import nz.ac.canterbury.seng303.healthtracking.daos.ExerciseDao
 import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
@@ -17,6 +18,7 @@ import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
+    abstract fun exerciseDao(): ExerciseDao
 
     companion object {
         @Volatile

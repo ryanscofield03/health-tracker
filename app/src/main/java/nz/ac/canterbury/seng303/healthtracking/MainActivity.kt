@@ -38,6 +38,7 @@ import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.ScheduleWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
@@ -49,6 +50,7 @@ data class TabBarItem (
 
 class MainActivity : ComponentActivity() {
     private val workoutViewModel: WorkoutViewModel by koinViewModel()
+    private val exerciseViewModel: ExerciseViewModel by koinViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +58,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
-                val addWorkoutViewModel = AddWorkoutViewModel(workoutViewModel)
+                val addWorkoutViewModel = AddWorkoutViewModel(workoutViewModel, exerciseViewModel)
 
                 val workoutTab = TabBarItem(title = stringResource(R.string.workout_screen), icon = ImageVector.vectorResource(id = R.drawable.workout))
                 val eatTab = TabBarItem(title = stringResource(R.string.eat_screen), icon = ImageVector.vectorResource(id = R.drawable.eat))

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
+import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 
 class WorkoutViewModel(
     private val workoutDao: WorkoutDao,
@@ -33,6 +34,13 @@ class WorkoutViewModel(
     fun removeExerciseFromWorkout(workoutId: Long, exerciseId: Long) {
         viewModelScope.launch {
             workoutDao.deleteWorkoutExerciseCrossRef(workoutId, exerciseId)
+        }
+    }
+
+    fun addExerciseToWorkout(workoutId: Long, exerciseId: Long) {
+        viewModelScope.launch {
+            val crossRef = WorkoutExerciseCrossRef(workoutId, exerciseId)
+            workoutDao.upsertWorkoutExerciseCrossRef(crossRef)
         }
     }
 }

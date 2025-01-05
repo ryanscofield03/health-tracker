@@ -2,24 +2,31 @@ package nz.ac.canterbury.seng303.healthtracking.screens.workout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
+import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import org.koin.androidx.compose.getViewModel
 
@@ -71,11 +78,15 @@ fun AddWorkout(
             Text(stringResource(id = R.string.add_exercise))
         }
 
-        LazyColumn(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.6f)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)) {
             items (viewModel.exercises) { exercise ->
-                Text(text = exercise, modifier = Modifier.padding(8.dp))
+                ExerciseCard(exercise)
             }
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         Button(
             onClick = { navController.navigate("ScheduleWorkout") },
@@ -90,7 +101,10 @@ fun AddWorkout(
         }
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                navController.navigate("Workout")
+                viewModel.save()
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
@@ -99,6 +113,24 @@ fun AddWorkout(
             shape = MaterialTheme.shapes.small
         ) {
             Text(stringResource(id = R.string.save))
+        }
+    }
+}
+
+@Composable
+fun ExerciseCard(exercise: Exercise) {
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .height(50.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+        ),
+    ) {
+        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+            Text(text = exercise.name)
         }
     }
 }

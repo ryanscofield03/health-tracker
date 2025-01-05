@@ -64,14 +64,17 @@ fun WorkoutMain(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            val workoutList: List<Workout> = if (workoutLiveData.value != null) workoutLiveData.value!! else listOf()
+            val workoutList: List<Workout> = workoutLiveData.value?.takeIf { it.isNotEmpty() } ?: listOf()
             itemsIndexed(workoutList) { index, workout ->
                 WorkoutCard(
                     modifier = Modifier.padding(bottom = 12.dp),
-                    id = index
+                    id = index,
+                    workout = workout
                 )
             }
         }
+
+        Text(text ="WORKOUT LIVE DATA:${workoutLiveData.value?.takeIf { it.isNotEmpty() } ?: listOf()}")
 
         Button(
             onClick = { navController.navigate("AddWorkout") },
@@ -93,7 +96,7 @@ fun WorkoutMain(
 }
 
 @Composable
-fun WorkoutCard(modifier: Modifier = Modifier, id: Int) {
+fun WorkoutCard(modifier: Modifier = Modifier, id: Int, workout: Workout) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -113,7 +116,7 @@ fun WorkoutCard(modifier: Modifier = Modifier, id: Int) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Chest Day",
+                text = workout.name,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )

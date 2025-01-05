@@ -48,13 +48,6 @@ fun ScheduleWorkout(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val selectedDays = rememberSaveable(
-            saver = listSaver(
-                save = { it.map { day -> day.value } },
-                restore = { (mutableStateListOf<DayOfWeek>().apply { addAll(it.map { day -> DayOfWeek.of(day) }) })  }
-            )
-        ) { mutableStateListOf<DayOfWeek>() }
-
         Text(
             text = stringResource(id = R.string.schedule_workout),
             style = MaterialTheme.typography.titleLarge,
