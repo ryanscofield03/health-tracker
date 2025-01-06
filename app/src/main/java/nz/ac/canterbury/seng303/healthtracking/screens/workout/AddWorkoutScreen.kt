@@ -15,20 +15,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
-import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun AddWorkout(
@@ -82,7 +84,7 @@ fun AddWorkout(
             .fillMaxWidth()
             .fillMaxHeight(0.5f)) {
             items (viewModel.exercises) { exercise ->
-                ExerciseCard(exercise)
+                ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
             }
         }
 
@@ -97,40 +99,84 @@ fun AddWorkout(
             ),
             shape = MaterialTheme.shapes.small
         ) {
-            Text(stringResource(id = R.string.schedule))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.schedule),
+                    contentDescription = stringResource(id = R.string.schedule),
+                )
+                Text(stringResource(id = R.string.schedule))
+            }
         }
 
-        Button(
-            onClick = {
-                navController.navigate("Workout")
-                viewModel.save()
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-            ),
-            shape = MaterialTheme.shapes.small
+        Row (
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(stringResource(id = R.string.save))
+            Button(
+                onClick = {
+                    navController.navigate("Workout")
+                    viewModel.save()
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = R.string.save))
+            }
+
+            Button(
+                onClick = {
+                    navController.navigate("Workout")
+                    viewModel.clear()
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f),
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = R.string.cancel))
+            }
         }
     }
 }
 
 @Composable
-fun ExerciseCard(exercise: Exercise) {
+fun ExerciseCard(exercise: Exercise, removeExercise: () -> Unit) {
     Card(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(8.dp)
             .fillMaxWidth()
-            .height(50.dp),
+            .height(60.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
-        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-            Text(text = exercise.name)
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = exercise.name,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            IconButton(onClick = { removeExercise() }) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.delete),
+                    contentDescription = stringResource(id = R.string.delete),
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

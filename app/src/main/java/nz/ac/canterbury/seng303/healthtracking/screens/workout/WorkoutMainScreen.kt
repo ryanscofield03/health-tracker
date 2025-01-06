@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,8 +44,10 @@ import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewMo
 fun WorkoutMain(
     modifier: Modifier = Modifier,
     navController: NavController,
-    workoutLiveData: LiveData<List<Workout>>
+    workoutViewModel: WorkoutViewModel
 ) {
+    val workoutList by workoutViewModel.allWorkouts.observeAsState(initial = emptyList())
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -64,17 +67,14 @@ fun WorkoutMain(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            val workoutList: List<Workout> = workoutLiveData.value?.takeIf { it.isNotEmpty() } ?: listOf()
             itemsIndexed(workoutList) { index, workout ->
                 WorkoutCard(
                     modifier = Modifier.padding(bottom = 12.dp),
-                    id = index,
-                    workout = workout
+                    workout = workout,
+                    deleteWorkout = { workoutViewModel.deleteWorkout(workout) }
                 )
             }
         }
-
-        Text(text ="WORKOUT LIVE DATA:${workoutLiveData.value?.takeIf { it.isNotEmpty() } ?: listOf()}")
 
         Button(
             onClick = { navController.navigate("AddWorkout") },
@@ -96,7 +96,7 @@ fun WorkoutMain(
 }
 
 @Composable
-fun WorkoutCard(modifier: Modifier = Modifier, id: Int, workout: Workout) {
+fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: () -> Unit) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -147,7 +147,7 @@ fun WorkoutCard(modifier: Modifier = Modifier, id: Int, workout: Workout) {
                     )
                     DropdownMenuItem(
                         text = { Text(text = stringResource(id = R.string.delete)) },
-                        onClick = { /* TODO */ }
+                        onClick = { deleteWorkout(); expanded = false; }
                     )
                 }
             }

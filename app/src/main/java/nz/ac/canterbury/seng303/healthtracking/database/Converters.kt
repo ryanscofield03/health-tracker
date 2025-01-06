@@ -30,11 +30,15 @@ class Converters {
 
     @TypeConverter
     fun fromDaysList(value: List<DayOfWeek>): String {
-        return value.joinToString(separator = ",")
+        return value.joinToString(separator = ",") { it.name }
     }
 
     @TypeConverter
     fun toDaysList(value: String): List<DayOfWeek> {
-        return value.split(",").map { DayOfWeek.of(it.toInt()) }
+        return if (value.isBlank()) {
+            emptyList()
+        } else {
+            value.split(",").map { DayOfWeek.valueOf(it) }
+        }
     }
 }

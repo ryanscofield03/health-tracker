@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng303.healthtracking.viewmodels.screen
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
@@ -16,16 +17,21 @@ class AddWorkoutViewModel(
     private val _exercises = mutableStateListOf<Exercise>()
     val exercises: List<Exercise> get() = _exercises
 
-    private var _name = mutableStateOf("")
+    private val _name = mutableStateOf("")
     val name: String get() = _name.value
 
-    private var _description = mutableStateOf("")
+    private val _description = mutableStateOf("")
     val description: String get() = _description.value
 
-    val scheduledDays = mutableStateListOf<DayOfWeek>()
+    private val _scheduledDays = mutableStateListOf<DayOfWeek>()
+    val scheduledDays: List<DayOfWeek> get() = _scheduledDays
 
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
+    }
+
+    fun removeExercise(exercise: Exercise) {
+        _exercises.remove(exercise)
     }
 
     fun updateName(updatedName: String) {
@@ -37,7 +43,7 @@ class AddWorkoutViewModel(
     }
 
     fun toggleScheduledDay(day: DayOfWeek) {
-        if (scheduledDays.contains(day)) scheduledDays.remove(day) else scheduledDays.add(day)
+        if (scheduledDays.contains(day)) _scheduledDays.remove(day) else _scheduledDays.add(day)
     }
 
     fun save() {
@@ -48,5 +54,14 @@ class AddWorkoutViewModel(
             exerciseViewModel.addExercise(exercise)
             workoutViewModel.addExerciseToWorkout(workoutId = workout.id, exerciseId = exercise.id)
         }
+
+        clear()
+    }
+
+    fun clear() {
+        _exercises.clear()
+        _name.value = ""
+        _description.value = ""
+        _scheduledDays.clear()
     }
 }

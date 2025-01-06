@@ -78,8 +78,8 @@ fun AddExercise(
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
             ),
             shape = MaterialTheme.shapes.small
         ) {

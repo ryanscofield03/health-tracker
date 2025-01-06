@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
                             WorkoutMain(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
-                                workoutLiveData = workoutViewModel.allWorkouts
+                                workoutViewModel = workoutViewModel
                             )
                         }
                         composable(route = "AddWorkout") {
