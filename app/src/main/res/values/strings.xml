@@ -15,6 +15,7 @@
 
     // Workout Screens Text
     <string name="my_workouts_title">My Workouts</string>
+    <string name="no_existing_exercises">No existing workouts, try adding one!</string>
     <string name="build_workout">Build Your Workout</string>
     <string name="workout_name">Workout Name</string>
     <string name="enter_workout_name">Enter workout name</string>

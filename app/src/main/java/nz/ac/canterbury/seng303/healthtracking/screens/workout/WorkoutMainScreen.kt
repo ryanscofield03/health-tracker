@@ -62,17 +62,20 @@ fun WorkoutMain(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            itemsIndexed(workoutList) { index, workout ->
-                WorkoutCard(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    workout = workout,
-                    deleteWorkout = { workoutViewModel.deleteWorkout(workout) }
-                )
+        val innerModifier = Modifier.fillMaxWidth().weight(1f)
+        if (workoutList.isEmpty()) {
+            Text(modifier = innerModifier, text= stringResource(id = R.string.no_existing_exercises))
+        } else {
+            LazyColumn(
+                modifier = innerModifier
+            ) {
+                itemsIndexed(workoutList) { index, workout ->
+                    WorkoutCard(
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        workout = workout,
+                        deleteWorkout = { workoutViewModel.deleteWorkout(workout) }
+                    )
+                }
             }
         }
 
@@ -82,8 +85,8 @@ fun WorkoutMain(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
             ),
             shape = MaterialTheme.shapes.small
         ) {
@@ -104,8 +107,8 @@ fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: 
             .fillMaxWidth()
             .height(90.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Row(

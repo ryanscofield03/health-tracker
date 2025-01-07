@@ -26,6 +26,9 @@ class AddWorkoutViewModel(
     private val _scheduledDays = mutableStateListOf<DayOfWeek>()
     val scheduledDays: List<DayOfWeek> get() = _scheduledDays
 
+    private val _nameErrorMessage = mutableStateOf<String?>(null)
+    val nameErrorMessage: String? get() = _nameErrorMessage.value
+
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
     }
@@ -36,6 +39,11 @@ class AddWorkoutViewModel(
 
     fun updateName(updatedName: String) {
         _name.value = updatedName
+        validateName()
+    }
+
+    private fun validateName() {
+        _nameErrorMessage.value = if (_name.value.isEmpty()) "Name cannot be empty." else null
     }
 
     fun updateDescription(updatedDescription: String) {
@@ -56,6 +64,12 @@ class AddWorkoutViewModel(
         }
 
         clear()
+    }
+
+    fun isValid(): Boolean {
+        validateName()
+
+        return name.isNotBlank() && description.isNotBlank() && _exercises.isNotEmpty()
     }
 
     fun clear() {
