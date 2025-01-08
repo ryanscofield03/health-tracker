@@ -14,3 +14,15 @@ class MainApplication: Application() {
         }
     }
 }
+
+/**
+ * TODO:
+ * - Allow for editing workout (2 hrs)
+ * - Allow for running workout (12 hrs ?)
+ *
+ * - Sleep, Eat, Stats, Settings
+ *
+ * - Settings (1) : Easiest and has a reasonably big impact (20 hrs)
+ * - Sleep (2) : 2nd Easiest and is important (20-30 hrs)
+ * - Eat (3) : May be a lot of work, big impact too but depends on how extensive my implementation is (40 hrs)
+ */
