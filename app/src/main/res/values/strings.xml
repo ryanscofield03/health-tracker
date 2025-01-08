@@ -23,6 +23,13 @@
     <string name="enter_workout_description">Enter a short description</string>
     <string name="schedule_workout">Schedule Your Workout</string>
     <string name="exercise_name">Exercise Name</string>
+    <string name="exercise_search_placeholder">Enter or search an exercise name</string>
+
+    // Workout Screen Error Messages
+    <string name="name_error_message">Name cannot be empty.</string>
+    <string name="description_error_message">Description cannot be empty.</string>
+    <string name="exercise_list_error_message">Workout must contain at least one exercise.</string>
+    <string name="exercise_error_message">Exercise name cannot be empty.</string>
 
     //Button Descriptions
     <string name="run_workout">Run Workout</string>

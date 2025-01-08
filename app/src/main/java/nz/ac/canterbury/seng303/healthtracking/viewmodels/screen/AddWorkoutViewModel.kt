@@ -1,9 +1,10 @@
 package nz.ac.canterbury.seng303.healthtracking.viewmodels.screen
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
@@ -26,15 +27,23 @@ class AddWorkoutViewModel(
     private val _scheduledDays = mutableStateListOf<DayOfWeek>()
     val scheduledDays: List<DayOfWeek> get() = _scheduledDays
 
-    private val _nameErrorMessage = mutableStateOf<String?>(null)
-    val nameErrorMessage: String? get() = _nameErrorMessage.value
+    private val _nameErrorMessageId = mutableStateOf<Int?>(null)
+    val nameErrorMessageId: Int? get() = _nameErrorMessageId.value
+
+    private val _descriptionErrorMessageId = mutableStateOf<Int?>(null)
+    val descriptionErrorMessageId: Int? get() = _descriptionErrorMessageId.value
+
+    private val _exercisesErrorMessageId = mutableStateOf<Int?>(null)
+    val exercisesErrorMessageId: Int? get() = _exercisesErrorMessageId.value
 
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
+        validateExercises()
     }
 
     fun removeExercise(exercise: Exercise) {
         _exercises.remove(exercise)
+        validateExercises()
     }
 
     fun updateName(updatedName: String) {
@@ -42,16 +51,40 @@ class AddWorkoutViewModel(
         validateName()
     }
 
-    private fun validateName() {
-        _nameErrorMessage.value = if (_name.value.isEmpty()) "Name cannot be empty." else null
-    }
-
     fun updateDescription(updatedDescription: String) {
         _description.value = updatedDescription
+        validateDescription()
     }
 
     fun toggleScheduledDay(day: DayOfWeek) {
         if (scheduledDays.contains(day)) _scheduledDays.remove(day) else _scheduledDays.add(day)
+    }
+
+    private fun validateFields() {
+        validateName()
+        validateDescription()
+        validateExercises()
+    }
+
+    private fun validateName() {
+        _nameErrorMessageId.value =
+            if (_name.value.isBlank())
+                R.string.name_error_message
+            else null
+    }
+
+    private fun validateDescription() {
+        _descriptionErrorMessageId.value =
+            if (_description.value.isBlank())
+                R.string.description_error_message
+            else null
+    }
+
+    private fun validateExercises() {
+        _exercisesErrorMessageId.value =
+            if (_exercises.isEmpty())
+                R.string.exercise_error_message
+            else null
     }
 
     fun save() {
@@ -67,7 +100,7 @@ class AddWorkoutViewModel(
     }
 
     fun isValid(): Boolean {
-        validateName()
+        validateFields()
 
         return name.isNotBlank() && description.isNotBlank() && _exercises.isNotEmpty()
     }
@@ -77,5 +110,9 @@ class AddWorkoutViewModel(
         _name.value = ""
         _description.value = ""
         _scheduledDays.clear()
+
+        _nameErrorMessageId.value = null
+        _descriptionErrorMessageId.value = null
+        _exercisesErrorMessageId.value = null
     }
 }

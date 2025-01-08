@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng303.healthtracking.screens.workout
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +23,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -37,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
+import nz.ac.canterbury.seng303.healthtracking.screens.ErrorMessageComponent
+import nz.ac.canterbury.seng303.healthtracking.screens.SaveAndCancelButtons
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,51 +51,52 @@ fun AddWorkout(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Header
         Text(
             text = stringResource(id = R.string.build_workout),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.align(Alignment.Start)
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Workout name input
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
             label = { Text(stringResource(id = R.string.workout_name)) },
             placeholder = { Text("Enter workout name") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = viewModel.nameErrorMessage != null,
+            maxLines = 1,
+            isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 errorLabelColor = MaterialTheme.colorScheme.onBackground
             )
         )
-        if (viewModel.nameErrorMessage != null) {
-            Text(
-                text = viewModel.nameErrorMessage!!,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        ErrorMessageComponent(
+            hasError = viewModel.nameErrorMessageId != null,
+            errorMessageId = viewModel.nameErrorMessageId
+        )
 
+        // Description name input
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
             label = { Text("Description") },
             placeholder = { Text("Enter a short description") },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 4,
-            isError = viewModel.nameErrorMessage != null,
+            maxLines = 2,
+            isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 errorLabelColor = MaterialTheme.colorScheme.onBackground
             )
         )
-        if (viewModel.nameErrorMessage != null) {
-            Text(
-                text = viewModel.nameErrorMessage!!,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        ErrorMessageComponent(
+            hasError = viewModel.descriptionErrorMessageId != null,
+            errorMessageId = viewModel.descriptionErrorMessageId
+        )
 
+        // Add exercise button
         Button(
             onClick = { navController.navigate("AddExercise") },
             modifier = Modifier.fillMaxWidth(),
@@ -108,34 +108,30 @@ fun AddWorkout(
         ) {
             Text(stringResource(id = R.string.add_exercise))
         }
-
+        Spacer(modifier = Modifier.height(6.dp))
+        // Display exercises
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.5f)
             .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.tertiary,
+                width = 1.dp,
+                color =
+                if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(10.dp)
             )
         ) {
-            if (viewModel.nameErrorMessage != null) {
-                item {
-                    Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                        Text(
-                            text = viewModel.nameErrorMessage!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
             items (viewModel.exercises) { exercise ->
                 ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
             }
         }
+        ErrorMessageComponent(
+            hasError = viewModel.exercisesErrorMessageId != null,
+            errorMessageId = viewModel.exercisesErrorMessageId
+        )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
+        // Schedule workout button
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = { navController.navigate("ScheduleWorkout") },
             modifier = Modifier.fillMaxWidth(),
@@ -154,41 +150,21 @@ fun AddWorkout(
             }
         }
 
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Button(
-                onClick = {
-                    if (viewModel.isValid()) {
-                        navController.navigate("Workout")
-                        viewModel.save()
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(stringResource(id = R.string.save))
-            }
+        Spacer(modifier = Modifier.height(10.dp))
 
-            Button(
-                onClick = {
+        // Save and cancel buttons
+        SaveAndCancelButtons(
+            onSave = {
+                if (viewModel.isValid()) {
                     navController.navigate("Workout")
-                    viewModel.clear()
-                },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text(stringResource(id = R.string.cancel))
+                    viewModel.save()
+                }
+            },
+            onCancel = {
+                navController.navigate("Workout")
+                viewModel.clear()
             }
-        }
+        )
     }
 }
 

@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 val PrimaryBlue = Color(0xFF102A49)
 val SecondaryBlue = Color(0xFF203042)
-val SoftGrey = Color(0xFF454D5C)
+val SoftGrey = Color(0xFFA8AEB9)
 
 val DarkGray = Color(0xFF1C1C1E)
 val LightGray = Color(0xFFF2F2F2)
@@ -15,4 +15,4 @@ val SuccessGreen = Color(0xFF4CAF50)
 
 val PrimaryBlueDark = Color(0xFF1F2E41)
 val SecondaryBlueDark = Color(0xFF29323D)
-val SoftGreyDark = Color(0xFF2D323C)
+val SoftGreyDark = Color(0xFF7C818A)
