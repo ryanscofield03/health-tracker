@@ -65,8 +65,8 @@ fun AddWorkout(
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
-            label = { Text(stringResource(id = R.string.workout_name)) },
-            placeholder = { Text("Enter workout name") }, // TODO
+            label = { Text(stringResource(id = R.string.workout_name_label)) },
+            placeholder = { Text(stringResource(id = R.string.workout_name_placeholder)) },
             maxLines = 1,
             isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -83,8 +83,8 @@ fun AddWorkout(
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
-            label = { Text("Description") }, // TODO
-            placeholder = { Text("Enter a short description") }, // TODO
+            label = { Text( stringResource(id = R.string.description_label)) },
+            placeholder = { Text(stringResource(id = R.string.description_placeholder)) },
             maxLines = 2,
             isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(

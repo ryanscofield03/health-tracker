@@ -17,7 +17,6 @@
     <string name="my_workouts_title">My Workouts</string>
     <string name="no_existing_exercises">No existing workouts, try adding one!</string>
     <string name="build_workout">Build Your Workout</string>
-    <string name="workout_name">Workout Name</string>
     <string name="enter_workout_name">Enter workout name</string>
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
@@ -25,6 +24,12 @@
     <string name="exercise_name">Exercise Name</string>
     <string name="exercise_search_placeholder">Enter or search an exercise name</string>
     <string name="search_exercise">Search for an Exercise</string>
+
+    // Workout Screen Textbox Labels and Placeholders
+    <string name="workout_name_label">Workout Name</string>
+    <string name="description_label">Description</string>
+    <string name="workout_name_placeholder">Enter workout name</string>
+    <string name="description_placeholder">Enter a short description</string>
 
     // Workout Screen Error Messages
     <string name="name_error_message">Name cannot be empty.</string>
@@ -36,7 +41,7 @@
     <string name="run_workout">Run Workout</string>
     <string name="add_workout">Add New Workout</string>
     <string name="view_options">More Options</string>
-    <string name="add_exercise">Add An Exercise</string>
+    <string name="add_exercise">Add Exercises</string>
     <string name="save_workout">Save Workout</string>
 
     //Button labels

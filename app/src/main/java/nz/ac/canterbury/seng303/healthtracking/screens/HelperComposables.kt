@@ -20,10 +20,6 @@ import nz.ac.canterbury.seng303.healthtracking.R
 
 @Composable
 fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
-    val lineHeight = with(LocalDensity.current) {
-        MaterialTheme.typography.bodySmall.lineHeight.toDp()
-    }
-
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(5.dp))
         if (hasError) {
@@ -33,6 +29,9 @@ fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
                 style = MaterialTheme.typography.bodySmall
             )
         } else {
+            val lineHeight = with(LocalDensity.current) {
+                MaterialTheme.typography.bodySmall.lineHeight.toDp()
+            }
             Box(modifier = Modifier.height(lineHeight))
         }
         Spacer(modifier = Modifier.height(10.dp))

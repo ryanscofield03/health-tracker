@@ -46,6 +46,10 @@ class AddWorkoutViewModel(
         validateExercises()
     }
 
+    fun clearExercises() {
+        _exercises.clear()
+    }
+
     fun updateName(updatedName: String) {
         _name.value = updatedName
         validateName()
