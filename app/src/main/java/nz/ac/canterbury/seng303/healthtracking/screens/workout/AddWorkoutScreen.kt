@@ -58,7 +58,7 @@ fun AddWorkout(
             modifier = Modifier.align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Workout name input
         OutlinedTextField(
@@ -66,7 +66,7 @@ fun AddWorkout(
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
             label = { Text(stringResource(id = R.string.workout_name)) },
-            placeholder = { Text("Enter workout name") },
+            placeholder = { Text("Enter workout name") }, // TODO
             maxLines = 1,
             isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -83,8 +83,8 @@ fun AddWorkout(
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
-            label = { Text("Description") },
-            placeholder = { Text("Enter a short description") },
+            label = { Text("Description") }, // TODO
+            placeholder = { Text("Enter a short description") }, // TODO
             maxLines = 2,
             isError = viewModel.nameErrorMessageId != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -108,11 +108,11 @@ fun AddWorkout(
         ) {
             Text(stringResource(id = R.string.add_exercise))
         }
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(7.dp))
         // Display exercises
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.5f)
+            .fillMaxHeight(0.55f)
             .border(
                 width = 1.dp,
                 color =
@@ -131,7 +131,7 @@ fun AddWorkout(
         )
 
         // Schedule workout button
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Button(
             onClick = { navController.navigate("ScheduleWorkout") },
             modifier = Modifier.fillMaxWidth(),
@@ -150,7 +150,7 @@ fun AddWorkout(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         // Save and cancel buttons
         SaveAndCancelButtons(

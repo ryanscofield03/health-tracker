@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="exercise_groups">
+        <item>Chest</item>
+        <item>Back</item>
+        <item>Legs</item>
+        <item>Cardio</item>
+        <item>Shoulders</item>
+        <item>Triceps</item>
+        <item>Biceps</item>
+        <item>Forearms</item>
+        <item>Calves</item>
+        <item>Abs</item>
+    </string-array>
+
+    <string-array name="chest_exercises">
+        <item>Assisted Dip</item>
+        <item>Band-Assisted Bench Press</item>
+        <item>Bar Dip</item>
+        <item>Bench Press</item>
+        <item>Bench Press Against Band</item>
+        <item>Board Press</item>
+        <item>Cable Chest Press</item>
+        <item>Close-Grip Bench Press</item>
+        <item>Close-Grip Feet-Up Bench Press</item>
+        <item>Decline Bench Press</item>
+        <item>Decline Push-Up</item>
+        <item>Dumbbell Chest Fly</item>
+        <item>Dumbbell Chest Press</item>
+        <item>Dumbbell Decline Chest Press</item>
+        <item>Dumbbell Floor Press</item>
+        <item>Dumbbell Pullover</item>
+        <item>Feet-Up Bench Press</item>
+        <item>Floor Press</item>
+        <item>Incline Bench Press</item>
+        <item>Incline Dumbbell Press</item>
+        <item>Incline Push-Up</item>
+        <item>Kettlebell Floor Press</item>
+        <item>Kneeling Incline Push-Up</item>
+        <item>Kneeling Push-Up</item>
+        <item>Machine Chest Fly</item>
+        <item>Machine Chest Press</item>
+        <item>Pec Deck</item>
+        <item>Pin Bench Press</item>
+        <item>Push-Up</item>
+        <item>Push-Up Against Wall</item>
+        <item>Push-Ups With Feet in Rings</item>
+        <item>Resistance Band Chest Fly</item>
+        <item>Ring Dip</item>
+        <item>Smith Machine Bench Press</item>
+        <item>Smith Machine Incline Bench Press</item>
+        <item>Smith Machine Reverse Grip Bench Press</item>
+        <item>Standing Cable Chest Fly</item>
+        <item>Standing Resistance Band Chest Fly</item>
+    </string-array>
+
+    <string-array name="shoulders_exercises">
+        <item>Arnold Press</item>
+        <item>Band External Shoulder Rotation</item>
+        <item>Band Internal Shoulder Rotation</item>
+        <item>Band Pull-Apart</item>
+        <item>Barbell Front Raise</item>
+        <item>Barbell Rear Delt Row</item>
+        <item>Barbell Upright Row</item>
+        <item>Behind the Neck Press</item>
+        <item>Cable Lateral Raise</item>
+        <item>Cable Rear Delt Row</item>
+        <item>Cuban Press</item>
+        <item>Dumbbell Front Raise</item>
+        <item>Dumbbell Horizontal Internal Shoulder Rotation</item>
+        <item>Dumbbell Horizontal External Shoulder Rotation</item>
+        <item>Dumbbell Lateral Raise</item>
+        <item>Dumbbell Rear Delt Row</item>
+        <item>Dumbbell Shoulder Press</item>
+        <item>Face Pull</item>
+        <item>Front Hold</item>
+        <item>Landmine Press</item>
+        <item>Lying Dumbbell External Shoulder Rotation</item>
+        <item>Lying Dumbbell Internal Shoulder Rotation</item>
+        <item>Machine Lateral Raise</item>
+        <item>Machine Shoulder Press</item>
+        <item>Monkey Row</item>
+        <item>Overhead Press</item>
+        <item>Plate Front Raise</item>
+        <item>Power Jerk</item>
+        <item>Push Press</item>
+        <item>Reverse Cable Flyes</item>
+        <item>Reverse Dumbbell Flyes</item>
+        <item>Reverse Machine Fly</item>
+        <item>Seated Dumbbell Shoulder Press</item>
+        <item>Seated Barbell Overhead Press</item>
+        <item>Seated Smith Machine Shoulder Press</item>
+        <item>Snatch Grip Behind the Neck Press</item>
+        <item>Squat Jerk</item>
+        <item>Split Jerk</item>
+    </string-array>
+
+    <string-array name="biceps_exercises">
+        <item>Barbell Curl</item>
+        <item>Barbell Preacher Curl</item>
+        <item>Bayesian Curl</item>
+        <item>Bodyweight Curl</item>
+        <item>Cable Crossover Bicep Curl</item>
+        <item>Cable Curl With Bar</item>
+        <item>Cable Curl With Rope</item>
+        <item>Concentration Curl</item>
+        <item>Drag Curl</item>
+        <item>Dumbbell Curl</item>
+        <item>Dumbbell Preacher Curl</item>
+        <item>Hammer Curl</item>
+        <item>Incline Dumbbell Curl</item>
+        <item>Machine Bicep Curl</item>
+        <item>Resistance Band Curl</item>
+        <item>Spider Curl</item>
+    </string-array>
+
+    <string-array name="triceps_exercises">
+        <item>Barbell Standing Triceps Extension</item>
+        <item>Barbell Lying Triceps Extension</item>
+        <item>Bench Dip</item>
+        <item>Crossbody Cable Triceps Extension</item>
+        <item>Close-Grip Push-Up</item>
+        <item>Dumbbell Lying Triceps Extension</item>
+        <item>Dumbbell Standing Triceps Extension</item>
+        <item>Overhead Cable Triceps Extension</item>
+        <item>Tricep Bodyweight Extension</item>
+        <item>Tricep Pushdown With Bar</item>
+        <item>Tricep Pushdown With Rope</item>
+    </string-array>
+
+    <string-array name="legs_exercises">
+        <item>Air Squat</item>
+        <item>Barbell Hack Squat</item>
+        <item>Barbell Lunge</item>
+        <item>Barbell Walking Lunge</item>
+        <item>Belt Squat</item>
+        <item>Body Weight Lunge</item>
+        <item>Bodyweight Leg Curl</item>
+        <item>Box Jump</item>
+        <item>Box Squat</item>
+        <item>Bulgarian Split Squat</item>
+        <item>Chair Squat</item>
+        <item>Dumbbell Lunge</item>
+        <item>Dumbbell Squat</item>
+        <item>Front Squat</item>
+        <item>Glute Ham Raise</item>
+        <item>Goblet Squat</item>
+        <item>Hack Squat Machine</item>
+        <item>Half Air Squat</item>
+        <item>Hip Adduction Machine</item>
+        <item>Jumping Lunge</item>
+        <item>Landmine Hack Squat</item>
+        <item>Landmine Squat</item>
+        <item>Leg Curl On Ball</item>
+        <item>Leg Extension</item>
+        <item>Leg Press</item>
+        <item>Lying Leg Curl</item>
+        <item>Nordic Hamstring Eccentric</item>
+        <item>Pause Squat</item>
+        <item>Pistol Squat</item>
+        <item>Reverse Barbell Lunge</item>
+        <item>Romanian Deadlift</item>
+        <item>Safety Bar Squat</item>
+        <item>Seated Leg Curl</item>
+        <item>Shallow Body Weight Lunge</item>
+        <item>Side Lunges (Bodyweight)</item>
+        <item>Smith Machine Bulgarian Split Squat</item>
+        <item>Smith Machine Front Squat</item>
+        <item>Smith Machine Squat</item>
+        <item>Squat</item>
+        <item>Step Up</item>
+        <item>Zercher Squat</item>
+        <item>Zombie Squat</item>
+    </string-array>
+
+    <string-array name="back_exercises">
+        <item>Assisted Chin-Up</item>
+        <item>Assisted Pull-Up</item>
+        <item>Back Extension</item>
+        <item>Banded Muscle-Up</item>
+        <item>Barbell Row</item>
+        <item>Barbell Shrug</item>
+        <item>Block Clean</item>
+        <item>Block Snatch</item>
+        <item>Cable Close Grip Seated Row</item>
+        <item>Cable Wide Grip Seated Row</item>
+        <item>Chest to Bar</item>
+        <item>Chin-Up</item>
+        <item>Clean</item>
+        <item>Clean and Jerk</item>
+        <item>Deadlift</item>
+        <item>Deficit Deadlift</item>
+        <item>Dumbbell Deadlift</item>
+        <item>Dumbbell Row</item>
+        <item>Dumbbell Shrug</item>
+        <item>Floor Back Extension</item>
+        <item>Good Morning</item>
+        <item>Gorilla Row</item>
+        <item>Hang Clean</item>
+        <item>Hang Power Clean</item>
+        <item>Hang Power Snatch</item>
+        <item>Hang Snatch</item>
+        <item>Inverted Row</item>
+        <item>Inverted Row with Underhand Grip</item>
+        <item>Jefferson Curl</item>
+        <item>Jumping Muscle-Up</item>
+        <item>Kettlebell Swing</item>
+        <item>Lat Pulldown With Pronated Grip</item>
+        <item>Lat Pulldown With Supinated Grip</item>
+        <item>Muscle-Up (Bar)</item>
+        <item>Muscle-Up (Rings)</item>
+        <item>One-Handed Cable Row</item>
+        <item>One-Handed Lat Pulldown</item>
+        <item>Pause Deadlift</item>
+        <item>Pendlay Row</item>
+        <item>Power Clean</item>
+        <item>Power Snatch</item>
+        <item>Pull-Up</item>
+        <item>Pull-Up With a Neutral Grip</item>
+        <item>Rack Pull</item>
+        <item>Ring Pull-Up</item>
+        <item>Ring Row</item>
+        <item>Scap Pull-Up</item>
+        <item>Seal Row</item>
+        <item>Seated Machine Row</item>
+        <item>Single Leg Deadlift with Kettlebell</item>
+        <item>Smith Machine One-Handed Row</item>
+        <item>Snatch</item>
+        <item>Snatch Grip Deadlift</item>
+        <item>Stiff-Legged Deadlift</item>
+        <item>Straight Arm Lat Pulldown</item>
+        <item>Sumo Deadlift</item>
+        <item>T-Bar Row</item>
+        <item>Trap Bar Deadlift With High Handles</item>
+        <item>Trap Bar Deadlift With Low Handles</item>
+    </string-array>
+
+    <string-array name="abs_exercises">
+        <item>Ball Slams</item>
+        <item>Cable Crunch</item>
+        <item>Crunch</item>
+        <item>Dead Bug</item>
+        <item>Dragon Flag</item>
+        <item>Hanging Knee Raise</item>
+        <item>Hanging Leg Raise</item>
+        <item>Hanging Sit-Up</item>
+        <item>Hanging Windshield Wiper</item>
+        <item>High to Low Wood Chop with Band</item>
+        <item>Horizontal Wood Chop with Band</item>
+        <item>Jackknife Sit-Up</item>
+        <item>Kneeling Ab Wheel Roll-Out</item>
+        <item>Kneeling Plank</item>
+        <item>Kneeling Side Plank</item>
+        <item>Lying Leg Raise</item>
+        <item>Lying Windshield Wiper</item>
+        <item>Lying Windshield Wiper with Bent Knees</item>
+        <item>Machine Crunch</item>
+        <item>Mountain Climbers</item>
+        <item>Oblique Crunch</item>
+        <item>Oblique Sit-Up</item>
+        <item>Plank</item>
+        <item>Plank with Leg Lifts</item>
+        <item>Russian Twist</item>
+        <item>Side Plank</item>
+        <item>Sit-Up</item>
+    </string-array>
+
+    <string-array name="calves_exercises">
+        <item>Barbell Standing Calf Raise</item>
+        <item>Donkey Calf Raise</item>
+        <item>Eccentric Heel Drop</item>
+        <item>Heel Raise</item>
+        <item>Seated Calf Raise</item>
+        <item>Standing Calf Raise</item>
+    </string-array>
+
+    <string-array name="forearms_exercises">
+        <item>Barbell Wrist Curl</item>
+        <item>Barbell Wrist Curl Behind the Back</item>
+        <item>Bar Hang</item>
+        <item>Dumbbell Wrist Curl</item>
+        <item>Farmers Walk</item>
+        <item>Fat Bar Deadlift</item>
+        <item>Gripper</item>
+        <item>One-Handed Bar Hang</item>
+        <item>Plate Pinch</item>
+        <item>Plate Wrist Curl</item>
+        <item>Towel Pull-Up</item>
+        <item>Wrist Roller</item>
+        <item>Barbell Wrist Extension</item>
+        <item>Dumbbell Wrist Extension</item>
+    </string-array>
+
+    <string-array name="cardio_exercises">
+        <item>Treadmill</item>
+        <item>Rowing Machine</item>
+        <item>Stationary Bike</item>
+    </string-array>
+</resources>

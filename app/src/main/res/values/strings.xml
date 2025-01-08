@@ -24,6 +24,7 @@
     <string name="schedule_workout">Schedule Your Workout</string>
     <string name="exercise_name">Exercise Name</string>
     <string name="exercise_search_placeholder">Enter or search an exercise name</string>
+    <string name="search_exercise">Search for an Exercise</string>
 
     // Workout Screen Error Messages
     <string name="name_error_message">Name cannot be empty.</string>
