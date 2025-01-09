@@ -1,9 +1,13 @@
 package nz.ac.canterbury.seng303.healthtracking.viewmodels.screen
 
 import android.content.Context
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
@@ -92,15 +96,21 @@ class AddWorkoutViewModel(
     }
 
     fun save() {
-        val workout = Workout(name = name, description = description, schedule = scheduledDays)
-        workoutViewModel.addWorkout(workout)
+        viewModelScope.launch {
+            workoutViewModel.addWorkout(
+                Workout(name = name, description = description, schedule = scheduledDays),
+                onResult = { workoutId ->
+                    exercises.forEach { exercise ->
+                        exerciseViewModel.addExercise(exercise, onResult = { exerciseId ->
+                            workoutViewModel.addExerciseToWorkout(workoutId = workoutId, exerciseId = exerciseId)
+                        })
+                    }
 
-        exercises.forEach { exercise ->
-            exerciseViewModel.addExercise(exercise)
-            workoutViewModel.addExerciseToWorkout(workoutId = workout.id, exerciseId = exercise.id)
+                    // important to clear here after all exercises have been added
+                    clear()
+                }
+            )
         }
-
-        clear()
     }
 
     fun isValid(): Boolean {
@@ -118,5 +128,23 @@ class AddWorkoutViewModel(
         _nameErrorMessageId.value = null
         _descriptionErrorMessageId.value = null
         _exercisesErrorMessageId.value = null
+    }
+
+    fun addWorkoutInfo(workout: Workout) {
+        updateName(workout.name)
+        updateDescription(workout.description)
+
+        /* HANDLE SCHEDULED DAYS */
+
+        loadExercisesForWorkout(workout.id)
+    }
+
+    private fun loadExercisesForWorkout(workoutId: Long) {
+        viewModelScope.launch {
+            val exercises = workoutViewModel.getExercisesForWorkout(workoutId)
+            exercises.forEach { exercise ->
+                addExercise(exercise)
+            }
+        }
     }
 }

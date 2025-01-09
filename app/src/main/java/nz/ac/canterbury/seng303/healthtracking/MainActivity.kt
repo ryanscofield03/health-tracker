@@ -15,8 +15,10 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -116,6 +118,25 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
                                 viewModel = addWorkoutViewModel
+                            )
+                        }
+                        composable(route = "EditWorkout/{id}") { navBackStackEntry ->
+                            val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                            LaunchedEffect(parsedId) {
+                                val workout = workoutViewModel
+                                    .allWorkouts
+                                    .value
+                                    ?.find { it.id == parsedId }
+
+                                workout?.let {
+                                    addWorkoutViewModel.addWorkoutInfo(workout = it)
+                                }
+                            }
+
+                            AddWorkout(
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                viewModel = addWorkoutViewModel,
                             )
                         }
                         composable(route = "AddExercise") {

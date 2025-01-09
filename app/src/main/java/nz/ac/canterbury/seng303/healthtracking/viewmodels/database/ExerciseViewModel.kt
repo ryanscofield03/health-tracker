@@ -12,9 +12,10 @@ class ExerciseViewModel(
 ) : ViewModel() {
     val allExercises: LiveData<List<Exercise>> = exerciseDao.getAllExercises()
 
-    fun addExercise(exercise: Exercise) {
+    fun addExercise(exercise: Exercise, onResult: (Long) -> Unit) {
         viewModelScope.launch {
-            exerciseDao.upsertExercise(exercise)
+            val exerciseId = exerciseDao.upsertExercise(exercise)
+            onResult(exerciseId)
         }
     }
 

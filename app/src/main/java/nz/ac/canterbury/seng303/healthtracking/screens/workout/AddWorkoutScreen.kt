@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
+import nz.ac.canterbury.seng303.healthtracking.entities.Workout
 import nz.ac.canterbury.seng303.healthtracking.screens.ErrorMessageComponent
 import nz.ac.canterbury.seng303.healthtracking.screens.SaveAndCancelButtons
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
@@ -169,7 +170,10 @@ fun AddWorkout(
 }
 
 @Composable
-fun ExerciseCard(exercise: Exercise, removeExercise: () -> Unit) {
+fun ExerciseCard(
+    exercise: Exercise,
+    removeExercise: () -> Unit
+) {
     Card(
         modifier = Modifier
             .padding(8.dp)

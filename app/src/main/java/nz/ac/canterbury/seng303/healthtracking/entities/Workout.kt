@@ -9,8 +9,7 @@ import java.time.DayOfWeek
  */
 @Entity(tableName = "workout")
 data class Workout(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var name: String,
     var description: String,
     var schedule: List<DayOfWeek>

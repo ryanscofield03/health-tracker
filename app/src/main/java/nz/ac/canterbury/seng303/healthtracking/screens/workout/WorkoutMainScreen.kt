@@ -62,18 +62,21 @@ fun WorkoutMain(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val innerModifier = Modifier.fillMaxWidth().weight(1f)
+        val innerModifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
         if (workoutList.isEmpty()) {
             Text(modifier = innerModifier, text= stringResource(id = R.string.no_existing_exercises))
         } else {
             LazyColumn(
                 modifier = innerModifier
             ) {
-                itemsIndexed(workoutList) { index, workout ->
+                itemsIndexed(workoutList) { _, workout ->
                     WorkoutCard(
                         modifier = Modifier.padding(bottom = 12.dp),
                         workout = workout,
-                        deleteWorkout = { workoutViewModel.deleteWorkout(workout) }
+                        deleteWorkout = { workoutViewModel.deleteWorkout(workout) },
+                        editWorkout = { navController.navigate("EditWorkout/${workout.id}") }
                     )
                 }
             }
@@ -99,7 +102,12 @@ fun WorkoutMain(
 }
 
 @Composable
-fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: () -> Unit) {
+fun WorkoutCard(
+    modifier: Modifier = Modifier,
+    workout: Workout,
+    deleteWorkout: () -> Unit,
+    editWorkout: () -> Unit
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -109,7 +117,8 @@ fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: 
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
-        )
+        ),
+        onClick = { /* TODO */ }
     ) {
         Row(
             modifier = Modifier
@@ -118,16 +127,16 @@ fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: 
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = workout.name,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f)
-            )
-            IconButton(onClick = { /* TODO */ }) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = stringResource(id = R.string.run_workout),
-                    tint = MaterialTheme.colorScheme.primary
+            Column {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = workout.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    text = workout.description,
+                    style = MaterialTheme.typography.titleSmall,
                 )
             }
 
@@ -140,13 +149,10 @@ fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, deleteWorkout: 
                     )
                 }
 
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     DropdownMenuItem(
                         text = { Text(text = stringResource(id = R.string.edit)) },
-                        onClick = { /* TODO */ }
+                        onClick = { editWorkout() }
                     )
                     DropdownMenuItem(
                         text = { Text(text = stringResource(id = R.string.delete)) },

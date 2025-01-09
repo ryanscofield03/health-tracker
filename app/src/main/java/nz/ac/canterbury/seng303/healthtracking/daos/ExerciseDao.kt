@@ -13,7 +13,7 @@ import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 @Dao
 interface ExerciseDao {
     @Upsert
-    suspend fun upsertExercise(exercise: Exercise)
+    suspend fun upsertExercise(exercise: Exercise): Long
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
