@@ -73,8 +73,8 @@ fun ScheduleWorkout(
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ),
             shape = MaterialTheme.shapes.small
         ) {
@@ -96,8 +96,8 @@ fun ToggleDayButton(
             .height(50.dp),
         shape = MaterialTheme.shapes.small,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = if (isSelected()) 1f else 0.2f),
-            contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = if (isSelected()) 1f else 0.7f)
+            containerColor = if (isSelected()) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f),
+            contentColor = if (isSelected()) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.6f)
         )) {
         Text(text = dayName)
     }

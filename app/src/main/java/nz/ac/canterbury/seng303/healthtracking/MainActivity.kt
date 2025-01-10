@@ -110,8 +110,7 @@ class MainActivity : ComponentActivity() {
                             WorkoutMain(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
-                                workoutViewModel = workoutViewModel,
-                                exerciseViewModel = exerciseViewModel
+                                workoutViewModel = workoutViewModel
                             )
                         }
                         composable(route = "AddWorkout") {

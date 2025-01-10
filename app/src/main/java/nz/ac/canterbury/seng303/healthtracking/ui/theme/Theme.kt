@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import nz.ac.canterbury.seng303.healthtracking.R
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryBlue,
+    primary = PrimaryBlueDark,
     secondary = SecondaryBlueDark,
     tertiary = SoftGreyDark,
     background = DarkGray,
@@ -26,8 +26,8 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = Color.Black,
     onBackground = Color.White,
     onSurface = Color.White,
-    error = ErrorRedLight,
-    errorContainer = ErrorRedDark
+    error = ErrorRed,
+    errorContainer = ErrorRedLight
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -41,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.Black,
     onBackground = Color.Black,
     onSurface = Color.Black,
-    error = ErrorRedLight,
+    error = ErrorRed,
     errorContainer = ErrorRedDark
 )
 

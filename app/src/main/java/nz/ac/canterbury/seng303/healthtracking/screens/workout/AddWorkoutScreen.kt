@@ -118,7 +118,7 @@ fun AddWorkout(
                 width = 1.dp,
                 color =
                 if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.tertiary,
+                else MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(10.dp)
             )
         ) {
@@ -180,8 +180,8 @@ fun ExerciseCard(
             .fillMaxWidth()
             .height(60.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onTertiary
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = MaterialTheme.shapes.medium
@@ -196,7 +196,6 @@ fun ExerciseCard(
             Text(
                 text = exercise.name,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
             )
             IconButton(onClick = { removeExercise() }) {
                 Icon(

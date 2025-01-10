@@ -47,7 +47,6 @@ fun WorkoutMain(
     modifier: Modifier = Modifier,
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
-    exerciseViewModel: ExerciseViewModel
 ) {
     val workoutList by workoutViewModel.allWorkouts.observeAsState(initial = emptyList())
 
@@ -91,8 +90,8 @@ fun WorkoutMain(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ),
             shape = MaterialTheme.shapes.small
         ) {
@@ -118,10 +117,10 @@ fun WorkoutCard(
             .fillMaxWidth()
             .height(90.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onTertiary
         ),
-        onClick = { /* TODO */ }
+        onClick = { /* TODO handle running workout ! */ }
     ) {
         Row(
             modifier = Modifier
@@ -148,7 +147,7 @@ fun WorkoutCard(
                     Icon(
                         imageVector = Icons.Outlined.MoreVert,
                         contentDescription = stringResource(id = R.string.view_options),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onTertiary
                     )
                 }
 
