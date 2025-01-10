@@ -27,7 +27,12 @@ class WorkoutViewModel(
 
     fun deleteWorkout(workout: Workout) {
         viewModelScope.launch {
-            workoutDao.deleteWorkout(workout)
+            withContext(Dispatchers.IO) {
+                workoutDao.deleteWorkoutAndExercises(
+                    workout = workout,
+                    exercises = workoutDao.getExercisesForWorkout(workoutId = workout.id)
+                )
+            }
         }
     }
 

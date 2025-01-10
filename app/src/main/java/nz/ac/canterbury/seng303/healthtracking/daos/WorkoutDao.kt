@@ -23,7 +23,7 @@ interface WorkoutDao {
     suspend fun upsertWorkoutExerciseCrossRef(crossRef: WorkoutExerciseCrossRef)
 
     @Delete
-    suspend fun deleteWorkout(workout: Workout)
+    suspend fun deleteWorkoutAndExercises(workout: Workout, exercises: List<Exercise>)
 
     @Query("""
         DELETE 

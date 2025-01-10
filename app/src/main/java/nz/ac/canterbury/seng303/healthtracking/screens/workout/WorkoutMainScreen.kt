@@ -35,16 +35,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 
 @Composable
 fun WorkoutMain(
     modifier: Modifier = Modifier,
     navController: NavController,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    exerciseViewModel: ExerciseViewModel
 ) {
     val workoutList by workoutViewModel.allWorkouts.observeAsState(initial = emptyList())
 
@@ -156,7 +159,10 @@ fun WorkoutCard(
                     )
                     DropdownMenuItem(
                         text = { Text(text = stringResource(id = R.string.delete)) },
-                        onClick = { deleteWorkout(); expanded = false; /* TODO FIX THIS TO REMOVE ALL ASSOCIATED EXERCISES */ }
+                        onClick = {
+                            deleteWorkout()
+                            expanded = false
+                        }
                     )
                 }
             }
