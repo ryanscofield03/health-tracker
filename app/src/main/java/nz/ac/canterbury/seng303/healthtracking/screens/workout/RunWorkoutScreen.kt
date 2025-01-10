@@ -1,19 +1,32 @@
 package nz.ac.canterbury.seng303.healthtracking.screens.workout
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
@@ -67,6 +80,7 @@ fun RunExerciseBlock(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight(0.88f)
             .padding(8.dp)
     ) {
         // Exercise Name
@@ -75,46 +89,56 @@ fun RunExerciseBlock(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // Exercise entry headers
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Weight", // TODO FIX - allow dynamic & use string resources
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "Sets", // TODO FIX - allow dynamic & use string resources
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End
-            )
+        val tableData = (1..4).mapIndexed { index, item ->
+            index to "Item $index"
         }
-
-        exerciseEntry.forEach { dataPair ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = dataPair.first.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = dataPair.second.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.End
-                )
+        LazyColumn {
+            item {
+                Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
+                    TableCell(text = "Weight")
+                    TableCell(text = "Reps")
+                    TableCell(text = "Weight")
+                    TableCell(text = "Reps")
+                }
+            }
+            items(tableData) {
+                val (id, text) = it
+                Row(Modifier.fillMaxWidth()) {
+                    TableCell(text = id.toString())
+                    TableCell(text = text)
+                    TableCell(text = "...")
+                    TableCell(text = "...")
+                }
             }
         }
+
+        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.Bottom) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                onClick = { /*TODO*/ }
+            ) {
+                Text(text = stringResource(id = R.string.add_exercise_entry))
+            }
+        }
+    }
+}
+
+@Composable
+fun RowScope.TableCell(
+    text: String,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(4.dp)
+            .weight(0.25f)
+            .height(40.dp)
+            .fillMaxSize()
+    ) {
+        Text(text = text)
     }
 }
