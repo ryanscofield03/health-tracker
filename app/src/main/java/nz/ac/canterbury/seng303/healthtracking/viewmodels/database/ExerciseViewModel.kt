@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.healthtracking.daos.ExerciseDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ExerciseViewModel(
     private val exerciseDao: ExerciseDao,
@@ -30,4 +32,17 @@ class ExerciseViewModel(
             exerciseDao.upsertExercise(exercise)
         }
     }
+
+    suspend fun addExerciseSuspendSuspendCoroutineWrapper(exercise: Exercise): Long =
+        suspendCoroutine { continuation ->
+            addExercise(exercise) { exerciseId ->
+                continuation.resume(exerciseId)
+            }
+        }
+
+    suspend fun deleteExerciseSuspendSuspendCoroutineWrapper(exercise: Exercise) =
+        suspendCoroutine { continuation ->
+            deleteExercise(exercise)
+            continuation.resume(Unit)
+        }
 }

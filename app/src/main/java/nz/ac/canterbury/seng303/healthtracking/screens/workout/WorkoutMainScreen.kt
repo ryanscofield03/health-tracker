@@ -156,7 +156,7 @@ fun WorkoutCard(
                     )
                     DropdownMenuItem(
                         text = { Text(text = stringResource(id = R.string.delete)) },
-                        onClick = { deleteWorkout(); expanded = false; }
+                        onClick = { deleteWorkout(); expanded = false; /* TODO FIX THIS TO REMOVE ALL ASSOCIATED EXERCISES */ }
                     )
                 }
             }

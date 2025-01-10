@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng303.healthtracking.viewmodels.database
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.reactivex.Flowable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -11,6 +10,8 @@ import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
 import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class WorkoutViewModel(
     private val workoutDao: WorkoutDao,
@@ -54,4 +55,17 @@ class WorkoutViewModel(
             workoutDao.getExercisesForWorkout(workoutId)
         }
     }
+
+    suspend fun addWorkoutSuspendCoroutineWrapper(workout: Workout): Long =
+        suspendCoroutine { continuation ->
+            addWorkout(workout) { workoutId ->
+                continuation.resume(workoutId)
+            }
+        }
+
+    suspend fun addExerciseToWorkoutSuspendCoroutineWrapper(workoutId: Long, exerciseId: Long) =
+        suspendCoroutine { continuation ->
+            addExerciseToWorkout(workoutId, exerciseId)
+            continuation.resume(Unit)
+        }
 }

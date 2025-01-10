@@ -131,7 +131,6 @@ fun AddExercise(
                     selectedExercises.forEach { exerciseName ->
                         viewModel.addExercise(Exercise(name = exerciseName))
                     }
-
                     navController.popBackStack()
                 },
                 onCancel = {

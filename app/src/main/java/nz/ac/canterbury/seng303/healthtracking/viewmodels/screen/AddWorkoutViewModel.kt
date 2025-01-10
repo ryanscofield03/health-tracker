@@ -1,13 +1,10 @@
 package nz.ac.canterbury.seng303.healthtracking.viewmodels.screen
 
-import android.content.Context
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
@@ -39,6 +36,11 @@ class AddWorkoutViewModel(
 
     private val _exercisesErrorMessageId = mutableStateOf<Int?>(null)
     val exercisesErrorMessageId: Int? get() = _exercisesErrorMessageId.value
+
+    // initial values which are required when saving an updated workout
+    private val _currentWorkoutId = mutableStateOf<Long?>(null)
+    private val _currentExercises = mutableStateListOf<Exercise>()
+    private val _loaded = mutableStateOf(false)
 
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
@@ -96,26 +98,46 @@ class AddWorkoutViewModel(
     }
 
     fun save() {
+        val workout = Workout(
+            id = _currentWorkoutId.value ?: 0,
+            name = name,
+            description = description,
+            schedule = scheduledDays
+        )
+
         viewModelScope.launch {
-            workoutViewModel.addWorkout(
-                Workout(name = name, description = description, schedule = scheduledDays),
-                onResult = { workoutId ->
+            workoutViewModel.addWorkoutSuspendCoroutineWrapper(workout).let { workoutId ->
+                if (_currentWorkoutId.value == null) {
+                    // Add all new exercises
                     exercises.forEach { exercise ->
-                        exerciseViewModel.addExercise(exercise, onResult = { exerciseId ->
-                            workoutViewModel.addExerciseToWorkout(workoutId = workoutId, exerciseId = exerciseId)
-                        })
+                        val exerciseId = exerciseViewModel.addExerciseSuspendSuspendCoroutineWrapper(exercise)
+                        workoutViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(workoutId, exerciseId)
+                    }
+                } else {
+                    // Remove exercises that were previously saved but have been removed
+                    _currentExercises.forEach { savedExercise ->
+                        if (exercises.none { it.name == savedExercise.name }) {
+                            exerciseViewModel.deleteExerciseSuspendSuspendCoroutineWrapper(savedExercise)
+                        }
                     }
 
-                    // important to clear here after all exercises have been added
-                    clear()
+                    // Add new exercises that have been added to the workout
+                    exercises.forEach { exercise ->
+                        if (_currentExercises.none { it.name == exercise.name }) {
+                            val exerciseId = exerciseViewModel.addExerciseSuspendSuspendCoroutineWrapper(exercise)
+                            workoutViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(_currentWorkoutId.value!!, exerciseId)
+                        }
+                    }
                 }
-            )
+
+                // Clear data after all operations are complete
+                clear()
+            }
         }
     }
 
     fun isValid(): Boolean {
         validateFields()
-
         return name.isNotBlank() && description.isNotBlank() && _exercises.isNotEmpty()
     }
 
@@ -128,15 +150,22 @@ class AddWorkoutViewModel(
         _nameErrorMessageId.value = null
         _descriptionErrorMessageId.value = null
         _exercisesErrorMessageId.value = null
+
+        _currentWorkoutId.value = null
+        _currentExercises.clear()
+        _loaded.value = false
     }
 
     fun addWorkoutInfo(workout: Workout) {
-        updateName(workout.name)
-        updateDescription(workout.description)
+        if (!_loaded.value) {
+            _loaded.value = true
+            updateName(workout.name)
+            updateDescription(workout.description)
+            workout.schedule.forEach { toggleScheduledDay(it) }
+            loadExercisesForWorkout(workout.id)
 
-        /* HANDLE SCHEDULED DAYS */
-
-        loadExercisesForWorkout(workout.id)
+            _currentWorkoutId.value = workout.id
+        }
     }
 
     private fun loadExercisesForWorkout(workoutId: Long) {
@@ -144,6 +173,7 @@ class AddWorkoutViewModel(
             val exercises = workoutViewModel.getExercisesForWorkout(workoutId)
             exercises.forEach { exercise ->
                 addExercise(exercise)
+                _currentExercises.add(exercise)
             }
         }
     }
