@@ -78,7 +78,10 @@ fun WorkoutMain(
                         modifier = Modifier.padding(bottom = 12.dp),
                         workout = workout,
                         deleteWorkout = { workoutViewModel.deleteWorkout(workout) },
-                        editWorkout = { navController.navigate("EditWorkout/${workout.id}") }
+                        editWorkout = { navController.navigate("EditWorkout/${workout.id}") },
+                        runWorkout = {
+                            navController.navigate("RunWorkout/${workout.id}")
+                        }
                     )
                 }
             }
@@ -107,6 +110,7 @@ fun WorkoutMain(
 fun WorkoutCard(
     modifier: Modifier = Modifier,
     workout: Workout,
+    runWorkout: () -> Unit,
     deleteWorkout: () -> Unit,
     editWorkout: () -> Unit
 ) {
@@ -120,7 +124,7 @@ fun WorkoutCard(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary
         ),
-        onClick = { /* TODO handle running workout ! */ }
+        onClick = { runWorkout() }
     ) {
         Row(
             modifier = Modifier

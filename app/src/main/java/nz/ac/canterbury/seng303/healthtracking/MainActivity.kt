@@ -37,12 +37,14 @@ import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
 import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddExercise
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.RunWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.ScheduleWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.RunWorkoutViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 data class TabBarItem (
@@ -121,17 +123,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "EditWorkout/{id}") { navBackStackEntry ->
+                            // get id, get workout, insert workout data into viewmodel for screen
                             val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
-                            LaunchedEffect(parsedId) {
-                                val workout = workoutViewModel
-                                    .allWorkouts
-                                    .value
-                                    ?.find { it.id == parsedId }
-
-                                workout?.let {
-                                    addWorkoutViewModel.addWorkoutInfo(workout = it)
-                                }
-                            }
+                            val workout = workoutViewModel
+                                .allWorkouts
+                                .value
+                                ?.find { it.id == parsedId }
+                            workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
 
                             AddWorkout(
                                 modifier = Modifier.padding(padding),
@@ -152,6 +150,24 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 viewModel = addWorkoutViewModel
                             )
+                        }
+                        composable(route = "RunWorkout/{id}") { navBackStackEntry ->
+                            val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                            val workout = workoutViewModel
+                                .allWorkouts
+                                .value
+                                ?.find { it.id == parsedId }
+
+                            if (workout != null) {
+                                RunWorkout(
+                                    modifier = Modifier.padding(padding),
+                                    navController = navController,
+                                    viewModel = RunWorkoutViewModel(workout)
+                                )
+                            } else {
+                                /** TODO HANDLE NO WORKOUT ERROR
+                                 * e.g take user to "workout does not exist" page */
+                            }
                         }
                         composable("Eat"){ EatMain() }
                         composable("Sleep"){ SleepMain() }
