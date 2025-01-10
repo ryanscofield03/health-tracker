@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.screens.eat.EatMain
 import nz.ac.canterbury.seng303.healthtracking.screens.Welcome
 import nz.ac.canterbury.seng303.healthtracking.screens.settings.SettingsMain
@@ -158,15 +160,29 @@ class MainActivity : ComponentActivity() {
                                 .value
                                 ?.find { it.id == parsedId }
 
-                            if (workout != null) {
-                                RunWorkout(
-                                    modifier = Modifier.padding(padding),
-                                    navController = navController,
-                                    viewModel = RunWorkoutViewModel(workout)
-                                )
-                            } else {
-                                /** TODO HANDLE NO WORKOUT ERROR
-                                 * e.g take user to "workout does not exist" page */
+                            var exercises by remember { mutableStateOf<List<Exercise>?>(null) }
+                            LaunchedEffect(workout) {
+                                if (workout != null && exercises == null) {
+                                    exercises = workoutViewModel.getExercisesForWorkout(workoutId = workout.id)
+                                }
+                            }
+
+                            when {
+                                workout == null -> {
+                                    /** TODO HANDLE NO WORKOUT ERROR
+                                     * e.g., take user to "workout does not exist" page */
+                                }
+
+                                exercises != null -> {
+                                    RunWorkout(
+                                        modifier = Modifier.padding(padding),
+                                        navController = navController,
+                                        viewModel = RunWorkoutViewModel(
+                                            workout = workout,
+                                            exercises = exercises!!
+                                        )
+                                    )
+                                }
                             }
                         }
                         composable("Eat"){ EatMain() }

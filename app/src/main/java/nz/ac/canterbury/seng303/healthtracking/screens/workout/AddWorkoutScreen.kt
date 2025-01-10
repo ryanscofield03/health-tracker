@@ -151,8 +151,6 @@ fun AddWorkout(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
-
         // Save and cancel buttons
         SaveAndCancelButtons(
             onSave = {

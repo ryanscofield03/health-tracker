@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
+import nz.ac.canterbury.seng303.healthtracking.screens.SaveAndCancelButtons
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import java.time.DayOfWeek
 
@@ -64,21 +65,18 @@ fun ScheduleWorkout(
             )
         }
 
-        Spacer(modifier = Modifier.height(25.dp))
-
-        Button(
-            onClick =
-            {
-                navController.navigate("addWorkout")
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(stringResource(id = R.string.save_schedule))
+        Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
+            Button(
+                onClick = { navController.navigate("addWorkout") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = R.string.save_schedule))
+            }
         }
     }
 }

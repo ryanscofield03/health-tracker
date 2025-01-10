@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -40,34 +44,38 @@ fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
 
 @Composable
 fun SaveAndCancelButtons(
+    saveButtonLabelId: Int = R.string.save,
+    cancelButtonLabelId: Int = R.string.cancel,
     onSave: () -> Unit,
     onCancel: () -> Unit
 ) {
-    Row (
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Button(
-            onClick = onSave,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            shape = MaterialTheme.shapes.small
+    Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
+        Row (
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(stringResource(id = R.string.save))
-        }
+            Button(
+                onClick = onSave,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = saveButtonLabelId))
+            }
 
-        Button(
-            onClick = onCancel,
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onError
-            ),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(stringResource(id = R.string.cancel))
+            Button(
+                onClick = onCancel,
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = cancelButtonLabelId))
+            }
         }
     }
 }

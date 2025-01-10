@@ -173,6 +173,7 @@ class AddWorkoutViewModel(
             val exercises = workoutViewModel.getExercisesForWorkout(workoutId)
             exercises.forEach { exercise ->
                 addExercise(exercise)
+                // for later when comparing what is and isn't new
                 _currentExercises.add(exercise)
             }
         }
