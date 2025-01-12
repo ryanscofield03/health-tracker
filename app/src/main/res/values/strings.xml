@@ -26,7 +26,12 @@
     <string name="search_exercise">Search for an Exercise</string>
 
     // Run Workout Screen
+    <string name="exercise_entry_title">Add Exercise Entry</string>
     <string name="add_exercise_entry">Add Exercise Entry</string>
+    <string name="weight_label">Weight</string>
+    <string name="reps_label">Reps</string>
+    <string name="weight_placeholder">24</string>
+    <string name="reps_placeholder">10</string>
 
     // Workout Screen Textbox Labels and Placeholders
     <string name="workout_name_label">Workout Name</string>
@@ -39,6 +44,10 @@
     <string name="description_error_message">Description cannot be empty.</string>
     <string name="exercise_list_error_message">Workout must contain at least one exercise.</string>
     <string name="exercise_error_message">Exercise name cannot be empty.</string>
+
+    // Run Workout Screen Error Messages
+    <string name="weight_error_message">Weight cannot be empty and must be a valid number.</string>
+    <string name="reps_error_message">Reps cannot be empty and must be a valid number.</string>
 
     //Button Descriptions
     <string name="run_workout">Run Workout</string>
@@ -67,4 +76,8 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+
+    // Content Descriptions (that don't fit elsewhere)
+    <string name="arrow_left">Arrow Left</string>
+    <string name="arrow_right">Arrow Right</string>
 </resources>
