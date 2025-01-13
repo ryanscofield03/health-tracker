@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
+import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 
 /**
  * DAO for interfacing with DB for exercise entities
@@ -14,6 +15,9 @@ import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 interface ExerciseDao {
     @Upsert
     suspend fun upsertExercise(exercise: Exercise): Long
+
+    @Upsert
+    suspend fun upsertWorkoutExerciseCrossRef(workoutExerciseCrossRef: WorkoutExerciseCrossRef)
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)

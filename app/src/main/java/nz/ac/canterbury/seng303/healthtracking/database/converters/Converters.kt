@@ -1,7 +1,8 @@
-package nz.ac.canterbury.seng303.healthtracking.database
+package nz.ac.canterbury.seng303.healthtracking.database.converters
 
 import androidx.room.TypeConverter
 import java.time.DayOfWeek
+import java.time.LocalDate
 
 /**
  * Used to convert data types that are not handled by Room into strings for Room to write into DB
@@ -40,5 +41,15 @@ class Converters {
         } else {
             value.split(",").map { DayOfWeek.valueOf(it) }
         }
+    }
+
+    @TypeConverter
+    fun fromLocalDate(value: LocalDate?): String? {
+        return value?.toString()
+    }
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? {
+        return value?.let { LocalDate.parse(it) }
     }
 }

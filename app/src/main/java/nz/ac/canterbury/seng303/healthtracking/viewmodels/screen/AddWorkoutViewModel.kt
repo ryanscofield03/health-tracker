@@ -111,7 +111,7 @@ class AddWorkoutViewModel(
                     // Add all new exercises
                     exercises.forEach { exercise ->
                         val exerciseId = exerciseViewModel.addExerciseSuspendSuspendCoroutineWrapper(exercise)
-                        workoutViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(workoutId, exerciseId)
+                        exerciseViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(workoutId, exerciseId)
                     }
                 } else {
                     // Remove exercises that were previously saved but have been removed
@@ -125,7 +125,7 @@ class AddWorkoutViewModel(
                     exercises.forEach { exercise ->
                         if (_currentExercises.none { it.name == exercise.name }) {
                             val exerciseId = exerciseViewModel.addExerciseSuspendSuspendCoroutineWrapper(exercise)
-                            workoutViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(_currentWorkoutId.value!!, exerciseId)
+                            exerciseViewModel.addExerciseToWorkoutSuspendCoroutineWrapper(_currentWorkoutId.value!!, exerciseId)
                         }
                     }
                 }

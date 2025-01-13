@@ -68,8 +68,8 @@ fun RunWorkout(
         SaveAndCancelButtons(
             saveButtonLabelId = R.string.complete,
             onSave = {
-                /* TODO save the workout information */
                 navController.navigate("Workout")
+                viewModel.saveWorkoutHistory()
             },
             onCancel = {
                 /* TODO clear view model? */

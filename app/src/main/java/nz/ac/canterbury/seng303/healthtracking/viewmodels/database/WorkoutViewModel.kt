@@ -28,9 +28,8 @@ class WorkoutViewModel(
     fun deleteWorkout(workout: Workout) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                workoutDao.deleteWorkoutAndExercises(
-                    workout = workout,
-                    exercises = workoutDao.getExercisesForWorkout(workoutId = workout.id)
+                workoutDao.deleteWorkoutAndAssociatedData(
+                    workout = workout
                 )
             }
         }
@@ -48,13 +47,6 @@ class WorkoutViewModel(
         }
     }
 
-    fun addExerciseToWorkout(workoutId: Long, exerciseId: Long) {
-        viewModelScope.launch {
-            val crossRef = WorkoutExerciseCrossRef(workoutId, exerciseId)
-            workoutDao.upsertWorkoutExerciseCrossRef(crossRef)
-        }
-    }
-
     suspend fun getExercisesForWorkout(workoutId: Long): List<Exercise> {
         return withContext(Dispatchers.IO) {
             workoutDao.getExercisesForWorkout(workoutId)
@@ -66,11 +58,5 @@ class WorkoutViewModel(
             addWorkout(workout) { workoutId ->
                 continuation.resume(workoutId)
             }
-        }
-
-    suspend fun addExerciseToWorkoutSuspendCoroutineWrapper(workoutId: Long, exerciseId: Long) =
-        suspendCoroutine { continuation ->
-            addExerciseToWorkout(workoutId, exerciseId)
-            continuation.resume(Unit)
         }
 }
