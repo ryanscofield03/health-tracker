@@ -5,11 +5,10 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(
-    tableName = "workout_history"
+    tableName = "exercise_history"
 )
-data class WorkoutHistory (
+data class ExerciseHistory (
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val date: LocalDate,
-    val exercises: List<Exercise>,
-    val entries: List<List<Pair<Int, Int>>>
+    val data: List<Pair<Int, Int>>
 )

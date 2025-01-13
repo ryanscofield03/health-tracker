@@ -5,15 +5,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
+import nz.ac.canterbury.seng303.healthtracking.entities.ExerciseHistory
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
-import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutHistory
-import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutHistoryViewModel
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHistoryViewModel
 import java.time.LocalDate
 
 class RunWorkoutViewModel(
     val workout: Workout,
     val exercises: List<Exercise>,
-    val workoutHistoryViewModel: WorkoutHistoryViewModel
+    val exerciseHistoryViewModel: ExerciseHistoryViewModel
 ) : ViewModel() {
     val workoutName = workout.name
 
@@ -109,15 +109,16 @@ class RunWorkoutViewModel(
     }
 
     fun saveWorkoutHistory() {
-        val workoutHistory = WorkoutHistory(
-            date = LocalDate.now(),
-            exercises = exercises,
-            entries = _exerciseEntries.value
-        )
+        exercises.forEachIndexed { index, exercise ->
+            val exerciseHistory = ExerciseHistory(
+                date = LocalDate.now(),
+                data = _exerciseEntries.value[index]
+            )
 
-        workoutHistoryViewModel.addWorkoutHistory(
-            workoutId = workout.id,
-            workoutHistory = workoutHistory
-        )
+            exerciseHistoryViewModel.addExerciseHistory(
+                exerciseId = exercise.id,
+                exerciseHistory = exerciseHistory
+            )
+        }
     }
 }

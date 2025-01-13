@@ -44,7 +44,7 @@ import nz.ac.canterbury.seng303.healthtracking.screens.workout.ScheduleWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
-import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutHistoryViewModel
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHistoryViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.RunWorkoutViewModel
@@ -58,7 +58,7 @@ data class TabBarItem (
 class MainActivity : ComponentActivity() {
     private val workoutViewModel: WorkoutViewModel by koinViewModel()
     private val exerciseViewModel: ExerciseViewModel by koinViewModel()
-    private val workoutHistoryViewModel: WorkoutHistoryViewModel by koinViewModel()
+    private val exerciseHistoryViewModel: ExerciseHistoryViewModel by koinViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
                                         viewModel = RunWorkoutViewModel(
                                             workout = workout,
                                             exercises = exercises!!,
-                                            workoutHistoryViewModel = workoutHistoryViewModel
+                                            exerciseHistoryViewModel = exerciseHistoryViewModel
                                         )
                                     )
                                 }

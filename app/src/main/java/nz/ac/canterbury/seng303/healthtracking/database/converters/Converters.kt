@@ -52,4 +52,19 @@ class Converters {
     fun toLocalDate(value: String?): LocalDate? {
         return value?.let { LocalDate.parse(it) }
     }
+
+    @TypeConverter
+    fun fromListOfPairs(value: List<Pair<Int, Int>>): String {
+        return value.joinToString(separator = ",") { "${it.first}:${it.second}" }
+    }
+
+    @TypeConverter
+    fun toListOfPairs(value: String): List<Pair<Int, Int>> {
+        return value
+            .split(",")
+            .map {
+                val (first, second) = it.split(":")
+                Pair(first.toInt(), second.toInt())
+            }
+    }
 }

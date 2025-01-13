@@ -3,9 +3,10 @@ package nz.ac.canterbury.seng303.healthtracking.viewmodels.database
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.canterbury.seng303.healthtracking.daos.ExerciseDao
-import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutHistoryDao
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.WorkoutExerciseCrossRef
 import kotlin.coroutines.resume
@@ -18,8 +19,18 @@ class ExerciseViewModel(
 
     fun addExercise(exercise: Exercise, onResult: (Long) -> Unit) {
         viewModelScope.launch {
-            val exerciseId = exerciseDao.upsertExercise(exercise)
-            onResult(exerciseId)
+            var savedExercise: Exercise? = null
+            withContext(Dispatchers.IO) {
+                savedExercise = exerciseDao.getExerciseWithName(exercise.name)
+            }
+
+            if (savedExercise == null) {
+                val exerciseId = exerciseDao.upsertExercise(exercise)
+                onResult(exerciseId)
+            } else {
+                onResult(savedExercise!!.id)
+            }
+
         }
     }
 

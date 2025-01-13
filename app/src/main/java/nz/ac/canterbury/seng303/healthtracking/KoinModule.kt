@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng303.healthtracking
 
 import nz.ac.canterbury.seng303.healthtracking.daos.ExerciseDao
+import nz.ac.canterbury.seng303.healthtracking.daos.ExerciseHistoryDao
 import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutDao
-import nz.ac.canterbury.seng303.healthtracking.daos.WorkoutHistoryDao
 import nz.ac.canterbury.seng303.healthtracking.database.AppDatabase
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
-import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutHistoryViewModel
+import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHistoryViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import org.koin.android.ext.koin.androidContext
@@ -16,10 +16,10 @@ val dataAccessModule = module {
     single { AppDatabase.getDatabase(androidContext()) }
     single { get<AppDatabase>().workoutDao() }
     single { get<AppDatabase>().exerciseDao() }
-    single { get<AppDatabase>().workoutHistoryDao() }
+    single { get<AppDatabase>().exerciseHistoryDao() }
 
     viewModel { WorkoutViewModel(get<WorkoutDao>()) }
     viewModel { ExerciseViewModel(get<ExerciseDao>()) }
-    viewModel { WorkoutHistoryViewModel(get<WorkoutHistoryDao>()) }
+    viewModel { ExerciseHistoryViewModel(get<ExerciseHistoryDao>()) }
     viewModel { AddWorkoutViewModel(get<WorkoutViewModel>(), get<ExerciseViewModel>())}
 }

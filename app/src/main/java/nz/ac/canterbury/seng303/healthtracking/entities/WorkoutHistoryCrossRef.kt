@@ -4,23 +4,23 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
-    primaryKeys = ["workoutId", "workoutHistoryId"],
+    primaryKeys = ["exerciseId", "exerciseHistoryId"],
     foreignKeys = [
         ForeignKey(
-            entity = Workout::class,
+            entity = Exercise::class,
             parentColumns = ["id"],
-            childColumns = ["workoutId"],
+            childColumns = ["exerciseId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = WorkoutHistory::class,
+            entity = ExerciseHistory::class,
             parentColumns = ["id"],
-            childColumns = ["workoutHistoryId"],
+            childColumns = ["exerciseHistoryId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class WorkoutHistoryCrossRef(
-    val workoutId: Long,
-    val workoutHistoryId: Long
+data class ExerciseHistoryCrossRef(
+    val exerciseId: Long,
+    val exerciseHistoryId: Long
 )

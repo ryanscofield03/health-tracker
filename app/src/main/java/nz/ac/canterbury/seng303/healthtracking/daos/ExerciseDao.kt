@@ -24,4 +24,7 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM workout")
     fun getAllExercises(): LiveData<List<Exercise>>
+
+    @Query("SELECT * FROM exercise e WHERE e.name == :name")
+    fun getExerciseWithName(name: String): Exercise?
 }
