@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.ExerciseHistory
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
@@ -22,7 +24,11 @@ class RunWorkoutViewModel(
     val currentExercise: Exercise
         get() = exercises[_currentExerciseIndex.intValue]
 
+    private val _exercisesHistory = mutableStateListOf<ExerciseHistory>()
+    val currentExerciseHistory get() = _exercisesHistory[_currentExerciseIndex.intValue]
+
     private val _exerciseEntries = mutableStateOf<List<List<Pair<Int, Int>>>>(exercises.map { listOf() })
+
     private val _currentExerciseEntries = mutableStateListOf<Pair<Int, Int>>()
     val currentExerciseEntries get() = _currentExerciseEntries.toList()
 
@@ -34,6 +40,12 @@ class RunWorkoutViewModel(
 
     private val _newRepFieldCanError = mutableStateOf(false)
     private val _newWeightFieldCanError = mutableStateOf(false)
+
+    fun loadExerciseHistories() {
+        viewModelScope.launch {
+            exercises.forEach { exercise -> _exercisesHistory.add(exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)) }
+        }
+    }
 
     private fun updateCurrentExerciseEntries() {
         _currentExerciseEntries.clear()

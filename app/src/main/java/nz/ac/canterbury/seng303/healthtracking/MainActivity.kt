@@ -176,6 +176,13 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 exercises != null -> {
+                                    val runWorkoutViewModel = RunWorkoutViewModel(
+                                        workout = workout,
+                                        exercises = exercises!!,
+                                        exerciseHistoryViewModel = exerciseHistoryViewModel
+                                    )
+
+                                    runWorkoutViewModel.loadExerciseHistories()
                                     RunWorkout(
                                         modifier = Modifier.padding(padding),
                                         navController = navController,

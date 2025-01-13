@@ -187,8 +187,8 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                             else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
                         )
                 ) {
-                    TableCell(text = "TODO")
-                    TableCell(text = "TODO")
+                    TableCell(text = viewModel.currentExerciseHistory.data[index].first.toString())
+                    TableCell(text = viewModel.currentExerciseHistory.data[index].second.toString())
                     TableCell(text = weight.toString())
                     TableCell(text = sets.toString())
                 }

@@ -26,7 +26,7 @@ class ExerciseHistoryViewModel(
         }
     }
 
-    suspend fun getMostRecentHistoryForExercise(exerciseId: Long) {
+    suspend fun getMostRecentHistoryForExercise(exerciseId: Long): ExerciseHistory {
         return withContext(Dispatchers.IO) {
             workoutHistoryDao.getMostRecentHistoryForExercise(exerciseId)
         }
