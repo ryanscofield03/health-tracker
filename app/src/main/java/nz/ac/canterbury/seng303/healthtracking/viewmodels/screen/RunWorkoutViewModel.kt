@@ -5,12 +5,13 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
 import nz.ac.canterbury.seng303.healthtracking.entities.ExerciseHistory
 import nz.ac.canterbury.seng303.healthtracking.entities.Workout
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHistoryViewModel
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class RunWorkoutViewModel(
     val workout: Workout,
@@ -24,8 +25,10 @@ class RunWorkoutViewModel(
     val currentExercise: Exercise
         get() = exercises[_currentExerciseIndex.intValue]
 
-    private val _exercisesHistory = mutableStateListOf<ExerciseHistory>()
-    val currentExerciseHistory get() = _exercisesHistory[_currentExerciseIndex.intValue]
+    private val _exercisesHistory = MutableStateFlow<List<ExerciseHistory?>>(emptyList())
+
+    val currentExerciseHistory: ExerciseHistory? get() =
+        _exercisesHistory.value.getOrNull(_currentExerciseIndex.intValue)
 
     private val _exerciseEntries = mutableStateOf<List<List<Pair<Int, Int>>>>(exercises.map { listOf() })
 
@@ -43,7 +46,10 @@ class RunWorkoutViewModel(
 
     fun loadExerciseHistories() {
         viewModelScope.launch {
-            exercises.forEach { exercise -> _exercisesHistory.add(exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)) }
+            val tempList = exercises.map { exercise ->
+                exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)
+            }
+            _exercisesHistory.value = tempList
         }
     }
 
@@ -83,6 +89,7 @@ class RunWorkoutViewModel(
         if (newRepsIsValid() && newWeightIsValid()) {
             _currentExerciseEntries.add(Pair(newWeight.toInt(), newReps.toInt()))
             clearEntry()
+            saveCurrentExerciseEntries()
             return true
         } else {
             return false
@@ -106,7 +113,6 @@ class RunWorkoutViewModel(
 
     fun goToPreviousExercise() {
         if (canGoPreviousExercise()) {
-            saveCurrentExerciseEntries()
             _currentExerciseIndex.intValue -= 1
             updateCurrentExerciseEntries()
         }
@@ -114,7 +120,6 @@ class RunWorkoutViewModel(
 
     fun goToNextExercise() {
         if (canGoNextExercise()) {
-            saveCurrentExerciseEntries()
             _currentExerciseIndex.intValue += 1
             updateCurrentExerciseEntries()
         }
@@ -123,7 +128,7 @@ class RunWorkoutViewModel(
     fun saveWorkoutHistory() {
         exercises.forEachIndexed { index, exercise ->
             val exerciseHistory = ExerciseHistory(
-                date = LocalDate.now(),
+                date = LocalDateTime.now(),
                 data = _exerciseEntries.value[index]
             )
 
@@ -134,3 +139,4 @@ class RunWorkoutViewModel(
         }
     }
 }
+

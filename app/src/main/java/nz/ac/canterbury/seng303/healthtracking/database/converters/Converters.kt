@@ -2,7 +2,9 @@ package nz.ac.canterbury.seng303.healthtracking.database.converters
 
 import androidx.room.TypeConverter
 import java.time.DayOfWeek
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 /**
  * Used to convert data types that are not handled by Room into strings for Room to write into DB
@@ -44,27 +46,32 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromLocalDate(value: LocalDate?): String? {
-        return value?.toString()
+    fun fromLocalDateTime(value: LocalDateTime?): Long? {
+        return value?.atZone(ZoneId.systemDefault())?.toEpochSecond()
     }
 
     @TypeConverter
-    fun toLocalDate(value: String?): LocalDate? {
-        return value?.let { LocalDate.parse(it) }
+    fun toLocalDateTime(value: Long?): LocalDateTime? {
+        return value?.let { LocalDateTime.ofEpochSecond(it, 0, ZoneOffset.UTC) }
     }
+
 
     @TypeConverter
     fun fromListOfPairs(value: List<Pair<Int, Int>>): String {
-        return value.joinToString(separator = ",") { "${it.first}:${it.second}" }
+        return value.joinToString(",") { "${it.first}:${it.second}" }
     }
 
     @TypeConverter
     fun toListOfPairs(value: String): List<Pair<Int, Int>> {
-        return value
-            .split(",")
+        if (value.isBlank()) {
+            return emptyList()
+        }
+
+        return value.split(",")
             .map {
                 val (first, second) = it.split(":")
                 Pair(first.toInt(), second.toInt())
             }
     }
+
 }

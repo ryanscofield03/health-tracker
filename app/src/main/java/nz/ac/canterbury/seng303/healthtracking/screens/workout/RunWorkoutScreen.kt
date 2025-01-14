@@ -30,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -169,6 +171,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             )
         }
         LazyColumn {
+            // Header Row
             item {
                 Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
                     TableCell(text = "Weight") // TODO fix
@@ -179,18 +182,25 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             }
             itemsIndexed(viewModel.currentExerciseEntries) { index, entry ->
                 val (weight, sets) = entry
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(
-                            if (index % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
-                            else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
-                        )
-                ) {
-                    TableCell(text = viewModel.currentExerciseHistory.data[index].first.toString())
-                    TableCell(text = viewModel.currentExerciseHistory.data[index].second.toString())
-                    TableCell(text = weight.toString())
-                    TableCell(text = sets.toString())
+
+                if (viewModel.currentExerciseHistory != null) {
+                    val historyData = viewModel.currentExerciseHistory!!.data.getOrNull(index)
+                    val historyWeight = historyData?.first?.toString() ?: "-"
+                    val historyReps = historyData?.second?.toString() ?: "-"
+
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(
+                                if (index % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                                else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
+                            )
+                    ) {
+                        TableCell(text = historyWeight)
+                        TableCell(text = historyReps)
+                        TableCell(text = weight.toString())
+                        TableCell(text = sets.toString())
+                    }
                 }
             }
         }

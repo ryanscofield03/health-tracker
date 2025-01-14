@@ -162,36 +162,26 @@ class MainActivity : ComponentActivity() {
                                 .value
                                 ?.find { it.id == parsedId }
 
-                            var exercises by remember { mutableStateOf<List<Exercise>?>(null) }
-                            LaunchedEffect(workout) {
-                                if (workout != null && exercises == null) {
+                            if (workout != null) {
+                                var exercises by remember { mutableStateOf<List<Exercise>?>(null) }
+                                LaunchedEffect(workout) {
                                     exercises = workoutViewModel.getExercisesForWorkout(workoutId = workout.id)
                                 }
-                            }
 
-                            when {
-                                workout == null -> {
-                                    /** TODO HANDLE NO WORKOUT ERROR
-                                     * e.g., take user to "workout does not exist" page */
-                                }
-
-                                exercises != null -> {
+                                if (exercises != null) {
                                     val runWorkoutViewModel = RunWorkoutViewModel(
                                         workout = workout,
                                         exercises = exercises!!,
                                         exerciseHistoryViewModel = exerciseHistoryViewModel
                                     )
 
-                                    runWorkoutViewModel.loadExerciseHistories()
                                     RunWorkout(
                                         modifier = Modifier.padding(padding),
                                         navController = navController,
-                                        viewModel = RunWorkoutViewModel(
-                                            workout = workout,
-                                            exercises = exercises!!,
-                                            exerciseHistoryViewModel = exerciseHistoryViewModel
-                                        )
+                                        viewModel = runWorkoutViewModel
                                     )
+
+                                    runWorkoutViewModel.loadExerciseHistories()
                                 }
                             }
                         }
