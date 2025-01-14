@@ -26,12 +26,16 @@
     <string name="search_exercise">Search for an Exercise</string>
 
     // Run Workout Screen
-    <string name="exercise_entry_title">Add Exercise Entry</string>
     <string name="add_exercise_entry">Add Exercise Entry</string>
     <string name="weight_label">Weight</string>
     <string name="reps_label">Reps</string>
     <string name="weight_placeholder">24</string>
     <string name="reps_placeholder">10</string>
+
+    // Run Workout Screen Dialogs
+    <string name="exercise_entry_title">Exercise Entry</string>
+    <string name="finish_workout_dialog_title">Are you sure you\'d like to finish?</string>
+    <string name="finish_workout_dialog_subtitle">There are still exercises without any entries.</string>
 
     // Workout Screen Textbox Labels and Placeholders
     <string name="workout_name_label">Workout Name</string>
@@ -65,8 +69,9 @@
     <string name="cancel">Cancel</string>
     <string name="next">Continue</string>
     <string name="schedule">Schedule</string>
-    <string name="complete">Complete</string>
+    <string name="finish">Finish</string>
     <string name="pause">Pause</string>
+    <string name="finish_anyway">Finish Anyway</string>
 
     //Days
     <string name="monday">Monday</string>

@@ -202,6 +202,13 @@ class RunWorkoutViewModel(
     }
 
     /**
+     * Validate that each exercise has at least one entry
+     */
+    fun validateEntries(): Boolean {
+        return _exerciseEntries.value.all { list -> list.isNotEmpty() }
+    }
+
+    /**
      * Saves workout data (exercise entries) to persistence
      */
     fun saveWorkoutHistory() {
@@ -219,7 +226,6 @@ class RunWorkoutViewModel(
 
         clearViewModel()
     }
-
 
     /**
      * Remove all data from view model for next usage

@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng303.healthtracking.screens.workout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -32,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,6 +50,19 @@ fun RunWorkout(
     navController: NavController,
     viewModel: RunWorkoutViewModel
 ) {
+    val openEndWorkoutConfirmationDialog = rememberSaveable { mutableStateOf(false) }
+    if (openEndWorkoutConfirmationDialog.value) {
+        EndWorkoutConfirmationDialog(
+            onSaveWorkout =
+            {
+                navController.navigate("Workout")
+                viewModel.saveWorkoutHistory()
+                openEndWorkoutConfirmationDialog.value = false
+            },
+            onDismiss = { openEndWorkoutConfirmationDialog.value = false }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,10 +79,15 @@ fun RunWorkout(
         RunExerciseBlock(viewModel = viewModel)
 
         SaveAndCancelButtons(
-            saveButtonLabelId = R.string.complete,
+            saveButtonLabelId = R.string.finish,
             onSave = {
-                navController.navigate("Workout")
-                viewModel.saveWorkoutHistory()
+                if (viewModel.validateEntries()) {
+                    navController.navigate("Workout")
+                    viewModel.saveWorkoutHistory()
+                } else {
+                    openEndWorkoutConfirmationDialog.value = true
+                }
+
             },
             onCancel = {
                 viewModel.clearViewModel()
@@ -90,12 +105,12 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             .fillMaxHeight(0.88f)
             .padding(8.dp)
     ) {
-        val openEntryPopup = rememberSaveable { mutableStateOf(false) }
-        if (openEntryPopup.value) {
-            EntryPopup(
+        val openEntryDialog = rememberSaveable { mutableStateOf(false) }
+        if (openEntryDialog.value) {
+            EntryDialog(
                 saveEntry = { viewModel.saveEntry() },
                 clearEntry = { viewModel.clearEntry() },
-                onDismiss = { openEntryPopup.value = false },
+                onDismiss = { openEntryDialog.value = false },
                 weight = viewModel.newWeight,
                 updateWeight = { viewModel.updateNewWeight(it) },
                 validWeight = viewModel.newWeightIsValid(),
@@ -209,7 +224,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                                 detectTapGestures (
                                     onLongPress = {
                                         if (viewModel.canEditEntry(index = i)) {
-                                            openEntryPopup.value = true
+                                            openEntryDialog.value = true
                                             viewModel.updateEditingEntryIndex(index = i)
                                         }
                                     }
@@ -229,7 +244,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
-                onClick = { openEntryPopup.value = true }
+                onClick = { openEntryDialog.value = true }
             ) {
                 Text(text = stringResource(id = R.string.add_exercise_entry))
             }
@@ -239,7 +254,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryPopup(
+fun EntryDialog(
     saveEntry: () -> Boolean,
     clearEntry: () -> Unit,
     onDismiss: () -> Unit,
@@ -339,6 +354,66 @@ fun EntryPopup(
                         clearEntry()
                         onDismiss()
                     }) {
+                        Text(
+                            text = stringResource(id = R.string.cancel),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EndWorkoutConfirmationDialog(
+    onSaveWorkout: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    BasicAlertDialog(onDismissRequest = onDismiss) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 4.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.finish_workout_dialog_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = stringResource(id = R.string.finish_workout_dialog_subtitle),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onSaveWorkout() }) {
+                        Text(
+                            text = stringResource(id = R.string.finish_anyway),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.errorContainer
+                        )
+                    }
+                    TextButton(onClick = { onDismiss() }) {
                         Text(
                             text = stringResource(id = R.string.cancel),
                             style = MaterialTheme.typography.labelLarge,
