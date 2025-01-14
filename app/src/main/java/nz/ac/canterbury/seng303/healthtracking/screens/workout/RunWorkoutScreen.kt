@@ -30,11 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +43,7 @@ import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.screens.SaveAndCancelButtons
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.RunWorkoutViewModel
+import kotlin.math.max
 
 @Composable
 fun RunWorkout(
@@ -180,26 +179,37 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                     TableCell(text = "Reps") // TODO fix
                 }
             }
-            itemsIndexed(viewModel.currentExerciseEntries) { index, entry ->
-                val (weight, sets) = entry
 
-                if (viewModel.currentExerciseHistory != null) {
-                    val historyData = viewModel.currentExerciseHistory!!.data.getOrNull(index)
-                    val historyWeight = historyData?.first?.toString() ?: "-"
-                    val historyReps = historyData?.second?.toString() ?: "-"
+            // Data rows
+            for (i in 0..< max(
+                a = viewModel.currentExerciseEntries.size,
+                b = viewModel.currentExerciseHistory?.data?.size ?: 0
+            )) {
+                item {
+                    val entry: Pair<Int, Int>? = viewModel.currentExerciseEntries.getOrNull(i)
+                    val weight = entry?.first ?: "-"
+                    val reps = entry?.second ?: "-"
+
+                    var historyWeight = "-"
+                    var historyReps = "-"
+                    if (viewModel.currentExerciseHistory != null) {
+                        val historyData = viewModel.currentExerciseHistory!!.data.getOrNull(i)
+                        historyWeight = historyData?.first?.toString() ?: "-"
+                        historyReps = historyData?.second?.toString() ?: "-"
+                    }
 
                     Row(
                         Modifier
                             .fillMaxWidth()
                             .background(
-                                if (index % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                                if (i % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
                                 else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
                             )
                     ) {
                         TableCell(text = historyWeight)
                         TableCell(text = historyReps)
                         TableCell(text = weight.toString())
-                        TableCell(text = sets.toString())
+                        TableCell(text = reps.toString())
                     }
                 }
             }
