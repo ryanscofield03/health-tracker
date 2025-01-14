@@ -27,8 +27,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.createSavedStateHandle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -40,13 +38,11 @@ import nz.ac.canterbury.seng303.healthtracking.screens.settings.SettingsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.sleep.SleepMain
 import nz.ac.canterbury.seng303.healthtracking.screens.stats.StatsMain
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddExercise
-import nz.ac.canterbury.seng303.healthtracking.screens.workout.AddWorkout
+import nz.ac.canterbury.seng303.healthtracking.screens.workout.BuildWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.RunWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.ScheduleWorkout
 import nz.ac.canterbury.seng303.healthtracking.screens.workout.WorkoutMain
 import nz.ac.canterbury.seng303.healthtracking.ui.theme.HealthTrackingTheme
-import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseViewModel
-import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHistoryViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.RunWorkoutViewModel
@@ -123,7 +119,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "AddWorkout") {
-                            AddWorkout(
+                            BuildWorkout(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
                                 viewModel = addWorkoutViewModel
@@ -138,7 +134,7 @@ class MainActivity : ComponentActivity() {
                                 ?.find { it.id == parsedId }
                             workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
 
-                            AddWorkout(
+                            BuildWorkout(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
                                 viewModel = addWorkoutViewModel,

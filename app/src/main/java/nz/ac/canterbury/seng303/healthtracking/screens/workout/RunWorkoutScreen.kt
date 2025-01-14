@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,8 +68,7 @@ fun RunWorkout(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = viewModel.workoutName,
@@ -103,7 +103,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.88f)
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
     ) {
         val openEntryDialog = rememberSaveable { mutableStateOf(false) }
         if (openEntryDialog.value) {
@@ -152,11 +152,12 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Icon(
+                modifier = Modifier.size(32.dp),
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(id = R.string.arrow_left),
                 tint =
-                    if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.secondary
-                    else MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+                    if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.tertiary
+                    else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
             )
 
             // Exercise Name
@@ -166,11 +167,12 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             )
 
             Icon(
+                modifier = Modifier.size(32.dp),
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(id = R.string.arrow_right),
                 tint =
-                    if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.secondary
-                    else MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
+                    if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.tertiary
+                    else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
             )
         }
 
@@ -347,7 +349,7 @@ fun EntryDialog(
                         Text(
                             text = stringResource(id = R.string.add),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     TextButton(onClick = {
@@ -357,7 +359,7 @@ fun EntryDialog(
                         Text(
                             text = stringResource(id = R.string.cancel),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
@@ -417,7 +419,7 @@ fun EndWorkoutConfirmationDialog(
                         Text(
                             text = stringResource(id = R.string.cancel),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }

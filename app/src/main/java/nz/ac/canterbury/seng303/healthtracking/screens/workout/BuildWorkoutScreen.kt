@@ -34,14 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.canterbury.seng303.healthtracking.R
 import nz.ac.canterbury.seng303.healthtracking.entities.Exercise
-import nz.ac.canterbury.seng303.healthtracking.entities.Workout
 import nz.ac.canterbury.seng303.healthtracking.screens.ErrorMessageComponent
 import nz.ac.canterbury.seng303.healthtracking.screens.SaveAndCancelButtons
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddWorkout(
+fun BuildWorkout(
     modifier: Modifier,
     navController: NavController,
     viewModel: AddWorkoutViewModel,
@@ -132,7 +131,6 @@ fun AddWorkout(
         )
 
         // Schedule workout button
-        Spacer(modifier = Modifier.height(6.dp))
         Button(
             onClick = { navController.navigate("ScheduleWorkout") },
             modifier = Modifier.fillMaxWidth(),
@@ -150,6 +148,7 @@ fun AddWorkout(
                 Text(stringResource(id = R.string.schedule))
             }
         }
+        Spacer(modifier = Modifier.height(6.dp))
 
         // Save and cancel buttons
         SaveAndCancelButtons(

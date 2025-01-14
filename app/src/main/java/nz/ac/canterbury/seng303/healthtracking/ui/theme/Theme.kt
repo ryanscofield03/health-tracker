@@ -16,24 +16,25 @@ import androidx.compose.ui.text.font.FontWeight
 import nz.ac.canterbury.seng303.healthtracking.R
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryBlueDark,
-    secondary = SecondaryBlueDark,
-    tertiary = SoftGreyDark,
+    primary = PrimaryDark,
+    secondary = SecondaryDark,
+    tertiary = TertiaryDark,
     background = DarkGray,
     surface = DarkGray,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onTertiary = Color.Black,
+    onTertiary = Color.White,
     onBackground = Color.White,
     onSurface = Color.White,
     error = ErrorRed,
-    errorContainer = ErrorRedLight
+    errorContainer = ErrorRedDark,
+    onError = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryBlue,
-    secondary = SecondaryBlue,
-    tertiary = SoftGrey,
+    primary = PrimaryLight,
+    secondary = SecondaryLight,
+    tertiary = TertiaryLight,
     background = LightGray,
     surface = LightGray,
     onPrimary = Color.White,
@@ -42,7 +43,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color.Black,
     onSurface = Color.Black,
     error = ErrorRed,
-    errorContainer = ErrorRedDark
+    errorContainer = ErrorRedLight,
+    onError = Color.White
 )
 
 val primaryFont = FontFamily(

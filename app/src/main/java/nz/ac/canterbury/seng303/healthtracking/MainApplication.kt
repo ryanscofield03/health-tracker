@@ -17,10 +17,6 @@ class MainApplication: Application() {
 
 /**
  * TODO:
- * - Allow for running workout (8 hrs ?)
- *  * Validation checks e.g. don't allow the user to finish a workout til they have at least 1 set for each exercise
- *   - or potentially have a pop up that says "You don't have a set for each exercise, are you sure you want to finish workout"
- *
  * - Sleep, Eat, Stats, Settings
  *
  * - Settings (1) : Easiest and has a reasonably big impact (>20 hrs)
