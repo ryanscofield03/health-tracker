@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng303.healthtracking.screens.workout
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,7 +75,7 @@ fun RunWorkout(
                 viewModel.saveWorkoutHistory()
             },
             onCancel = {
-                /* TODO clear view model? */
+                viewModel.clearViewModel()
                 navController.navigate("Workout")
             }
         )
@@ -169,17 +171,15 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 text = "Current"
             )
         }
-        LazyColumn {
-            // Header Row
-            item {
-                Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
-                    TableCell(text = "Weight") // TODO fix
-                    TableCell(text = "Reps") // TODO fix
-                    TableCell(text = "Weight") // TODO fix
-                    TableCell(text = "Reps") // TODO fix
-                }
-            }
 
+        // Header Row
+        Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
+            TableCell(text = "Weight") // TODO fix
+            TableCell(text = "Reps") // TODO fix
+            TableCell(text = "Weight") // TODO fix
+            TableCell(text = "Reps") // TODO fix
+        }
+        LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
             // Data rows
             for (i in 0..< max(
                 a = viewModel.currentExerciseEntries.size,
@@ -205,6 +205,16 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                                 if (i % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
                                 else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
                             )
+                            .pointerInput(Unit) {
+                                detectTapGestures (
+                                    onLongPress = {
+                                        if (viewModel.canEditEntry(index = i)) {
+                                            openEntryPopup.value = true
+                                            viewModel.updateEditingEntryIndex(index = i)
+                                        }
+                                    }
+                                )
+                            }
                     ) {
                         TableCell(text = historyWeight)
                         TableCell(text = historyReps)

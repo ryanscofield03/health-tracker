@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -48,6 +50,9 @@ import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.ExerciseHisto
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.database.WorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.AddWorkoutViewModel
 import nz.ac.canterbury.seng303.healthtracking.viewmodels.screen.RunWorkoutViewModel
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.core.parameter.parametersOf
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
 data class TabBarItem (
@@ -57,8 +62,6 @@ data class TabBarItem (
 
 class MainActivity : ComponentActivity() {
     private val workoutViewModel: WorkoutViewModel by koinViewModel()
-    private val exerciseViewModel: ExerciseViewModel by koinViewModel()
-    private val exerciseHistoryViewModel: ExerciseHistoryViewModel by koinViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +69,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
-                val addWorkoutViewModel = AddWorkoutViewModel(workoutViewModel, exerciseViewModel)
+                val addWorkoutViewModel: AddWorkoutViewModel = getViewModel()
 
                 val workoutTab = TabBarItem(title = stringResource(R.string.workout_screen), icon = ImageVector.vectorResource(id = R.drawable.workout))
                 val eatTab = TabBarItem(title = stringResource(R.string.eat_screen), icon = ImageVector.vectorResource(id = R.drawable.eat))
@@ -162,6 +165,7 @@ class MainActivity : ComponentActivity() {
                                 .value
                                 ?.find { it.id == parsedId }
 
+                            println(parsedId)
                             if (workout != null) {
                                 var exercises by remember { mutableStateOf<List<Exercise>?>(null) }
                                 LaunchedEffect(workout) {
@@ -169,10 +173,9 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 if (exercises != null) {
-                                    val runWorkoutViewModel = RunWorkoutViewModel(
-                                        workout = workout,
-                                        exercises = exercises!!,
-                                        exerciseHistoryViewModel = exerciseHistoryViewModel
+                                    val runWorkoutViewModel: RunWorkoutViewModel = getViewModel(
+                                        key = "RunWorkoutViewModel_${workout.id}",
+                                        parameters = { parametersOf(workout, exercises) }
                                     )
 
                                     RunWorkout(
@@ -180,7 +183,6 @@ class MainActivity : ComponentActivity() {
                                         navController = navController,
                                         viewModel = runWorkoutViewModel
                                     )
-
                                     runWorkoutViewModel.loadExerciseHistories()
                                 }
                             }
