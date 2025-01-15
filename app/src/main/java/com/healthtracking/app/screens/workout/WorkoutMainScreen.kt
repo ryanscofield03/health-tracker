@@ -40,7 +40,7 @@ import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 
 @Composable
 fun WorkoutMain(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
 ) {

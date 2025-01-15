@@ -46,8 +46,10 @@ import com.healthtracking.app.ui.theme.HealthTrackingTheme
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
@@ -67,27 +69,27 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val addWorkoutViewModel: AddWorkoutViewModel = getViewModel()
 
-                val workoutTab = com.healthtracking.app.TabBarItem(
+                val workoutTab = TabBarItem(
                     title = stringResource(R.string.workout_screen),
                     icon = ImageVector.vectorResource(id = R.drawable.workout)
                 )
-                val eatTab = com.healthtracking.app.TabBarItem(
+                val eatTab = TabBarItem(
                     title = stringResource(R.string.eat_screen),
                     icon = ImageVector.vectorResource(id = R.drawable.eat)
                 )
-                val sleepTab = com.healthtracking.app.TabBarItem(
+                val sleepTab = TabBarItem(
                     title = stringResource(R.string.sleep_screen),
                     icon = ImageVector.vectorResource(id = R.drawable.sleep)
                 )
-                val historyTab = com.healthtracking.app.TabBarItem(
+                val historyTab = TabBarItem(
                     title = stringResource(R.string.stats_screen),
                     icon = ImageVector.vectorResource(id = R.drawable.stats)
                 )
-                val settingsTab = com.healthtracking.app.TabBarItem(
+                val settingsTab = TabBarItem(
                     title = stringResource(R.string.settings_screen),
                     icon = Icons.Filled.Settings
                 )
-                val tabBarItems: List<com.healthtracking.app.TabBarItem> = listOf(workoutTab, eatTab, sleepTab, historyTab, settingsTab)
+                val tabBarItems: List<TabBarItem> = listOf(workoutTab, eatTab, sleepTab, historyTab, settingsTab)
 
                 var selectedTabIndex by rememberSaveable {
                     mutableIntStateOf(0)
@@ -176,7 +178,6 @@ class MainActivity : ComponentActivity() {
                                 .value
                                 ?.find { it.id == parsedId }
 
-                            println(parsedId)
                             if (workout != null) {
                                 var exercises by remember { mutableStateOf<List<Exercise>?>(null) }
                                 LaunchedEffect(workout) {
@@ -200,7 +201,13 @@ class MainActivity : ComponentActivity() {
                         composable("Eat"){ EatMain() }
                         composable("Sleep"){ SleepMain() }
                         composable("Stats"){ StatsMain() }
-                        composable("Settings"){ SettingsMain() }
+                        composable("Settings") {
+                            val settingsViewModel: SettingsViewModel by viewModel()
+                            SettingsMain(
+                                modifier = Modifier.padding(padding),
+                                settingsViewModel = settingsViewModel
+                            )
+                        }
                     }
                 }
             }
