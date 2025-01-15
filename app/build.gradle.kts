@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "nz.ac.canterbury.seng303.healthtracking"
+    namespace = "com.healthtracking.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "nz.ac.canterbury.seng303.healthtracking"
+        applicationId = "com.healthtracking.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
