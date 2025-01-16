@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,14 +47,21 @@ fun SettingsMain (
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        LanguagePicker()
-        Spacer(modifier = Modifier.height(48.dp))
-        ToggleMeasurementType(
-            measurements = viewModel.measurements,
-            changeMeasurements = { viewModel.saveMeasurements(it) }
+        LanguagePicker(
+            languageSetting = viewModel.languageSetting.collectAsState().value,
+            changeLanguageSetting = { viewModel.saveLanguageSetting(it) }
         )
         Spacer(modifier = Modifier.height(48.dp))
-        ToggleNotifications()
+        ToggleMeasurementType(
+            measurementsSetting = viewModel.measurementsSetting.collectAsState().value,
+            toMetric = { viewModel.saveMeasurementsSetting(SettingsViewModel.MEASUREMENTS_METRIC) },
+            toImperial = { viewModel.saveMeasurementsSetting(SettingsViewModel.MEASUREMENTS_IMPERIAL) }
+        )
+        Spacer(modifier = Modifier.height(48.dp))
+        ToggleNotifications(
+            notificationsSetting = viewModel.notificationsSetting.collectAsState().value,
+            changeNotificationsSetting = { viewModel.saveNotificationsSetting() }
+        )
         Spacer(modifier = Modifier.height(48.dp))
 
         Column(
@@ -66,7 +74,10 @@ fun SettingsMain (
 }
 
 @Composable
-fun LanguagePicker() {
+fun LanguagePicker(
+    languageSetting: String,
+    changeLanguageSetting: (String) -> Unit
+) {
     val languages = stringArrayResource(id = R.array.languages)
     
     Text(
@@ -85,8 +96,9 @@ fun LanguagePicker() {
 
 @Composable
 fun ToggleMeasurementType(
-    measurements: String,
-    changeMeasurements: (String) -> Unit
+    measurementsSetting: String,
+    toMetric: () -> Unit,
+    toImperial: () -> Unit,
 ) {
     Text(
         text = stringResource(id = R.string.select_measurement),
@@ -97,18 +109,15 @@ fun ToggleMeasurementType(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        val metric = "metric"
-        val imperial = "imperial"
-
         Button(
             modifier = Modifier.weight(0.5f),
             shape = RoundedCornerShape(0.dp),
             onClick = {
-                changeMeasurements(metric)
+                toMetric()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor =
-                if (measurements == metric)
+                if (measurementsSetting == "metric")
                     MaterialTheme.colorScheme.tertiary
                 else
                     MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
@@ -120,11 +129,11 @@ fun ToggleMeasurementType(
             modifier = Modifier.weight(0.5f),
             shape = RoundedCornerShape(0.dp),
             onClick = {
-                changeMeasurements(imperial)
+                toImperial()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor =
-                if (measurements == imperial)
+                if (measurementsSetting == "imperial")
                     MaterialTheme.colorScheme.tertiary
                 else
                     MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
@@ -138,7 +147,10 @@ fun ToggleMeasurementType(
 }
 
 @Composable
-fun ToggleNotifications() {
+fun ToggleNotifications(
+    notificationsSetting: Boolean,
+    changeNotificationsSetting: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -148,7 +160,7 @@ fun ToggleNotifications() {
             text = stringResource(id = R.string.select_notification),
             style = MaterialTheme.typography.titleLarge
         )
-        Switch(checked = true, onCheckedChange = {})
+        Switch(checked = notificationsSetting, onCheckedChange = { changeNotificationsSetting() })
     }
 }
 
