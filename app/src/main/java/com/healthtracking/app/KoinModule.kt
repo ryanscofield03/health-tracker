@@ -25,7 +25,7 @@ val dataAccessModule = module {
     viewModel { ExerciseViewModel(get<ExerciseDao>()) }
     viewModel { ExerciseHistoryViewModel(get<ExerciseHistoryDao>()) }
     viewModel { AddWorkoutViewModel(get<WorkoutViewModel>(), get<ExerciseViewModel>()) }
-    viewModel { SettingsViewModel() }
+    viewModel { SettingsViewModel(get()) }
 
     viewModel { parameters -> RunWorkoutViewModel(
         savedStateHandle = get(),

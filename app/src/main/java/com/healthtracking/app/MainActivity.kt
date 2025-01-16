@@ -205,7 +205,7 @@ class MainActivity : ComponentActivity() {
                             val settingsViewModel: SettingsViewModel by viewModel()
                             SettingsMain(
                                 modifier = Modifier.padding(padding),
-                                settingsViewModel = settingsViewModel
+                                viewModel = settingsViewModel
                             )
                         }
                     }

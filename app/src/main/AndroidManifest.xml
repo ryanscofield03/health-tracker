@@ -11,11 +11,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="com.healthtracking.app.MainApplication"
+        android:name=".MainApplication"
         android:theme="@style/Theme.HealthTracking"
         tools:targetApi="31">
         <activity
-            android:name="com.healthtracking.app.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.HealthTracking">
             <intent-filter>

@@ -85,4 +85,12 @@
     // Content Descriptions (that don't fit elsewhere)
     <string name="arrow_left">Arrow Left</string>
     <string name="arrow_right">Arrow Right</string>
+
+    //Settings
+    <string name="select_language">Select language</string>
+    <string name="select_measurement">Select measurement</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
+    <string name="select_notification">Notifications</string>
+    <string name="ask_for_help">Need more help? Click me!</string>
 </resources>
