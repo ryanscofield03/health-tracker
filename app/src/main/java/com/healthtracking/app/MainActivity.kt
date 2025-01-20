@@ -48,8 +48,6 @@ import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
 
@@ -67,7 +65,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
-                val addWorkoutViewModel: AddWorkoutViewModel = getViewModel()
+                val addWorkoutViewModel: AddWorkoutViewModel by koinViewModel()
 
                 val workoutTab = TabBarItem(
                     title = stringResource(R.string.workout_screen),
@@ -186,7 +184,6 @@ class MainActivity : ComponentActivity() {
 
                                 if (exercises != null) {
                                     val runWorkoutViewModel: RunWorkoutViewModel = getViewModel(
-                                        key = "RunWorkoutViewModel_${workout.id}",
                                         parameters = { parametersOf(workout, exercises) }
                                     )
 
@@ -202,7 +199,7 @@ class MainActivity : ComponentActivity() {
                         composable("Sleep"){ SleepMain() }
                         composable("Stats"){ StatsMain() }
                         composable("Settings") {
-                            val settingsViewModel: SettingsViewModel by viewModel()
+                            val settingsViewModel: SettingsViewModel by koinViewModel()
                             SettingsMain(
                                 modifier = Modifier.padding(padding),
                                 viewModel = settingsViewModel

@@ -1,0 +1,15 @@
+package com.healthtracking.app.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.time.LocalDateTime
+
+@Entity(
+    tableName = "workout_backup"
+)
+data class WorkoutBackup(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val exerciseIndex: Int,
+    val entries: List<List<Pair<Int, Int>>>,
+    val timerStart: LocalDateTime
+)

@@ -7,11 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.healthtracking.app.daos.ExerciseDao
 import com.healthtracking.app.daos.ExerciseHistoryDao
+import com.healthtracking.app.daos.WorkoutBackupDao
 import com.healthtracking.app.daos.WorkoutDao
 import com.healthtracking.app.database.converters.Converters
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.ExerciseHistoryCrossRef
+import com.healthtracking.app.entities.WorkoutBackup
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.entities.WorkoutExerciseCrossRef
 
@@ -23,13 +25,15 @@ import com.healthtracking.app.entities.WorkoutExerciseCrossRef
                         Exercise::class,
                         WorkoutExerciseCrossRef::class,
                         ExerciseHistory::class,
-                        ExerciseHistoryCrossRef::class
-                     ], version = 1, exportSchema = false)
+                        ExerciseHistoryCrossRef::class,
+                        WorkoutBackup::class
+                     ], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
     abstract fun exerciseDao(): ExerciseDao
     abstract fun exerciseHistoryDao(): ExerciseHistoryDao
+    abstract fun workoutBackupDao(): WorkoutBackupDao
 
     companion object {
         @Volatile

@@ -74,4 +74,18 @@ class Converters {
             }
     }
 
+    @TypeConverter
+    fun fromEntryBackupList(value: List<List<Pair<Int, Int>>>): String {
+        return value.joinToString(";") { fromListOfPairs(it) }
+    }
+
+    @TypeConverter
+    fun toEntryBackupList(value: String): List<List<Pair<Int, Int>>> {
+        if (value.isBlank()) {
+            return emptyList()
+        }
+
+        return value.split(";")
+            .map { toListOfPairs(it) }
+    }
 }

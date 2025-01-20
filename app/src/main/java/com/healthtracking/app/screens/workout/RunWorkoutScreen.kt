@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,9 +44,9 @@ import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.screens.SaveAndCancelButtons
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
+import java.time.Duration
 import java.util.Locale
 import kotlin.math.max
-import kotlin.time.Duration
 
 @Composable
 fun RunWorkout(
@@ -87,7 +86,7 @@ fun RunWorkout(
                 style = MaterialTheme.typography.displaySmall
             )
 
-            StopWatch(duration = viewModel.timer)
+            StopWatch(duration = viewModel.timer.value)
         }
 
         RunExerciseBlock(viewModel = viewModel)
@@ -465,7 +464,7 @@ fun StopWatch(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + duration.inWholeSeconds * 0.005.toFloat()))
+            .background(color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + duration.seconds * 0.005.toFloat()))
             .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -473,8 +472,8 @@ fun StopWatch(
             text = String.format(
                 Locale.US,
                 "%02d:%02d",
-                duration.inWholeMinutes % 60,
-                duration.inWholeSeconds % 60
+                duration.toMinutes() % 60,
+                duration.seconds % 60
             ),
             style = MaterialTheme.typography.bodyLarge
         )

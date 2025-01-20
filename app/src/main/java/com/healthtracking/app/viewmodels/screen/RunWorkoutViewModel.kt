@@ -1,5 +1,6 @@
 package com.healthtracking.app.viewmodels.screen
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -8,24 +9,27 @@ import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.Workout
+import com.healthtracking.app.entities.WorkoutBackup
 import com.healthtracking.app.viewmodels.database.ExerciseHistoryViewModel
+import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Duration as JavaDuration
 import java.time.LocalDateTime
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * ViewModel for storing, handling, and persisting data pertaining to the RunWorkoutScreen
  */
 class RunWorkoutViewModel(
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    private val savedStateHandle: SavedStateHandle,
     val workout: Workout,
     var exercises: List<Exercise>,
-    val exerciseHistoryViewModel: ExerciseHistoryViewModel
+    val exerciseHistoryViewModel: ExerciseHistoryViewModel,
+    val workoutBackupViewModel: WorkoutBackupViewModel
 ) : ViewModel() {
     // store constants for savesStateHandle keys
     companion object {
@@ -73,12 +77,68 @@ class RunWorkoutViewModel(
 
     // for displaying time since last entry
     private var job: Job? = null
-    private val _timer = mutableStateOf(Duration.ZERO)
-    val timer get() = _timer.value
+    private val _timerStart: MutableState<LocalDateTime> = mutableStateOf(LocalDateTime.now())
+    var timer: MutableState<JavaDuration> = mutableStateOf(Duration.ZERO)
 
     init {
         loadExerciseHistories()
+        loadBackup()
         startTimer()
+    }
+
+    /**
+     * Loads historical data for exercises asynchronously.
+     */
+    private fun loadExerciseHistories() {
+        viewModelScope.launch {
+            val tempList = exercises.map { exercise ->
+                exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)
+            }
+            _exercisesHistory.value = tempList
+        }
+    }
+
+    /**
+     * Loads the last saved data that was persisted from this screen
+     * (this is automatically backed up and is useful for recovering data).
+     */
+    private fun loadBackup() {
+        viewModelScope.launch {
+            val backedUpData: WorkoutBackup? = workoutBackupViewModel
+                .getWorkoutBackup(workoutId = workout.id)
+
+            if (backedUpData != null) {
+                _exerciseEntries.value = List(_exerciseEntries.value.size) { index ->
+                    backedUpData.entries[index].toMutableList()
+                }
+
+                _timerStart.value = backedUpData.timerStart
+            }
+
+        }
+    }
+
+    /**
+     * Persists user data to be restored later if backup is needed
+     */
+    private fun saveBackup() {
+        viewModelScope.launch {
+            workoutBackupViewModel.addWorkoutBackup(
+                workoutId = workout.id,
+                exerciseIndex = _currentExerciseIndex.intValue,
+                entries = _exerciseEntries.value,
+                timerStart = _timerStart.value
+            )
+        }
+    }
+
+    /**
+     * Removes the backup (when viewmodel is saved or canceled)
+     */
+    private fun removeBackup() {
+        viewModelScope.launch {
+            workoutBackupViewModel.deleteWorkoutBackup(workoutId = workout.id)
+        }
     }
 
     /**
@@ -89,8 +149,9 @@ class RunWorkoutViewModel(
 
         job = viewModelScope.launch {
             while (isActive) {
-                _timer.value += 1.seconds
+                timer.value = JavaDuration.between(_timerStart.value, LocalDateTime.now())
                 delay(1000L)
+                saveBackup()
             }
         }
     }
@@ -107,19 +168,8 @@ class RunWorkoutViewModel(
      * Reset the timer - useful for when the user makes an entry
      */
     private fun resetTimer() {
-        _timer.value = Duration.ZERO
-    }
-
-    /**
-     * Loads historical data for exercises asynchronously.
-     */
-    private fun loadExerciseHistories() {
-        viewModelScope.launch {
-            val tempList = exercises.map { exercise ->
-                exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)
-            }
-            _exercisesHistory.value = tempList
-        }
+        _timerStart.value = LocalDateTime.now()
+        timer.value = JavaDuration.ZERO
     }
 
     /**
@@ -149,6 +199,7 @@ class RunWorkoutViewModel(
 
             savedStateHandle[EXERCISE_ENTRIES_KEY] = _exerciseEntries.value
             clearEntry()
+            saveBackup()
             return true
         } else {
             return false
@@ -278,6 +329,8 @@ class RunWorkoutViewModel(
      * Remove all data from view model for next usage
      */
     fun clearViewModel() {
+        removeBackup()
+
         savedStateHandle[EXERCISE_ENTRIES_KEY] = null
         savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = null
 
@@ -287,4 +340,3 @@ class RunWorkoutViewModel(
         stopTimer()
     }
 }
-
