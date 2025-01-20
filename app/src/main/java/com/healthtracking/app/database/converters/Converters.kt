@@ -2,7 +2,9 @@ package com.healthtracking.app.database.converters
 
 import androidx.room.TypeConverter
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -87,5 +89,25 @@ class Converters {
 
         return value.split(";")
             .map { toListOfPairs(it) }
+    }
+
+    @TypeConverter
+    fun fromLocalDate(value: LocalDate): String {
+        return value.toString()
+    }
+
+    @TypeConverter
+    fun toLocalDate(value: String): LocalDate {
+        return LocalDate.parse(value)
+    }
+
+    @TypeConverter
+    fun fromLocalTime(value: LocalTime): String {
+        return value.toString()
+    }
+
+    @TypeConverter
+    fun toLocalTime(value: String): LocalTime {
+        return LocalTime.parse(value)
     }
 }

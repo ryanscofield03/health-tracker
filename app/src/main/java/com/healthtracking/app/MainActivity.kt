@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -47,6 +48,7 @@ import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
+import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
@@ -196,7 +198,13 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("Eat"){ EatMain() }
-                        composable("Sleep"){ SleepMain() }
+                        composable("Sleep"){
+                            val sleepScreenViewModel: SleepScreenViewModel by koinViewModel()
+                            SleepMain(
+                                modifier = Modifier.padding(padding),
+                                viewModel = sleepScreenViewModel
+                            )
+                        }
                         composable("Stats"){ StatsMain() }
                         composable("Settings") {
                             val settingsViewModel: SettingsViewModel by koinViewModel()
