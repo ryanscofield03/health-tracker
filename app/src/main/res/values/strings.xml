@@ -14,7 +14,7 @@
     <string name="welcome_subtitle">Your journey with fitness starts here.</string>
 
     // Sleep Screen Text
-    <string name="track_your_sleep">Track your sleep</string>
+    <string name="track_your_sleep">Track Your Sleep</string>
     <string name="no_existing_sleep_entries">No existing sleep entries, add one below!</string>
     <string name="save_sleep_entry">Save Entry</string>
     <string name="cannot_add_sleep_entry">Entry saved</string>
@@ -25,6 +25,9 @@
     <string name="ok">OK</string>
     <string name="good">Good</string>
     <string name="great">Great</string>
+
+    // Eat Screen
+    <string name="eat_title">Track Your Food</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

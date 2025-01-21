@@ -48,9 +48,7 @@ fun WorkoutMain(
     val workoutList by workoutViewModel.allWorkouts.observeAsState(initial = emptyList())
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ScreenHeader(

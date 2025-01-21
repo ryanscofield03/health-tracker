@@ -48,9 +48,7 @@ fun BuildWorkout(
     viewModel: AddWorkoutViewModel,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ScreenHeader(

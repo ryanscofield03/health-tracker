@@ -120,7 +120,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }) { innerPadding ->
-                    val padding = PaddingValues(8.dp, 48.dp, 8.dp, 128.dp)
+                    val padding = PaddingValues(
+                        start = 24.dp,
+                        top = 64.dp,
+                        end = 24.dp,
+                        bottom = 144.dp
+                    )
                     NavHost(
                         navController = navController,
                         startDestination = "Welcome",
@@ -202,7 +207,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                        composable("Eat"){ EatMain() }
+                        composable("Eat"){
+                            EatMain(
+                                modifier = Modifier.padding(padding)
+                            )
+                        }
                         composable("Sleep"){
                             val sleepScreenViewModel: SleepScreenViewModel by koinViewModel()
                             SleepMain(

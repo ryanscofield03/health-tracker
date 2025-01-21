@@ -58,15 +58,14 @@ fun SleepMain(
     val sleepEntries by viewModel.pastSleepEntries.observeAsState(emptyList())
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = modifier.fillMaxSize()
     ) {
         ScreenHeader(
             headerStringId = R.string.track_your_sleep,
             spacerSize = 16.dp
         )
 
+        Spacer(modifier = Modifier.height(5.dp))
         Column(
             Modifier
                 .fillMaxWidth()

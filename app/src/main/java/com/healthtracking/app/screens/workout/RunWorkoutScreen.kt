@@ -70,9 +70,7 @@ fun RunWorkout(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp, 0.dp, 16.dp, 16.dp),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(

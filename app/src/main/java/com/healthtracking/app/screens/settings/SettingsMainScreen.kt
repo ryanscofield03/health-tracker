@@ -39,9 +39,7 @@ fun SettingsMain (
     viewModel: SettingsViewModel
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = modifier.fillMaxSize()
     ) {
         ScreenHeader(
             headerStringId = R.string.settings_screen,

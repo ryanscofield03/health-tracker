@@ -31,7 +31,7 @@ fun Welcome(modifier: Modifier = Modifier, navController: NavController) {
             .padding(16.dp)
             .pointerInput(Unit) {
                 detectDragGestures(
-                    onDrag = { PointerInputChange, Offset -> },
+                    onDrag = { _, _ -> },
                     onDragEnd = { navController.navigate(workoutString)}
                 )
             },
