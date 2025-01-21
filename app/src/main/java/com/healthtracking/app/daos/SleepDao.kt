@@ -14,7 +14,7 @@ interface SleepDao {
     @Upsert
     suspend fun upsertSleepEntry(sleepEntry: Sleep): Long
 
-    @Query("SELECT * FROM sleep ORDER BY id DESC")
+    @Query("SELECT * FROM sleep ORDER BY id ASC")
     fun getAllSleepEntries(): LiveData<List<Sleep>?>
 
     @Query("SELECT * FROM SLEEP WHERE id = :sleepId")

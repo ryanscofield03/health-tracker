@@ -14,6 +14,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -75,4 +79,17 @@ fun SaveAndCancelButtons(
             }
         }
     }
+}
+
+/**
+ * Custom extension to Modifier class for applying disabled colour on content
+ * https://stackoverflow.com/questions/75689724/set-the-entire-component-to-grayscale-compose
+ */
+fun Modifier.disabled(disabledColour: Color, colourWeight: Float): Modifier {
+    return drawWithCache {
+        onDrawWithContent {
+            drawContent()
+            drawRect(Color.Gray, blendMode = BlendMode.Saturation)
+        }
+    }.graphicsLayer { alpha = colourWeight }
 }
