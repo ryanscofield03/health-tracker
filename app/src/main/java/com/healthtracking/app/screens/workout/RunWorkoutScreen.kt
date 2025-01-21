@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -88,6 +90,10 @@ fun RunWorkout(
 
             StopWatch(duration = viewModel.timer.value)
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+        Spacer(modifier = Modifier.height(8.dp))
 
         RunExerciseBlock(viewModel = viewModel)
 
@@ -237,7 +243,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                             )
                             .pointerInput(Unit) {
                                 detectTapGestures(
-                                    onLongPress = {
+                                    onPress = {
                                         if (viewModel.canEditEntry(index = i)) {
                                             openEntryDialog.value = true
                                             viewModel.updateEditingEntryIndex(index = i)

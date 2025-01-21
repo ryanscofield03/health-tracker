@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +37,7 @@ import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.screens.ErrorMessageComponent
 import com.healthtracking.app.screens.SaveAndCancelButtons
+import com.healthtracking.app.screens.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,14 +53,10 @@ fun BuildWorkout(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header
-        Text(
-            text = stringResource(id = R.string.build_workout),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.align(Alignment.Start)
+        ScreenHeader(
+            headerStringId = R.string.build_workout,
+            spacerSize = 4.dp
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
 
         // Workout name input
         OutlinedTextField(
@@ -116,8 +114,8 @@ fun BuildWorkout(
             .border(
                 width = 1.dp,
                 color =
-                if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.secondary,
+                    if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(10.dp)
             )
         ) {

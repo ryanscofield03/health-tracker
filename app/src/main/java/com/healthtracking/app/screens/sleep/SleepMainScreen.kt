@@ -1,7 +1,9 @@
 package com.healthtracking.app.screens.sleep
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Sleep
+import com.healthtracking.app.screens.ScreenHeader
 import com.healthtracking.app.screens.disabled
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
 import java.time.format.DateTimeFormatter
@@ -59,14 +62,10 @@ fun SleepMain(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.track_your_sleep),
-            style = MaterialTheme.typography.displaySmall
+        ScreenHeader(
+            headerStringId = R.string.track_your_sleep,
+            spacerSize = 16.dp
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f))
-        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             Modifier
@@ -75,7 +74,10 @@ fun SleepMain(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (sleepEntries != null && sleepEntries!!.isNotEmpty()) {
-                PastSleepEntries(pastSleepEntries = sleepEntries!!)
+                PastSleepEntries(
+                    pastSleepEntries = sleepEntries!!,
+                    editSleepEntry = { viewModel.editSleepEntry(it) }
+                )
             } else {
                 Text(text = stringResource(id = R.string.no_existing_sleep_entries))
             }
@@ -84,10 +86,7 @@ fun SleepMain(
         val sleepEntryModifier = if (viewModel.canAddNewEntry) {
             Modifier
         } else {
-            Modifier.disabled(
-                disabledColour = MaterialTheme.colorScheme.tertiary,
-                colourWeight = 0.7f
-            )
+            Modifier.disabled(colourWeight = 0.7f)
         }
 
         Column(
@@ -108,18 +107,23 @@ fun SleepMain(
 
 @Composable
 fun PastSleepEntries(
-    pastSleepEntries: List<Sleep>
+    pastSleepEntries: List<Sleep>,
+    editSleepEntry: (Long) -> Unit
 ) {
     LazyRow(modifier = Modifier.fillMaxWidth(), state = LazyListState(firstVisibleItemIndex = pastSleepEntries.size-1)) {
         itemsIndexed(pastSleepEntries) { _, pastSleepEntry ->
-            PastSleepEntryCard(pastSleepEntry)
+            PastSleepEntryCard(
+                pastSleepEntry = pastSleepEntry,
+                openEditSleepEntry = { editSleepEntry(pastSleepEntry.id) }
+            )
         }
     }
 }
 
 @Composable
 fun PastSleepEntryCard(
-    pastSleepEntry: Sleep
+    pastSleepEntry: Sleep,
+    openEditSleepEntry: () -> Unit
 ) {
     val hoursSleptDifference = pastSleepEntry.startTime.until(pastSleepEntry.endTime, ChronoUnit.HOURS)
     val hoursSlept = if (hoursSleptDifference < 0) hoursSleptDifference + 24 else hoursSleptDifference
@@ -139,7 +143,11 @@ fun PastSleepEntryCard(
     }
 
     Card(
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable(onClick = {
+                openEditSleepEntry()
+            }),
         colors = CardDefaults.cardColors(containerColor = containerColour)
     ) {
         Column(

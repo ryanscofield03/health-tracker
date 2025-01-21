@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
+import com.healthtracking.app.screens.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import java.time.DayOfWeek
 
@@ -42,16 +44,12 @@ fun ScheduleWorkout(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(id = R.string.schedule_workout),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.align(Alignment.Start)
+        ScreenHeader(
+            headerStringId = R.string.schedule_workout,
+            spacerSize = 16.dp
         )
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         daysOfWeek.forEach { (day, stringResId) ->
             ToggleDayButton(
@@ -59,6 +57,7 @@ fun ScheduleWorkout(
                 toggle = { viewModel.toggleScheduledDay(day) },
                 isSelected = { viewModel.scheduledDays.contains(day) }
             )
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
         Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {

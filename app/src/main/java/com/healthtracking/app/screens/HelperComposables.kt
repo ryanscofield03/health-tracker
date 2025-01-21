@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 
@@ -85,11 +87,28 @@ fun SaveAndCancelButtons(
  * Custom extension to Modifier class for applying disabled colour on content
  * https://stackoverflow.com/questions/75689724/set-the-entire-component-to-grayscale-compose
  */
-fun Modifier.disabled(disabledColour: Color, colourWeight: Float): Modifier {
+fun Modifier.disabled(colourWeight: Float): Modifier {
     return drawWithCache {
         onDrawWithContent {
             drawContent()
             drawRect(Color.Gray, blendMode = BlendMode.Saturation)
         }
     }.graphicsLayer { alpha = colourWeight }
+}
+
+@Composable
+fun ScreenHeader(
+    headerStringId: Int,
+    spacerSize: Dp = 16.dp
+) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(id = headerStringId),
+            style = MaterialTheme.typography.displaySmall
+        )
+    }
+
+    Spacer(modifier = Modifier.height(spacerSize))
+    HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+    Spacer(modifier = Modifier.height(spacerSize))
 }

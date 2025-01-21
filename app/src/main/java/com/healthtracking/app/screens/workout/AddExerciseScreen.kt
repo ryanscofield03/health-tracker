@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.screens.SaveAndCancelButtons
+import com.healthtracking.app.screens.ScreenHeader
 import com.healthtracking.app.services.getExerciseList
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
@@ -73,12 +75,10 @@ fun AddExercise(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = stringResource(id = R.string.add_exercise),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.align(Alignment.Start)
+        ScreenHeader(
+            headerStringId = R.string.add_exercise,
+            spacerSize = 8.dp
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             itemsIndexed(exerciseGroups) { _, exerciseGroup ->
@@ -99,7 +99,7 @@ fun AddExercise(
             }
         }
 
-        LazyColumn(modifier = Modifier.fillMaxHeight(0.9f)) {
+        LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
             val exerciseList = getExerciseList(context, selectedExerciseGroup)
             if (exerciseList != null) {
                 itemsIndexed(exerciseList) { _, exerciseName: String ->

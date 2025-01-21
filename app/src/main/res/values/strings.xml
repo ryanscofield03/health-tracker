@@ -27,13 +27,13 @@
     <string name="great">Great</string>
 
     // Workout Screens Text
-    <string name="my_workouts_title">My Workouts</string>
+    <string name="my_workouts_title">Your Workouts</string>
     <string name="no_existing_exercises">No existing workouts, try adding one!</string>
     <string name="build_workout">Build Your Workout</string>
     <string name="enter_workout_name">Enter workout name</string>
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
-    <string name="schedule_workout">Schedule Your Workout</string>
+    <string name="schedule_workout">Schedule Workout</string>
     <string name="exercise_name">Exercise Name</string>
     <string name="exercise_search_placeholder">Enter or search an exercise name</string>
     <string name="search_exercise">Search for an Exercise</string>

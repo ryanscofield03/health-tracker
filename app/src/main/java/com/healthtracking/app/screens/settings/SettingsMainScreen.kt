@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
+import com.healthtracking.app.screens.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 
 @Composable
@@ -41,12 +43,10 @@ fun SettingsMain (
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = stringResource(id = R.string.settings_screen),
-            style = MaterialTheme.typography.displaySmall
+        ScreenHeader(
+            headerStringId = R.string.settings_screen,
+            spacerSize = 16.dp
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
         LanguagePicker(
             languageSetting = viewModel.languageSetting.collectAsState().value,
             changeLanguageSetting = { viewModel.saveLanguageSetting(it) }
@@ -62,7 +62,7 @@ fun SettingsMain (
             notificationsSetting = viewModel.notificationsSetting.collectAsState().value,
             changeNotificationsSetting = { viewModel.saveNotificationsSetting() }
         )
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Column(
             modifier = Modifier.fillMaxHeight(),

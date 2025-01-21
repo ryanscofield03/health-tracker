@@ -34,13 +34,32 @@ class SleepViewModel(
         }
     }
 
+    fun updateSleepEntry(
+        id: Long,
+        date: LocalDate,
+        startTime: LocalTime,
+        endTime: LocalTime,
+        rating: Int
+    ) {
+        viewModelScope.launch {
+            val sleep = Sleep(
+                id = id,
+                date = date,
+                startTime = startTime,
+                endTime = endTime,
+                rating = rating
+            )
+            sleepDao.upsertSleepEntry(sleep)
+        }
+    }
+
     suspend fun getSleepEntries(): LiveData<List<Sleep>?> {
         return withContext(Dispatchers.IO) {
             sleepDao.getAllSleepEntries()
         }
     }
 
-    suspend fun getSleepEntry(sleepId: Long) {
+    suspend fun getSleepEntry(sleepId: Long): Sleep? {
         return withContext(Dispatchers.IO) {
             sleepDao.getSleepEntry(sleepId = sleepId)
         }
