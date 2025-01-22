@@ -28,6 +28,12 @@
 
     // Eat Screen
     <string name="eat_title">Track Your Food</string>
+    <string name="calories">Calories</string>
+    <string name="protein">Protein</string>
+    <string name="carbs">Carbs</string>
+    <string name="fats">Fats</string>
+    <string name="add_meal_entry">Add Meal Entry</string>
+    <string name="update_daily_food_goal">Update Daily Goal</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

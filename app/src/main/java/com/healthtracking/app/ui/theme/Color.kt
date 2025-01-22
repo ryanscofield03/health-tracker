@@ -17,3 +17,7 @@ val ErrorRedDark = Color(0xB2AC2424)
 val ErrorRedLight = Color(0xB2B30000)
 val ErrorRed = Color(0xB2FF2424)
 val SuccessGreen = Color(0xFF4CAF50)
+
+val ProteinColour = Color(0xB225E68C)
+val CarbsColour = Color(0xB2DFE625)
+val FatsColour = Color(0xB29625E6)
