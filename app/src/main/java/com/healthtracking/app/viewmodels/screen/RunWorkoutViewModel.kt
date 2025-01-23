@@ -104,8 +104,8 @@ class RunWorkoutViewModel(
      */
     private fun loadBackup() {
         viewModelScope.launch {
-            val backedUpData: WorkoutBackup? = workoutBackupViewModel
-                .getWorkoutBackup(workoutId = workout.id)
+            val backedUpData: WorkoutBackup? =
+                workoutBackupViewModel.getWorkoutBackup(workoutId = workout.id)
 
             if (backedUpData != null) {
                 _exerciseEntries.value = List(_exerciseEntries.value.size) { index ->
@@ -337,6 +337,7 @@ class RunWorkoutViewModel(
         _currentExerciseIndex.intValue = 0
         _exerciseEntries.value = exercises.map { mutableListOf() }
 
+        resetTimer()
         stopTimer()
     }
 }

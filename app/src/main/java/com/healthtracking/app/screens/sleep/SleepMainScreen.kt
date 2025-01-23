@@ -65,7 +65,7 @@ fun SleepMain(
             spacerSize = 16.dp
         )
 
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Column(
             Modifier
                 .fillMaxWidth()
@@ -87,7 +87,6 @@ fun SleepMain(
         } else {
             Modifier.disabled(colourWeight = 0.7f)
         }
-
         Column(
             modifier = sleepEntryModifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom

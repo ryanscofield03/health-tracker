@@ -4,21 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Entity for food/meals which stores necessary fields
+ * Entity for meals which stores necessary fields (name and list of food)
  */
 @Entity(
-    tableName = "meal",
+    tableName = "meal"
 )
 data class Meal(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val foodItems: List<Food>
-)
-
-data class Food(
-    val name: String,
-    val calories: Float,
-    val protein: Float,
-    val fat: Float,
-    val carbohydrates: Float
 )
