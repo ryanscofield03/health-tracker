@@ -132,11 +132,11 @@ fun PastSleepEntryCard(
     )
 
     val containerColour = when (pastSleepEntry.rating) {
-        1 -> MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
-        2 -> MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
-        3 -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
-        4 -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.6f)
-        5 -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f)
+        1 -> MaterialTheme.colorScheme.error
+        2 -> MaterialTheme.colorScheme.error
+        3 -> MaterialTheme.colorScheme.tertiary
+        4 -> MaterialTheme.colorScheme.tertiary
+        5 -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.error
     }
 
@@ -146,6 +146,7 @@ fun PastSleepEntryCard(
             .clickable(onClick = {
                 openEditSleepEntry()
             }),
+        elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = containerColour)
     ) {
         Column(
@@ -179,15 +180,15 @@ fun AddSleepEntry(
 ) {
     val timeInputColours = TimePickerDefaults.colors(
         periodSelectorSelectedContainerColor = MaterialTheme.colorScheme.tertiary,
-        timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
-        timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+        timeSelectorSelectedContainerColor = MaterialTheme.colorScheme.tertiary,
+        timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.tertiary.copy(0.2f),
     )
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
+                color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(12.dp),
@@ -263,7 +264,7 @@ fun SleepRatingButton(
             .clip(shape = CircleShape)
             .background(
                 color =
-                if (isSelected) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.75f)
+                if (isSelected) MaterialTheme.colorScheme.tertiary
                 else Color.Transparent
             ),
         onClick = {

@@ -1,12 +1,13 @@
 package com.healthtracking.app.screens.eat
 
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,13 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -58,25 +67,27 @@ fun EatMain (
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.18f),
+                .fillMaxHeight(0.5f),
             horizontalArrangement = Arrangement.spacedBy(12.dp))
         {
-            CaloriesCard(
-                weight = 0.3f,
-                onClick = { },
-                caloriesCurrent = 1800,
-                caloriesTotal = 2500
-            )
-            MacroCards(
-                weight = 0.7f,
-                onClick = { },
-                proteinCurrent = 80L,
-                proteinTotal = 100L,
-                carbsCurrent = 120L,
-                carbsTotal = 200L,
-                fatsCurrent = 15L,
-                fatsTotal = 40L,
-            )
+            Column(modifier = Modifier.weight(0.7f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                CaloriesCard(
+                    caloriesCurrent = 1800,
+                    caloriesTotal = 2500
+                )
+
+                WeeklyGraph()
+            }
+            Box(modifier = Modifier.weight(0.3f)) {
+                MacroCards(
+                    proteinCurrent = 80L,
+                    proteinTotal = 100L,
+                    carbsCurrent = 120L,
+                    carbsTotal = 200L,
+                    fatsCurrent = 15L,
+                    fatsTotal = 40L,
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -108,18 +119,29 @@ fun EatMain (
 }
 
 @Composable
-fun RowScope.CaloriesCard(
-    weight: Float,
-    onClick: () -> Unit,
+fun ColumnScope.WeeklyGraph() {
+    Card(
+        modifier = Modifier
+            .weight(2 / 3f)
+            .fillMaxSize(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Text(text = "TEST")
+    }
+}
+
+@Composable
+fun ColumnScope.CaloriesCard(
     caloriesCurrent: Long,
     caloriesTotal: Long
 ) {
     Card(
-        modifier = Modifier
-            .weight(weight)
-            .fillMaxHeight()
-            .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+        modifier = Modifier.weight(0.31f),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         // display a bar filled to % of goal calories met
         Text(
@@ -130,7 +152,7 @@ fun RowScope.CaloriesCard(
         )
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
-            text = "$caloriesCurrent/$caloriesTotal",
+            text = "$caloriesCurrent/${caloriesTotal}kcal",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onTertiary
         )
@@ -149,9 +171,7 @@ fun RowScope.CaloriesCard(
 }
 
 @Composable
-fun RowScope.MacroCards(
-    weight: Float,
-    onClick: () -> Unit,
+fun MacroCards(
     proteinCurrent: Long,
     proteinTotal: Long,
     carbsCurrent: Long,
@@ -159,88 +179,73 @@ fun RowScope.MacroCards(
     fatsCurrent: Long,
     fatsTotal: Long
 ) {
-    Card(modifier = Modifier
-        .weight(weight)
-        .fillMaxHeight()
-        .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceAround) {
-            Card(modifier = Modifier.padding(8.dp)) {
-                // display a bar filled to % of goal protein met
-                Text(
-                    text = stringResource(id = R.string.protein),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Text(
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    text = "$proteinCurrent/$proteinTotal",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Box(modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterHorizontally)){
-                    CircularProgressIndicator(
-                        progress = {(proteinCurrent.toFloat() / proteinTotal).coerceIn(0f, 1f)},
-                        color = ProteinColour,
-                        trackColor = Color.White,
-                        strokeWidth = 6.dp,
-                    )
-                }
-            }
+        MacroCard(
+            titleId = R.string.protein,
+            progressString = "$proteinCurrent/${proteinTotal}g",
+            progressFloat = (proteinCurrent.toFloat() / proteinTotal).coerceIn(0f, 1f),
+            progressColour = ProteinColour
+        )
 
-            Card(modifier = Modifier.padding(8.dp)) {
-                // display a bar filled to % of goal carbs met
-                Text(
-                    text = stringResource(id = R.string.carbs),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Text(
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    text = "$carbsCurrent/$carbsTotal",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Box(modifier = Modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterHorizontally)){
-                    CircularProgressIndicator(
-                        progress = {(carbsCurrent.toFloat() / carbsTotal).coerceIn(0f, 1f)},
-                        color = CarbsColour,
-                        trackColor = Color.White,
-                        strokeWidth = 6.dp,
-                    )
-                }
-            }
+        MacroCard(
+            titleId = R.string.carbs,
+            progressString = "$carbsCurrent/${carbsTotal}g",
+            progressFloat = (carbsCurrent.toFloat() / carbsTotal).coerceIn(0f, 1f),
+            progressColour = CarbsColour
+        )
 
-            Card(modifier = Modifier.padding(8.dp)) {
-                // display a bar filled to % of goal fat met
-                Text(
-                    text = stringResource(id = R.string.fats),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onTertiary
+        MacroCard(
+            titleId = R.string.fats,
+            progressString = "$fatsCurrent/${fatsTotal}g",
+            progressFloat = (fatsCurrent.toFloat() / fatsTotal).coerceIn(0f, 1f),
+            progressColour = FatsColour
+        )
+    }
+}
+
+@Composable
+fun ColumnScope.MacroCard(
+    titleId: Int,
+    progressString: String,
+    progressFloat: Float,
+    progressColour: Color
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiary
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier
+            .padding(6.dp)
+            .fillMaxSize()) {
+            // display a bar filled to % of goal protein met
+            Text(
+                text = stringResource(id = titleId),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+            Text(
+                modifier = Modifier.padding(top = 5.dp),
+                text = progressString,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
+            Box(modifier = Modifier
+                .size(32.dp)
+                .align(Alignment.End)){
+                CircularProgressIndicator(
+                    progress = { progressFloat },
+                    color = progressColour,
+                    trackColor = Color.White,
+                    strokeWidth = 6.dp,
                 )
-                Text(
-                    modifier = Modifier.padding(vertical = 5.dp),
-                    text = "$fatsCurrent/$fatsTotal",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onTertiary
-                )
-                Column(
-                    modifier = Modifier.size(30.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ){
-                    CircularProgressIndicator(
-                        progress = {(fatsCurrent.toFloat() / fatsTotal).coerceIn(0f, 1f)},
-                        color = FatsColour,
-                        trackColor = Color.White,
-                        strokeWidth = 6.dp,
-                    )
-                }
             }
         }
     }
@@ -255,7 +260,7 @@ fun AddMealEntry() {
 
     Button(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(0.dp),
+        shape = RoundedCornerShape(8.dp),
         onClick = { /*TODO open dialog */ }
     ) {
         Text(text = stringResource(id = R.string.add_meal_entry))
@@ -286,28 +291,74 @@ fun CurrentMealEntryList(
 fun MealEntryCard(
     mealEntry: Meal
 ) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Text(text = mealEntry.name, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onTertiary)
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = mealEntry.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onTertiary
+            )
 
-            mealEntry.foodItems.forEach { foodItem ->
-                Box(modifier = Modifier
-                    .padding(8.dp)
-                    .clip(shape = RoundedCornerShape(16.dp))
-                    .background(color = MaterialTheme.colorScheme.secondary.copy(0.4f))) {
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text(text = foodItem.name, style = MaterialTheme.typography.titleMedium)
-                        Text(text = "Calories: ${foodItem.calories}kcal")
-                        Text(text = "Protein: ${foodItem.protein}g")
-                        Text(text = "Carbs: ${foodItem.carbohydrates}g")
-                        Text(text = "Fat: ${foodItem.fat}g")
-                    }
-                }
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val formatter = DecimalFormat("0.#")
+                NutrientItem(
+                    label = "P",
+                    value = formatter.format(mealEntry.foodItems.sumOf { it.protein.toDouble() }),
+                    drawableId = R.drawable.protein,
+                    iconColour = ProteinColour
+                )
+                NutrientItem(
+                    label = "C",
+                    value = formatter.format(mealEntry.foodItems.sumOf { it.carbohydrates.toDouble() }),
+                    drawableId = R.drawable.carbs,
+                    iconColour = CarbsColour
+                )
+                NutrientItem(
+                    label = "F",
+                    value = formatter.format(mealEntry.foodItems.sumOf { it.fat.toDouble() }),
+                    drawableId = R.drawable.fats,
+                    iconColour = FatsColour
+                )
             }
         }
+    }
+}
+
+@Composable
+fun NutrientItem(label: String, value: String, drawableId: Int, iconColour: Color) {
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = drawableId),
+            contentDescription = label,
+            tint = iconColour,
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onTertiary
+        )
     }
 }

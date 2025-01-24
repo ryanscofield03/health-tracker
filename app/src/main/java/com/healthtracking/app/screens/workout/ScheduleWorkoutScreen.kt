@@ -87,8 +87,8 @@ fun ToggleDayButton(
             .height(50.dp),
         shape = MaterialTheme.shapes.small,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected()) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f),
-            contentColor = if (isSelected()) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.6f)
+            containerColor = if (isSelected()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
+            contentColor = if (isSelected()) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
         )) {
         Text(text = dayName)
     }

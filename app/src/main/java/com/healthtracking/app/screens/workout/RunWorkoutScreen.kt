@@ -173,8 +173,8 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(id = R.string.arrow_left),
                 tint =
-                    if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.tertiary
-                    else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.secondary
+                else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
             )
 
             // Exercise Name
@@ -188,8 +188,8 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(id = R.string.arrow_right),
                 tint =
-                    if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.tertiary
-                    else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+                    if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.secondary
+                    else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
             )
         }
 

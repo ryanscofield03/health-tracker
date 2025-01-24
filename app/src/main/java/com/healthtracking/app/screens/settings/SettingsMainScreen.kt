@@ -116,9 +116,9 @@ fun ToggleMeasurementType(
             colors = ButtonDefaults.buttonColors(
                 containerColor =
                 if (measurementsSetting == "metric")
-                    MaterialTheme.colorScheme.tertiary
+                    MaterialTheme.colorScheme.secondary
                 else
-                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
+                    MaterialTheme.colorScheme.tertiary
             )
         ) {
             Text(text = stringResource(id = R.string.metric))
@@ -132,9 +132,9 @@ fun ToggleMeasurementType(
             colors = ButtonDefaults.buttonColors(
                 containerColor =
                 if (measurementsSetting == "imperial")
-                    MaterialTheme.colorScheme.tertiary
+                    MaterialTheme.colorScheme.secondary
                 else
-                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
+                    MaterialTheme.colorScheme.tertiary
             )
         ) {
             Text(

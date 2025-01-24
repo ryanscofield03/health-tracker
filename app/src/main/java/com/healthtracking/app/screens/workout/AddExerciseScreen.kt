@@ -153,9 +153,9 @@ fun ExerciseDisplayItem(
         shape = RoundedCornerShape(5.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
-            contentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.7f)
+            contentColor = MaterialTheme.colorScheme.onTertiary
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
             modifier = Modifier
@@ -175,7 +175,7 @@ fun ExerciseDisplayItem(
             Icon(
                 imageVector = if (isCurrentlySelected) Icons.Default.CheckCircle else Icons.Outlined.CheckCircle,
                 contentDescription = stringResource(id = R.string.add),
-                tint = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.7f)
+                tint = MaterialTheme.colorScheme.onTertiary
             )
         }
     }

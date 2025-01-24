@@ -116,6 +116,7 @@ fun WorkoutCard(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary
         ),
+        elevation = CardDefaults.cardElevation(4.dp),
         onClick = { runWorkout() }
     ) {
         Row(

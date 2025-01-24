@@ -122,7 +122,7 @@ class MainActivity : ComponentActivity() {
                 }) { innerPadding ->
                     val padding = PaddingValues(
                         start = 24.dp,
-1                        top = 40.dp,
+                        top = 40.dp,
                         end = 24.dp,
                         bottom = 144.dp
                     )
