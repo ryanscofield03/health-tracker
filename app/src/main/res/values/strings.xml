@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">HealthTracking</string>
 
+    <string name="cannot_find_error_message">Cannot find error message.</string>
+
     // Navigation Titles
     <string name="welcome_screen">Welcome"</string>
     <string name="workout_screen">Workout"</string>
@@ -33,7 +35,20 @@
     <string name="carbs">Carbs</string>
     <string name="fats">Fats</string>
     <string name="add_meal_entry">Add Meal Entry</string>
-    <string name="update_daily_food_goal">Update Daily Goal</string>
+    <string name="update_daily_food_goal">Update Daily Goals</string>
+    <string name="weekly_calories_and_macros_graph_title">Weekly Goal Progress</string>
+
+    <string name="invalid_protein_goal">Protein goal must be a positive number.</string>
+    <string name="invalid_carbs_goal">Carbs goal must be a positive number.</string>
+    <string name="invalid_fats_goal">Fats goal must be a positive number.</string>
+
+    <string name="protein_goal_label">Protein Goal</string>
+    <string name="carbs_goal_label">Carbs Goal</string>
+    <string name="fats_goal_label">Fats Goal</string>
+
+    <string name="protein_goal_placeholder">Enter protein goal</string>
+    <string name="carbs_goal_placeholder">Enter carbs goal</string>
+    <string name="fats_goal_placeholder">Enter fats goal</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

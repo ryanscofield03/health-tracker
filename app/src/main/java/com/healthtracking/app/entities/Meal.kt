@@ -2,9 +2,10 @@ package com.healthtracking.app.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
 /**
- * Entity for meals which stores necessary fields (name and list of food)
+ * Entity for meals which stores necessary fields (name and date) - actual food is crossref'd
  */
 @Entity(
     tableName = "meal"
@@ -12,5 +13,5 @@ import androidx.room.PrimaryKey
 data class Meal(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val foodItems: List<Food>
+    val date: LocalDateTime
 )

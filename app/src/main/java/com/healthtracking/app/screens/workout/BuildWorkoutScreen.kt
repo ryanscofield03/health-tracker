@@ -18,7 +18,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +37,7 @@ import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.screens.ErrorMessageComponent
 import com.healthtracking.app.screens.SaveAndCancelButtons
 import com.healthtracking.app.screens.ScreenHeader
+import com.healthtracking.app.screens.TextFieldWithErrorMessage
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,37 +57,20 @@ fun BuildWorkout(
         )
 
         // Workout name input
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+        TextFieldWithErrorMessage(
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
-            label = { Text(stringResource(id = R.string.workout_name_label)) },
-            placeholder = { Text(stringResource(id = R.string.workout_name_placeholder)) },
-            maxLines = 1,
-            isError = viewModel.nameErrorMessageId != null,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                errorLabelColor = MaterialTheme.colorScheme.onBackground
-            )
-        )
-        ErrorMessageComponent(
+            labelId = R.string.workout_name_label,
+            placeholderId = R.string.workout_name_placeholder,
             hasError = viewModel.nameErrorMessageId != null,
             errorMessageId = viewModel.nameErrorMessageId
         )
 
-        // Description name input
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+        TextFieldWithErrorMessage(
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
-            label = { Text( stringResource(id = R.string.description_label)) },
-            placeholder = { Text(stringResource(id = R.string.description_placeholder)) },
-            maxLines = 2,
-            isError = viewModel.nameErrorMessageId != null,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                errorLabelColor = MaterialTheme.colorScheme.onBackground
-            )
-        )
-        ErrorMessageComponent(
+            labelId = R.string.description_label,
+            placeholderId = R.string.description_placeholder,
             hasError = viewModel.descriptionErrorMessageId != null,
             errorMessageId = viewModel.descriptionErrorMessageId
         )
@@ -112,8 +95,8 @@ fun BuildWorkout(
             .border(
                 width = 1.dp,
                 color =
-                    if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
-                    else MaterialTheme.colorScheme.secondary,
+                if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(10.dp)
             )
         ) {

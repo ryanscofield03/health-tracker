@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.healthtracking.app.daos.ExerciseDao
 import com.healthtracking.app.daos.ExerciseHistoryDao
+import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.daos.SleepDao
 import com.healthtracking.app.daos.WorkoutBackupDao
 import com.healthtracking.app.daos.WorkoutDao
@@ -14,6 +15,7 @@ import com.healthtracking.app.database.converters.Converters
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.ExerciseHistoryCrossRef
+import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.entities.WorkoutBackup
 import com.healthtracking.app.entities.Workout
@@ -29,7 +31,8 @@ import com.healthtracking.app.entities.WorkoutExerciseCrossRef
                         ExerciseHistory::class,
                         ExerciseHistoryCrossRef::class,
                         WorkoutBackup::class,
-                        Sleep::class
+                        Sleep::class,
+                        Meal::class
                      ], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -39,6 +42,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutBackupDao(): WorkoutBackupDao
 
     abstract fun sleepDao(): SleepDao
+
+    abstract fun mealDao(): MealDao
 
     companion object {
         @Volatile

@@ -1,5 +1,10 @@
 package com.healthtracking.app.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +17,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -26,20 +33,45 @@ import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 
 @Composable
+fun TextFieldWithErrorMessage(
+    value: String?,
+    onValueChange: (String) -> Unit,
+    labelId: Int,
+    placeholderId: Int,
+    hasError: Boolean,
+    errorMessageId: Int?
+) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = value ?: "",
+        onValueChange = { onValueChange(it) },
+        label = { Text(stringResource(id = labelId)) },
+        placeholder = { Text(stringResource(id = placeholderId)) },
+        maxLines = 1,
+        isError = hasError,
+        colors = TextFieldDefaults.colors(
+            errorContainerColor = MaterialTheme.colorScheme.background,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+        )
+    )
+    ErrorMessageComponent(hasError = hasError, errorMessageId = errorMessageId)
+}
+
+@Composable
 fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(5.dp))
-        if (hasError) {
+        AnimatedVisibility(
+            visible = hasError,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { -it / 2 }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { -it / 2 })
+        ) {
             Text(
-                text = stringResource(id = errorMessageId!!),
+                text = stringResource(id = errorMessageId ?: R.string.cannot_find_error_message),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
-        } else {
-            val lineHeight = with(LocalDensity.current) {
-                MaterialTheme.typography.bodySmall.lineHeight.toDp()
-            }
-            Box(modifier = Modifier.height(lineHeight))
         }
         Spacer(modifier = Modifier.height(10.dp))
     }

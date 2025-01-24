@@ -11,12 +11,12 @@ val PrimaryDark = Color(0xFF1B3A61)
 val SecondaryDark = Color(0xFF3C598F)
 val TertiaryDark = Color(0xFF394C6D)
 
-val DarkGray = Color(0xFF1C1C1E)
-val LightGray = Color(0xFFF2F2F2)
+val DarkGray = Color(0xFF29292B)
+val LightGray = Color(0xFFD9D9D9)
 
 val ErrorRedDark = Color(0xFFAC2424)
-val ErrorRedLight = Color(0xFFB11919)
-val ErrorRed = Color(0xFFFF2424)
+val ErrorRedLight = Color(0xFFDA3B3B)
+val ErrorRed = Color(0xFFCE4949)
 val SuccessGreen = Color(0xFF4CAF50)
 
 val CaloriesColour = Color(0xB2FF0000)

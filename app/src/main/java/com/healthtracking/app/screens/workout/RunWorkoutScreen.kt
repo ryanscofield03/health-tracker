@@ -27,12 +27,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.screens.SaveAndCancelButtons
+import com.healthtracking.app.screens.TextFieldWithErrorMessage
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import java.time.Duration
 import java.util.Locale
@@ -214,21 +215,26 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             TableCell(text = "Weight", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
             TableCell(text = "Reps", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
         }
+
+        val exerciseEntries by viewModel.exerciseEntries.collectAsState()
+        val exerciseHistory by viewModel.exerciseHistory.collectAsState()
         LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
             // Data rows
             for (i in 0..< max(
-                a = viewModel.currentExerciseEntries.size + 1,
-                b = viewModel.currentExerciseHistory?.data?.size ?: 0,
+                a = exerciseEntries[viewModel.currentExerciseIndex].size + 1,
+                b = exerciseHistory.size,
             )) {
                 item {
-                    val entry: Pair<Int, Int>? = viewModel.currentExerciseEntries.getOrNull(i)
+                    val entry: Pair<Int, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
                     val weight = entry?.first ?: "-"
                     val reps = entry?.second ?: "-"
 
                     var historyWeight = "-"
                     var historyReps = "-"
-                    if (viewModel.currentExerciseHistory != null) {
-                        val historyData = viewModel.currentExerciseHistory!!.data.getOrNull(i)
+                    if (exerciseHistory.size > viewModel.currentExerciseIndex &&
+                        exerciseHistory[viewModel.currentExerciseIndex] != null)
+                    {
+                        val historyData = exerciseHistory[viewModel.currentExerciseIndex]!!.data.getOrNull(i)
                         historyWeight = historyData?.first?.toString() ?: "-"
                         historyReps = historyData?.second?.toString() ?: "-"
                     }
@@ -242,7 +248,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                             )
                             .pointerInput(Unit) {
                                 detectTapGestures(
-                                    onPress = {
+                                    onDoubleTap = {
                                         if (viewModel.canEditEntry(index = i)) {
                                             openEntryDialog.value = true
                                             viewModel.updateEditingEntryIndex(index = i)
@@ -311,48 +317,24 @@ fun EntryDialog(
                 )
 
                 // Weight Input Field
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                TextFieldWithErrorMessage(
                     value = weight,
                     onValueChange = updateWeight,
-                    label = { Text(stringResource(id = R.string.weight_label)) },
-                    placeholder = { Text(stringResource(id = R.string.weight_placeholder)) },
-                    maxLines = 1,
-                    isError = !validWeight,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        errorBorderColor = MaterialTheme.colorScheme.error
-                    )
+                    labelId = R.string.weight_label,
+                    placeholderId = R.string.weight_label,
+                    hasError = !validWeight,
+                    errorMessageId = weightErrorMessageId
                 )
-                if (!validWeight) {
-                    Text(
-                        text = stringResource(id = weightErrorMessageId),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
 
                 // Reps Input Field
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                TextFieldWithErrorMessage(
                     value = reps,
                     onValueChange = updateReps,
-                    label = { Text(stringResource(id = R.string.reps_label)) },
-                    placeholder = { Text(stringResource(id = R.string.reps_placeholder)) },
-                    maxLines = 1,
-                    isError = !validReps,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        errorBorderColor = MaterialTheme.colorScheme.error
-                    )
+                    labelId = R.string.reps_label,
+                    placeholderId = R.string.reps_placeholder,
+                    hasError = !validReps,
+                    errorMessageId = repsErrorMessageId
                 )
-                if (!validReps) {
-                    Text(
-                        text = stringResource(id = repsErrorMessageId),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
 
                 Row(
                     modifier = Modifier

@@ -15,6 +15,8 @@ import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -42,6 +44,7 @@ class RunWorkoutViewModel(
 
     // current index of the workout - user controlled
     private val _currentExerciseIndex = mutableIntStateOf(savedStateHandle.get<Int>(CURRENT_EXERCISE_INDEX_KEY) ?: 0)
+    val currentExerciseIndex get() = _currentExerciseIndex.intValue
 
     // current exercise - based on index
     val currentExercise: Exercise
@@ -49,16 +52,14 @@ class RunWorkoutViewModel(
 
     // historical data for the workout
     private val _exercisesHistory = MutableStateFlow<List<ExerciseHistory?>>(emptyList())
-    val currentExerciseHistory: ExerciseHistory? get() =
-        _exercisesHistory.value.getOrNull(_currentExerciseIndex.intValue)
+    val exerciseHistory: StateFlow<List<ExerciseHistory?>> get() = _exercisesHistory.asStateFlow()
 
     // user entries for the workout - user controlled
-    private val _exerciseEntries = mutableStateOf(
-        savedStateHandle.get<List<MutableList<Pair<Int, Int>>>>(EXERCISE_ENTRIES_KEY)
+    private val _exerciseEntries = MutableStateFlow(
+        value = savedStateHandle.get<List<MutableList<Pair<Int, Int>>>>(EXERCISE_ENTRIES_KEY)
             ?: exercises.map { mutableListOf() }
     )
-    val currentExerciseEntries: List<Pair<Int, Int>>
-        get() = _exerciseEntries.value[_currentExerciseIndex.intValue]
+    val exerciseEntries: StateFlow<List<MutableList<Pair<Int, Int>>>> = _exerciseEntries.asStateFlow()
 
     // data for new entry
     private val _newWeight = mutableStateOf("")
@@ -185,11 +186,11 @@ class RunWorkoutViewModel(
             val pair = Pair(newWeight.toInt(), newReps.toInt())
 
             if (_editingEntryIndex.value != null) {
-                val updatedEntries = _exerciseEntries.value.toMutableList()
+                val updatedEntries = _exerciseEntries.value.map { it.toMutableList() }.toMutableList()
                 updatedEntries[_currentExerciseIndex.intValue][_editingEntryIndex.value!!] = pair
                 _exerciseEntries.value = updatedEntries
             } else {
-                val updatedEntries = _exerciseEntries.value.toMutableList()
+                val updatedEntries = _exerciseEntries.value.map { it.toMutableList() }.toMutableList()
                 updatedEntries[_currentExerciseIndex.intValue].add(pair)
                 _exerciseEntries.value = updatedEntries
 
@@ -222,7 +223,7 @@ class RunWorkoutViewModel(
      * Checks to see if given index of current exercise has an entry already
      */
     fun canEditEntry(index: Int): Boolean {
-        return currentExerciseEntries.size > index
+        return exerciseEntries.value[currentExerciseIndex].size > index
     }
 
     fun updateEditingEntryIndex(index: Int) {

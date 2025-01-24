@@ -53,8 +53,10 @@ import com.healthtracking.app.screens.workout.RunWorkout
 import com.healthtracking.app.screens.workout.ScheduleWorkout
 import com.healthtracking.app.screens.workout.WorkoutMain
 import com.healthtracking.app.ui.theme.HealthTrackingTheme
+import com.healthtracking.app.viewmodels.database.MealViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.MealScreenViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
@@ -107,11 +109,11 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
                     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
                     if (currentDestination != stringResource(R.string.welcome_screen)) {
-                        NavigationBar {
+                        NavigationBar(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)) {
                             tabBarItems.forEachIndexed {index, item ->
                                 NavigationBarItem(
                                     colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
+                                        indicatorColor = MaterialTheme.colorScheme.secondary
                                     ),
                                     label = { Text(text = item.title, style = MaterialTheme.typography.labelSmall)},
                                     selected = selectedTabIndex == index,
@@ -253,8 +255,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("Eat"){
+                            val mealViewModel: MealScreenViewModel by koinViewModel()
                             EatMain(
-                                modifier = Modifier.padding(padding)
+                                modifier = Modifier.padding(padding),
+                                viewModel = mealViewModel
                             )
                         }
                         composable("Sleep"){
