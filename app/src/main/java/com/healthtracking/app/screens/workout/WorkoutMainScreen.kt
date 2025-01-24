@@ -51,10 +51,7 @@ fun WorkoutMain(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenHeader(
-            headerStringId = R.string.my_workouts_title,
-            spacerSize = 16.dp
-        )
+        ScreenHeader(headerStringId = R.string.my_workouts_title)
 
         val innerModifier = Modifier
             .fillMaxWidth()

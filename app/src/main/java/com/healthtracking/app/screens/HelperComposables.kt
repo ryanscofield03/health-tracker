@@ -99,7 +99,7 @@ fun Modifier.disabled(colourWeight: Float): Modifier {
 @Composable
 fun ScreenHeader(
     headerStringId: Int,
-    spacerSize: Dp = 16.dp
+    spacerSize: Dp = 12.dp
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(

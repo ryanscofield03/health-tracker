@@ -58,10 +58,7 @@ fun EatMain (
     modifier: Modifier
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        ScreenHeader(
-            headerStringId = R.string.eat_title,
-            spacerSize = 8.dp
-        )
+        ScreenHeader(headerStringId = R.string.eat_title)
 
         // Display today's calories and macros
         Row(

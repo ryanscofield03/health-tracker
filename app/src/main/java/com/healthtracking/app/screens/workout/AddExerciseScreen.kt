@@ -73,10 +73,7 @@ fun AddExercise(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ScreenHeader(
-            headerStringId = R.string.add_exercise,
-            spacerSize = 8.dp
-        )
+        ScreenHeader(headerStringId = R.string.add_exercise)
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             itemsIndexed(exerciseGroups) { _, exerciseGroup ->

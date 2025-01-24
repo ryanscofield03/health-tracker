@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -208,10 +209,10 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
 
         // Header Row
         Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
-            TableCell(text = "Weight") // TODO fix
-            TableCell(text = "Reps") // TODO fix
-            TableCell(text = "Weight") // TODO fix
-            TableCell(text = "Reps") // TODO fix
+            TableCell(text = "Weight", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
+            TableCell(text = "Reps", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
+            TableCell(text = "Weight", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
+            TableCell(text = "Reps", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
         }
         LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
             // Data rows
@@ -447,7 +448,8 @@ fun EndWorkoutConfirmationDialog(
 
 @Composable
 fun RowScope.TableCell(
-    text: String
+    text: String,
+    textColor: Color = Color.Black
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -457,7 +459,7 @@ fun RowScope.TableCell(
             .height(40.dp)
             .fillMaxSize()
     ) {
-        Text(text = text)
+        Text(text = text, color = textColor)
     }
 }
 

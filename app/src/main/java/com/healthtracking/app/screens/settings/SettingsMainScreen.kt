@@ -42,8 +42,7 @@ fun SettingsMain (
         modifier = modifier.fillMaxSize()
     ) {
         ScreenHeader(
-            headerStringId = R.string.settings_screen,
-            spacerSize = 16.dp
+            headerStringId = R.string.settings_screen
         )
         LanguagePicker(
             languageSetting = viewModel.languageSetting.collectAsState().value,

@@ -60,10 +60,7 @@ fun SleepMain(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        ScreenHeader(
-            headerStringId = R.string.track_your_sleep,
-            spacerSize = 16.dp
-        )
+        ScreenHeader(headerStringId = R.string.track_your_sleep)
 
         Spacer(modifier = Modifier.height(20.dp))
         Column(
