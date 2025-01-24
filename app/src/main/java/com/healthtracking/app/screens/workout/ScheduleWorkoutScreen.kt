@@ -1,5 +1,6 @@
 package com.healthtracking.app.screens.workout
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,13 +8,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -60,7 +60,7 @@ fun ScheduleWorkout(
 
         Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
             Button(
-                onClick = { navController.navigate("addWorkout") },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -80,16 +80,29 @@ fun ToggleDayButton(
     toggle: () -> Unit,
     isSelected: () -> Boolean
 ){
+    val selected = isSelected()
+
+    // Use animateColorAsState to smoothly animate color changes based on the state
+    val containerColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
+        label = "AnimateColourChange",
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.onSecondary
+        else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f),
+        label = "AnimateColourChange"
+    )
+
     Button(
         onClick = { toggle() },
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         shape = MaterialTheme.shapes.small,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected()) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
-            contentColor = if (isSelected()) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
-        )) {
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor)
+    ) {
         Text(text = dayName)
     }
 }

@@ -1,6 +1,16 @@
 package com.healthtracking.app.screens.workout
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -78,7 +88,7 @@ fun AddExercise(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             itemsIndexed(exerciseGroups) { _, exerciseGroup ->
                 Button(
-                    modifier = Modifier.padding(vertical = 7.dp),
+                    modifier = Modifier.padding(vertical = 8.dp),
                     onClick = { selectedExerciseGroup = exerciseGroup },
                     colors = ButtonDefaults.buttonColors(
                         containerColor =
@@ -94,21 +104,30 @@ fun AddExercise(
             }
         }
 
-        LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
-            val exerciseList = getExerciseList(context, selectedExerciseGroup)
-            if (exerciseList != null) {
-                itemsIndexed(exerciseList) { _, exerciseName: String ->
-                    ExerciseDisplayItem(
-                        name = exerciseName,
-                        onClick = {
-                            if (selectedExercises.contains(exerciseName)) {
-                                selectedExercises.removeAll{it == exerciseName}
-                            } else {
-                                selectedExercises.add(exerciseName)
-                            }
-                        },
-                        isCurrentlySelected = selectedExercises.contains(exerciseName)
-                    )
+        AnimatedContent(
+            targetState = selectedExerciseGroup,
+            label = "AnimateChangePage",
+            transitionSpec = {
+                (slideInHorizontally { it } + fadeIn())
+                    .togetherWith(slideOutVertically { -it } + fadeOut())
+            }
+        ) { currentGroup ->
+            val exerciseList = getExerciseList(context, currentGroup)
+            LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
+                if (exerciseList != null) {
+                    itemsIndexed(exerciseList) { _, exerciseName: String ->
+                        ExerciseDisplayItem(
+                            name = exerciseName,
+                            onClick = {
+                                if (selectedExercises.contains(exerciseName)) {
+                                    selectedExercises.removeAll{it == exerciseName}
+                                } else {
+                                    selectedExercises.add(exerciseName)
+                                }
+                            },
+                            isCurrentlySelected = selectedExercises.contains(exerciseName)
+                        )
+                    }
                 }
             }
         }

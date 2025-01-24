@@ -4,6 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,6 +40,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.screens.eat.EatMain
 import com.healthtracking.app.screens.Welcome
@@ -126,11 +133,49 @@ class MainActivity : ComponentActivity() {
                         end = 24.dp,
                         bottom = 144.dp
                     )
+
+                    val routeList = listOf("Welcome", "Workout", "Eat", "Sleep", "Stats", "Settings")
+
                     NavHost(
                         navController = navController,
                         startDestination = "Welcome",
-                        modifier = Modifier
-                            .fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        enterTransition = {
+                            val initialRoute = navController.previousBackStackEntry?.destination?.route
+                            val destinationRoute = navController.currentBackStackEntry?.destination?.route
+
+                            val initialRouteIndex = routeList.indexOf(initialRoute)
+                            val destinationRouteIndex = routeList.indexOf(destinationRoute)
+
+                            if (!routeList.contains(destinationRoute) || !routeList.contains(initialRoute)) {
+                                // slide up
+                                slideInVertically( initialOffsetY = { 1000 }) + fadeIn()
+                            } else if (destinationRouteIndex > initialRouteIndex) {
+                                // moving right
+                                slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn()
+                            } else {
+                                // moving left
+                                slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn()
+                            }
+                        },
+                        exitTransition = {
+                            val initialRoute = navController.previousBackStackEntry?.destination?.route
+                            val destinationRoute = navController.currentBackStackEntry?.destination?.route
+
+                            val initialRouteIndex = routeList.indexOf(initialRoute)
+                            val destinationRouteIndex = routeList.indexOf(destinationRoute)
+
+                            if (!routeList.contains(destinationRoute) || !routeList.contains(initialRoute)) {
+                                // slide up
+                                slideOutVertically( targetOffsetY = { -1000 }) + fadeOut()
+                            } else if (destinationRouteIndex > initialRouteIndex) {
+                                // moving right
+                                slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut()
+                            } else {
+                                // moving left
+                                slideOutHorizontally(targetOffsetX = { 1000 }) + fadeOut()
+                            }
+                        }
                     ) {
                         composable("Welcome") {
                             Welcome(
