@@ -14,5 +14,5 @@ interface WorkoutBackupDao {
     fun getWorkoutBackup(workoutId: Long): WorkoutBackup?
 
     @Query("DELETE FROM workout_backup WHERE id = :workoutId")
-    fun deleteWorkoutBackup(workoutId: Long)
+    fun deleteWorkoutBackup(workoutId: Long): Int
 }

@@ -1,7 +1,11 @@
 [versions]
-accompanistNavigationAnimationVersion = "0.31.5-beta"
 agp = "8.8.0"
 gson = "2.10.1"
+junitJupiter = "5.11.4"
+junitJupiterApi = "5.11.4"
+junitJupiterEngine = "5.11.4"
+junitJupiterEngineVersion = "5.9.0"
+junitJupiterVersion = "5.11.4"
 koinAndroid = "3.5.0"
 koinAndroidxCompose = "3.4.0"
 kotlin = "2.1.0"
@@ -43,6 +47,10 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "roomCompiler" }
 androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomCompiler" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomCompiler" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiterVersion" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+junit-jupiter-engine-v590 = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngineVersion" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
