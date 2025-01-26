@@ -1,10 +1,9 @@
-package com.healthtracking.app.screens.workout
+package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Workout
-import com.healthtracking.app.screens.ScreenHeader
+import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 
 @Composable

@@ -1,4 +1,4 @@
-package com.healthtracking.app.screens.workout
+package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,9 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
-import com.healthtracking.app.screens.ErrorMessageComponent
-import com.healthtracking.app.screens.SaveAndCancelButtons
-import com.healthtracking.app.screens.ScreenHeader
-import com.healthtracking.app.screens.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.ErrorMessageComponent
+import com.healthtracking.app.composables.SaveAndCancelButtons
+import com.healthtracking.app.composables.ScreenHeader
+import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

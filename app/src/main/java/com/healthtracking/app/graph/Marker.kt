@@ -27,6 +27,9 @@ import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 
+/**
+ * Taken from sample of Vico library
+ */
 @Composable
 internal fun rememberMarker(
     valueFormatter: DefaultCartesianMarker.ValueFormatter =

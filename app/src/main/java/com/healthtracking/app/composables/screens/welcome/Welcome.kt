@@ -1,4 +1,4 @@
-package com.healthtracking.app.screens
+package com.healthtracking.app.composables.screens.welcome
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement

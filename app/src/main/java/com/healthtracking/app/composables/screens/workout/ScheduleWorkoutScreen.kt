@@ -1,4 +1,4 @@
-package com.healthtracking.app.screens.workout
+package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.screens.ScreenHeader
+import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import java.time.DayOfWeek
 

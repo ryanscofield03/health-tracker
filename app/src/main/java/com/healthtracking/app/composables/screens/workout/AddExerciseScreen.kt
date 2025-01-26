@@ -1,16 +1,12 @@
-package com.healthtracking.app.screens.workout
+package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
-import com.healthtracking.app.screens.SaveAndCancelButtons
-import com.healthtracking.app.screens.ScreenHeader
+import com.healthtracking.app.composables.SaveAndCancelButtons
+import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.services.getExerciseList
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 

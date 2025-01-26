@@ -81,7 +81,10 @@ class RunWorkoutViewModel(
     private val _timerStart: MutableState<LocalDateTime> = mutableStateOf(LocalDateTime.now())
     var timer: MutableState<JavaDuration> = mutableStateOf(Duration.ZERO)
 
+    private var canBackup: Boolean = true
+
     init {
+        canBackup = true
         loadExerciseHistories()
         loadBackup()
         startTimer()
@@ -123,13 +126,15 @@ class RunWorkoutViewModel(
      * Persists user data to be restored later if backup is needed
      */
     private fun saveBackup() {
-        viewModelScope.launch {
-            workoutBackupViewModel.addWorkoutBackup(
-                workoutId = workout.id,
-                exerciseIndex = _currentExerciseIndex.intValue,
-                entries = _exerciseEntries.value,
-                timerStart = _timerStart.value
-            )
+        if (canBackup) {
+            viewModelScope.launch {
+                workoutBackupViewModel.addWorkoutBackup(
+                    workoutId = workout.id,
+                    exerciseIndex = _currentExerciseIndex.intValue,
+                    entries = _exerciseEntries.value,
+                    timerStart = _timerStart.value
+                )
+            }
         }
     }
 
@@ -330,7 +335,8 @@ class RunWorkoutViewModel(
      * Remove all data from view model for next usage
      */
     fun clearViewModel() {
-        removeBackup()
+        resetTimer()
+        stopTimer()
 
         savedStateHandle[EXERCISE_ENTRIES_KEY] = null
         savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = null
@@ -338,7 +344,7 @@ class RunWorkoutViewModel(
         _currentExerciseIndex.intValue = 0
         _exerciseEntries.value = exercises.map { mutableListOf() }
 
-        resetTimer()
-        stopTimer()
+        canBackup = false
+        removeBackup()
     }
 }

@@ -12,6 +12,7 @@ val SecondaryDark = Color(0xFF3C598F)
 val TertiaryDark = Color(0xFF394C6D)
 
 val DarkGray = Color(0xFF29292B)
+val DisabledGray = Color(0xFFBFBFC1)
 val LightGray = Color(0xFFD9D9D9)
 
 val ErrorRedDark = Color(0xFFAC2424)

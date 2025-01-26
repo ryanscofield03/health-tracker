@@ -1,11 +1,14 @@
-package com.healthtracking.app.screens.eat
+package com.healthtracking.app.composables.screens.eat
 
+import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -119,7 +122,9 @@ fun BarChart(
             startAxis = VerticalAxis.rememberStart(
                 valueFormatter = StartAxisValueFormatter,
                 itemPlacer = StartAxisItemPlacer,
-                label = TextComponent(textSizeSp = 10f),
+
+                // only accepts Int values for colour rather than Color objects
+                label = TextComponent(textSizeSp = 10f, color = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK),
                 labelRotationDegrees = -25f,
             ),
             layerPadding = { cartesianLayerPadding(scalableStart = 4.dp, scalableEnd = 4.dp) },

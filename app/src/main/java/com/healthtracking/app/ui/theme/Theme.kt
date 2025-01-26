@@ -28,7 +28,7 @@ private val DarkColorScheme = darkColorScheme(
     onSurface = Color.White,
     error = ErrorRed,
     errorContainer = ErrorRedDark,
-    onError = Color.White
+    onError = Color.White,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -44,7 +44,9 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color.Black,
     error = ErrorRed,
     errorContainer = ErrorRedLight,
-    onError = Color.White
+    onError = Color.White,
+
+    surfaceVariant = DisabledGray
 )
 
 val primaryFont = FontFamily(

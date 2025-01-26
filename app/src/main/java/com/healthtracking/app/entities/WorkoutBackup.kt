@@ -8,7 +8,7 @@ import java.time.LocalDateTime
     tableName = "workout_backup"
 )
 data class WorkoutBackup(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey val id: Long,
     val exerciseIndex: Int,
     val entries: List<List<Pair<Int, Int>>>,
     val timerStart: LocalDateTime

@@ -1,4 +1,4 @@
-package com.healthtracking.app.screens.workout
+package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -45,8 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.screens.SaveAndCancelButtons
-import com.healthtracking.app.screens.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.SaveAndCancelButtons
+import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import java.time.Duration
 import java.util.Locale
@@ -92,7 +93,10 @@ fun RunWorkout(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
+        HorizontalDivider(
+            thickness = 2.dp,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f)
+        )
         Spacer(modifier = Modifier.height(8.dp))
 
         RunExerciseBlock(viewModel = viewModel)
@@ -218,11 +222,17 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
 
         val exerciseEntries by viewModel.exerciseEntries.collectAsState()
         val exerciseHistory by viewModel.exerciseHistory.collectAsState()
+        var history: ExerciseHistory? = null
+        if (exerciseHistory.size > viewModel.currentExerciseIndex
+            && exerciseHistory[viewModel.currentExerciseIndex] != null) {
+            history = exerciseHistory[viewModel.currentExerciseIndex]!!
+        }
+
         LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
             // Data rows
             for (i in 0..< max(
                 a = exerciseEntries[viewModel.currentExerciseIndex].size + 1,
-                b = exerciseHistory.size,
+                b = history?.data?.size ?: 0,
             )) {
                 item {
                     val entry: Pair<Int, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
@@ -449,10 +459,12 @@ fun RowScope.TableCell(
 fun StopWatch(
     duration: Duration
 ) {
+    val errorAlphaValue = 0.2f + duration.seconds * 0.005.toFloat()
+
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f + duration.seconds * 0.005.toFloat()))
+            .background(color = MaterialTheme.colorScheme.error.copy(alpha = errorAlphaValue))
             .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {

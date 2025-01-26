@@ -28,6 +28,9 @@
     <string name="good">Good</string>
     <string name="great">Great</string>
 
+    <string name="start_time_title">Start Time</string>
+    <string name="end_time_title">End Time</string>
+
     // Eat Screen
     <string name="eat_title">Track Your Food</string>
     <string name="calories">Calories</string>
@@ -109,6 +112,7 @@
     <string name="finish">Finish</string>
     <string name="pause">Pause</string>
     <string name="finish_anyway">Finish Anyway</string>
+    <string name="close">Close</string>
 
     //Days
     <string name="monday">Monday</string>

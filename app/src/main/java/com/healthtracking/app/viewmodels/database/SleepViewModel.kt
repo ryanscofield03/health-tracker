@@ -36,20 +36,23 @@ class SleepViewModel(
 
     fun updateSleepEntry(
         id: Long,
-        date: LocalDate,
         startTime: LocalTime,
         endTime: LocalTime,
         rating: Int
     ) {
+
         viewModelScope.launch {
-            val sleep = Sleep(
-                id = id,
-                date = date,
-                startTime = startTime,
-                endTime = endTime,
-                rating = rating
-            )
-            sleepDao.upsertSleepEntry(sleep)
+            val date = getSleepEntry(sleepId = id)?.date
+            if (date != null) {
+                val sleep = Sleep(
+                    id = id,
+                    date = date,
+                    startTime = startTime,
+                    endTime = endTime,
+                    rating = rating
+                )
+                sleepDao.upsertSleepEntry(sleep)
+            }
         }
     }
 

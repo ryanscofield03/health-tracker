@@ -1,4 +1,4 @@
-package com.healthtracking.app.screens.eat
+package com.healthtracking.app.composables.screens.eat
 
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.background
@@ -47,8 +47,8 @@ import androidx.compose.ui.window.Dialog
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
-import com.healthtracking.app.screens.ScreenHeader
-import com.healthtracking.app.screens.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.ScreenHeader
+import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.ui.theme.CaloriesColour
 import com.healthtracking.app.ui.theme.CarbsColour
 import com.healthtracking.app.ui.theme.FatsColour
