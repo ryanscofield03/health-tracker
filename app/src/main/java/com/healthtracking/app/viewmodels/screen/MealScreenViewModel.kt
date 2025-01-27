@@ -36,6 +36,15 @@ class MealScreenViewModel(private val mealViewModel: MealViewModel): ViewModel()
     val fatDialogValueValid: Boolean get() = dialogFatsValueValid || !fatsCanError.value
 
     /**
+     * Populate the dialog box with the current goals
+     */
+    fun populateDialogEntries() {
+        _dialogProteinValue.value = goalProtein.toString()
+        _dialogCarbohydratesValue.value = goalCarbohydrates.toString()
+        _dialogFatsValue.value = goalFats.toString()
+    }
+
+    /**
      * Update the string value of the dialog for protein
      */
     fun updateDialogProtein(newProteinValue: String?) {
@@ -68,8 +77,8 @@ class MealScreenViewModel(private val mealViewModel: MealViewModel): ViewModel()
     fun updateGoals(): Boolean {
         if (dialogProteinValueValid  && dialogCarbohydratesValueValid && dialogFatsValueValid) {
             mealViewModel.updateProteinGoal(dialogProteinValue!!.toInt())
-            mealViewModel.updateProteinGoal(dialogCarbohydratesValue!!.toInt())
-            mealViewModel.updateProteinGoal(dialogFatsValue!!.toInt())
+            mealViewModel.updateCarbohydratesGoal(dialogCarbohydratesValue!!.toInt())
+            mealViewModel.updateFatsGoal(dialogFatsValue!!.toInt())
 
             return true
         }
@@ -85,10 +94,6 @@ class MealScreenViewModel(private val mealViewModel: MealViewModel): ViewModel()
      * Clears the dialog box
      */
     fun clearDialog() {
-        _dialogProteinValue.value = null
-        _dialogCarbohydratesValue.value = null
-        _dialogFatsValue.value = null
-
         proteinCanError.value = false
         carbsCanError.value = false
         fatsCanError.value = false

@@ -196,26 +196,31 @@ fun EatMain (
                 .fillMaxHeight(0.5f),
             horizontalArrangement = Arrangement.spacedBy(12.dp))
         {
+            val openEditGoalDialog = {
+                openUpdateDailyGoalDialog.value = true
+                viewModel.populateDialogEntries()
+            }
+
             Column(modifier = Modifier
                 .fillMaxSize()
                 .weight(0.65f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 CaloriesCard(
-                    onClick = { openUpdateDailyGoalDialog.value = true },
+                    onClick = openEditGoalDialog,
                     caloriesCurrent = 1800,
-                    caloriesTotal = 2500
+                    caloriesTotal = viewModel.goalCalories
                 )
 
                 WeeklyGraph()
             }
             Box(modifier = Modifier.weight(0.35f)) {
                 MacroCards(
-                    onClick = { openUpdateDailyGoalDialog.value = true },
+                    onClick = openEditGoalDialog,
                     proteinCurrent = 80L,
-                    proteinTotal = 100L,
+                    proteinTotal = viewModel.goalProtein,
                     carbsCurrent = 120L,
-                    carbsTotal = 200L,
+                    carbsTotal = viewModel.goalCarbohydrates,
                     fatsCurrent = 15L,
-                    fatsTotal = 40L,
+                    fatsTotal = viewModel.goalFats,
                 )
             }
         }
@@ -299,7 +304,7 @@ fun ColumnScope.WeeklyGraph() {
 @Composable
 fun ColumnScope.CaloriesCard(
     caloriesCurrent: Long,
-    caloriesTotal: Long,
+    caloriesTotal: Int,
     onClick: () -> Unit
 ) {
     Card(
@@ -341,11 +346,11 @@ fun ColumnScope.CaloriesCard(
 fun MacroCards(
     onClick: () -> Unit,
     proteinCurrent: Long,
-    proteinTotal: Long,
+    proteinTotal: Int,
     carbsCurrent: Long,
-    carbsTotal: Long,
+    carbsTotal: Int,
     fatsCurrent: Long,
-    fatsTotal: Long
+    fatsTotal: Int
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),

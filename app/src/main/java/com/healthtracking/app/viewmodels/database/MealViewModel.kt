@@ -47,6 +47,8 @@ class MealViewModel(context: Context, mealDao: MealDao): ViewModel() {
             .edit()
             .putInt(PROTEIN_KEY, newProteinGoal)
             .apply()
+
+        _goalProtein.value = newProteinGoal
     }
 
     fun updateCarbohydratesGoal(newCarbohydratesGoal: Int) {
@@ -54,6 +56,8 @@ class MealViewModel(context: Context, mealDao: MealDao): ViewModel() {
             .edit()
             .putInt(CARBOHYDRATES_KEY, newCarbohydratesGoal)
             .apply()
+
+        _goalCarbohydrates.value = newCarbohydratesGoal
     }
 
     fun updateFatsGoal(newFatsGoal: Int) {
@@ -61,6 +65,8 @@ class MealViewModel(context: Context, mealDao: MealDao): ViewModel() {
             .edit()
             .putInt(FATS_KEY, newFatsGoal)
             .apply()
+
+        _goalFats.value = newFatsGoal
     }
 
     override fun onCleared() {
