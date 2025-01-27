@@ -70,8 +70,9 @@ fun SleepMain(
         Column(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.3f),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .weight(0.26f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             if (sleepEntries != null && sleepEntries!!.isNotEmpty()) {
                 PastSleepEntries(
@@ -84,7 +85,7 @@ fun SleepMain(
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().weight(0.7f),
             verticalArrangement = Arrangement.Bottom
         ) {
             AddSleepEntry(
@@ -119,7 +120,7 @@ fun PastSleepEntryCard(
     pastSleepEntry: Sleep,
     openEditSleepEntry: () -> Unit
 ) {
-    val hoursSlept = calculateTimeSlept(
+    val hoursSlept: String = calculateTimeSlept(
         startTime = pastSleepEntry.startTime,
         endTime = pastSleepEntry.endTime
     )
@@ -185,7 +186,9 @@ fun PastSleepEntryCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
