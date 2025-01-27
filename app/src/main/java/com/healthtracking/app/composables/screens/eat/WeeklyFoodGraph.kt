@@ -20,6 +20,8 @@ import com.healthtracking.app.ui.theme.CarbsColour
 import com.healthtracking.app.ui.theme.FatsColour
 import com.healthtracking.app.ui.theme.ProteinColour
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
@@ -55,6 +57,8 @@ private val StartAxisValueFormatter = CartesianValueFormatter { _, value, _ ->
 private val BottomAxisLabelKey = ExtraStore.Key<List<String>>()
 
 private val BottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
+    println(x)
+    println(context.model.extraStore[BottomAxisLabelKey][x.toInt()])
     context.model.extraStore[BottomAxisLabelKey][x.toInt()]
 }
 
@@ -122,10 +126,22 @@ fun BarChart(
             startAxis = VerticalAxis.rememberStart(
                 valueFormatter = StartAxisValueFormatter,
                 itemPlacer = StartAxisItemPlacer,
-
+                line = rememberAxisLineComponent(
+                    fill(color = MaterialTheme.colorScheme.onBackground)
+                ),
+                guideline = rememberAxisGuidelineComponent(
+                    fill(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                ),
                 // only accepts Int values for colour rather than Color objects
                 label = TextComponent(textSizeSp = 10f, color = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK),
                 labelRotationDegrees = -25f,
+            ),
+            bottomAxis = HorizontalAxis.rememberBottom(
+                label = TextComponent(textSizeSp = 12f, color = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK),
+                valueFormatter = BottomAxisValueFormatter,
+                line = rememberAxisLineComponent(
+                    fill(color = MaterialTheme.colorScheme.onBackground)
+                ),
             ),
             layerPadding = { cartesianLayerPadding(scalableStart = 4.dp, scalableEnd = 4.dp) },
             marker = rememberMarker(MarkerValueFormatter)
