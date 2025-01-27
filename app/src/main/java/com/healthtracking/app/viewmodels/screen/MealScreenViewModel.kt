@@ -45,6 +45,21 @@ class MealScreenViewModel(private val mealViewModel: MealViewModel): ViewModel()
     }
 
     /**
+     * Calculate the calories goal based on the macros
+     */
+    fun getCalorieGoal(): String {
+        return if (dialogProteinValue?.toIntOrNull() != null &&
+            dialogCarbohydratesValue?.toIntOrNull() != null &&
+            dialogFatsValue?.toIntOrNull() != null)
+        {
+            (dialogProteinValue!!.toInt() * 4 + dialogCarbohydratesValue!!.toInt() * 4 +
+                    dialogFatsValue!!.toInt() * 9).toString()
+        } else {
+            "error"
+        }
+    }
+
+    /**
      * Update the string value of the dialog for protein
      */
     fun updateDialogProtein(newProteinValue: String?) {

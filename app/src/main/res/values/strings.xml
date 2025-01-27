@@ -40,6 +40,7 @@
     <string name="add_meal_entry">Add Meal Entry</string>
     <string name="update_daily_food_goal">Update Daily Goals</string>
     <string name="weekly_calories_and_macros_graph_title">Weekly Goal Progress</string>
+    <string name="dialog_calories_display">Total Calories: %1$s</string>
 
     <string name="invalid_protein_goal">Protein goal must be a positive number.</string>
     <string name="invalid_carbs_goal">Carbs goal must be a positive number.</string>

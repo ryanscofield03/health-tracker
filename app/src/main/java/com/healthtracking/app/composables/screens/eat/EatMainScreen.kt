@@ -61,6 +61,7 @@ import java.time.LocalDateTime
 fun UpdateDailyGoalDialog(
     onSubmit: () -> Boolean,
     onDismissRequest: () -> Unit,
+    caloriesGoal: String,
     proteinGoal: String?,
     updateProteinGoal: (String?) -> Unit,
     validProteinGoal: Boolean,
@@ -87,14 +88,20 @@ fun UpdateDailyGoalDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(16.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.update_daily_food_goal),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.dialog_calories_display, caloriesGoal),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 )
 
                 // Protein Goal Input Field
@@ -174,6 +181,7 @@ fun EatMain (
                     openUpdateDailyGoalDialog.value = false
                     viewModel.clearDialog()
                 },
+                caloriesGoal = viewModel.getCalorieGoal(),
                 proteinGoal = viewModel.dialogProteinValue,
                 updateProteinGoal = { viewModel.updateDialogProtein(it) },
                 validProteinGoal = viewModel.proteinDialogValueValid,
