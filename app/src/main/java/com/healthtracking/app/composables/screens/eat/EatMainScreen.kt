@@ -49,6 +49,7 @@ import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.graphs.eat.BarChart
 import com.healthtracking.app.ui.theme.CaloriesColour
 import com.healthtracking.app.ui.theme.CarbsColour
 import com.healthtracking.app.ui.theme.FatsColour

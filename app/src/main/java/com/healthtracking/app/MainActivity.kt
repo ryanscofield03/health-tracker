@@ -69,6 +69,7 @@ import com.healthtracking.app.viewmodels.screen.MealScreenViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
+import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -146,7 +147,7 @@ class MainActivity : ComponentActivity() {
                         bottom = 144.dp
                     )
 
-                    val routeList = listOf("Welcome", "Workout", "Eat", "Sleep", "Stats", "Settings")
+                    val routeList = listOf("Welcome", "Workout", "Eat", "Sleep", "Progress", "Settings")
 
                     NavHost(
                         navController = navController,
@@ -278,7 +279,13 @@ class MainActivity : ComponentActivity() {
                                 viewModel = sleepScreenViewModel
                             )
                         }
-                        composable("Stats"){ StatsMain() }
+                        composable("Progress"){
+                            val statsScreenViewModel: StatsScreenViewModel by koinViewModel()
+                            StatsMain(
+                                modifier = Modifier.padding(padding),
+                                viewModel = statsScreenViewModel
+                            )
+                        }
                         composable("Settings") {
                             val settingsViewModel: SettingsViewModel by koinViewModel()
                             SettingsMain(

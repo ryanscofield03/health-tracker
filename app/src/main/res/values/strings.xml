@@ -8,7 +8,7 @@
     <string name="workout_screen">Workout"</string>
     <string name="eat_screen">Eat"</string>
     <string name="sleep_screen">Sleep"</string>
-    <string name="stats_screen">Stats"</string>
+    <string name="stats_screen">Progress"</string>
     <string name="settings_screen">Settings"</string>
 
     // Welcome Screen Text
@@ -19,7 +19,7 @@
     <string name="track_your_sleep">Track Your Sleep</string>
     <string name="no_existing_sleep_entries">No existing sleep entries, add one below!</string>
     <string name="save_sleep_entry">Save Entry</string>
-    <string name="cannot_add_sleep_entry">Entry saved</string>
+    <string name="cannot_add_sleep_entry">Today\'s entry saved</string>
 
     // Sleep Rating Button Descriptions
     <string name="terrible">Terrible</string>
@@ -135,4 +135,18 @@
     <string name="imperial">Imperial</string>
     <string name="select_notification">Notifications</string>
     <string name="ask_for_help">Need more help? Click me!</string>
+
+    // Stats/progress
+    <string name="error_screen">Error</string>
+    <string name="error_string">Uh oh.. something went wrong. Try restarting the app.</string>
+    <string name="hours_slept_axis_title">Hours Slept</string>
+    <string name="sleep_ratings_axis_title">Sleep Ratings</string>
+
+    <string name="calories_intercept">Calories Goal</string>
+    <string name="protein_intercept">Protein Goal</string>
+    <string name="carbs_intercept">Carbs Goal</string>
+    <string name="fats_intercept">Fats Goal</string>
+    <string name="protein_letter">P</string>
+    <string name="carbs_letter">C</string>
+    <string name="fats_letter">F</string>
 </resources>

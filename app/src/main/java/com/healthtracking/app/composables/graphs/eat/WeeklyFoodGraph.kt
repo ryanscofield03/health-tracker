@@ -1,18 +1,15 @@
-package com.healthtracking.app.composables.screens.eat
+package com.healthtracking.app.composables.graphs.eat
 
-import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.graph.rememberMarker
 import com.healthtracking.app.ui.theme.CaloriesColour
@@ -57,8 +54,6 @@ private val StartAxisValueFormatter = CartesianValueFormatter { _, value, _ ->
 private val BottomAxisLabelKey = ExtraStore.Key<List<String>>()
 
 private val BottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
-    println(x)
-    println(context.model.extraStore[BottomAxisLabelKey][x.toInt()])
     context.model.extraStore[BottomAxisLabelKey][x.toInt()]
 }
 
@@ -130,17 +125,20 @@ fun BarChart(
                     fill(color = MaterialTheme.colorScheme.onBackground)
                 ),
                 guideline = rememberAxisGuidelineComponent(
-                    fill(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f))
+                    fill(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f))
                 ),
                 // only accepts Int values for colour rather than Color objects
-                label = TextComponent(textSizeSp = 10f, color = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK),
+                label = TextComponent(textSizeSp = 10f, color = MaterialTheme.colorScheme.onSurface.toArgb()),
                 labelRotationDegrees = -25f,
             ),
             bottomAxis = HorizontalAxis.rememberBottom(
-                label = TextComponent(textSizeSp = 12f, color = if (isSystemInDarkTheme()) Color.WHITE else Color.BLACK),
+                label = TextComponent(textSizeSp = 12f, color = MaterialTheme.colorScheme.onSurface.toArgb()),
                 valueFormatter = BottomAxisValueFormatter,
                 line = rememberAxisLineComponent(
                     fill(color = MaterialTheme.colorScheme.onBackground)
+                ),
+                guideline = rememberAxisGuidelineComponent(
+                    fill(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f))
                 ),
             ),
             layerPadding = { cartesianLayerPadding(scalableStart = 4.dp, scalableEnd = 4.dp) },
