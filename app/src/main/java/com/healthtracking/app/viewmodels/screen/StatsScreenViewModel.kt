@@ -155,16 +155,22 @@ class StatsScreenViewModel(
 
     fun getSelectedExerciseWeightData(): Map<LocalDate, List<Double>> {
         return mapOf(
-            Pair(LocalDate.now().minusDays(1), listOf(25.0, 25.0, 20.0)),
-            Pair(LocalDate.now(), listOf(25.0, 20.0, 20.0))
+            Pair(LocalDate.now().minusDays(3), listOf(40.0, 25.0, 12.0)),
+            Pair(LocalDate.now().minusDays(2), listOf(40.0, 25.0)),
+            Pair(LocalDate.now().minusDays(1), listOf(40.0, 25.0, 20.0)),
+            Pair(LocalDate.now(), listOf(25.0, 50.0))
         )
     }
 
     fun getSelectedExerciseRepsData(): Map<LocalDate, List<Double>> {
         return mapOf(
-            Pair(LocalDate.now().minusDays(1), listOf(10.0, 9.0, 8.0)),
+            Pair(LocalDate.now().minusDays(2), listOf(10.0, 9.0, 8.0)),
+            Pair(LocalDate.now().minusDays(1), listOf(10.0, 10.0)),
             Pair(LocalDate.now(), listOf(10.0, 10.0, 9.0))
-
         )
+    }
+
+    fun updateSelectedExercise(newExercise: String) {
+
     }
 }

@@ -22,7 +22,6 @@ import androidx.room.PrimaryKey
     ]
 )
 data class WorkoutHistoryWorkoutCrossRef (
-    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val workoutId: Long,
     val workoutHistoryId: Long
 )

@@ -44,7 +44,7 @@ fun MacrosEatenGraph(
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(0.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -108,7 +108,10 @@ fun ColumnScope.MacroSelectionButton(
         )
     ) {
         Text(
-            text = text
+            text = text,
+            color =
+                if (isSelected) MaterialTheme.colorScheme.onSecondary
+                else MaterialTheme.colorScheme.onTertiary
         )
     }
 }

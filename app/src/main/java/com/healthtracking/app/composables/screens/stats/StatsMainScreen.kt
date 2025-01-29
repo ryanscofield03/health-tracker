@@ -1,9 +1,11 @@
 package com.healthtracking.app.composables.screens.stats
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.HorizontalDivider
@@ -44,34 +46,37 @@ fun StatsMain (
                 // title
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineLarge
+                    style = MaterialTheme.typography.headlineMedium
                 )
 
                 Spacer(Modifier.height(10.dp))
                 HorizontalDivider()
                 Spacer(Modifier.height(10.dp))
 
-                // graphs
-                when (page) {
-                    0 -> WorkoutStats(
-                        workoutData = viewModel.getWorkoutHistory(),
-                        workoutAttendance = viewModel.getWorkoutAttendance(),
-                        selectedExercise = viewModel.getSelectedExercise(),
-                        exercises = viewModel.getExercises(),
-                        selectedExerciseWeightData = viewModel.getSelectedExerciseWeightData(),
-                        selectedExerciseRepsData = viewModel.getSelectedExerciseRepsData()
-                    )
-                    1 -> EatStats(
-                        caloriesData = viewModel.getCaloriesData(),
-                        proteinData = viewModel.getProteinData(),
-                        carbsData = viewModel.getCarbsData(),
-                        fatsData = viewModel.getFatsData()
-                    )
-                    2 -> SleepStats(
-                        hoursSleptData = viewModel.getHoursSleptData(),
-                        sleepRatingsData = viewModel.getSleepRatingsData()
-                    )
-                    else -> Text(text = stringResource(id = R.string.error_string))
+                Box(modifier = Modifier.padding(8.dp)) {
+                    // graphs
+                    when (page) {
+                        0 -> WorkoutStats(
+                            workoutData = viewModel.getWorkoutHistory(),
+                            workoutAttendance = viewModel.getWorkoutAttendance(),
+                            selectedExercise = viewModel.getSelectedExercise(),
+                            exercises = viewModel.getExercises(),
+                            updateSelectedExercise = { viewModel.updateSelectedExercise(it) },
+                            selectedExerciseWeightData = viewModel.getSelectedExerciseWeightData(),
+                            selectedExerciseRepsData = viewModel.getSelectedExerciseRepsData()
+                        )
+                        1 -> EatStats(
+                            caloriesData = viewModel.getCaloriesData(),
+                            proteinData = viewModel.getProteinData(),
+                            carbsData = viewModel.getCarbsData(),
+                            fatsData = viewModel.getFatsData()
+                        )
+                        2 -> SleepStats(
+                            hoursSleptData = viewModel.getHoursSleptData(),
+                            sleepRatingsData = viewModel.getSleepRatingsData()
+                        )
+                        else -> Text(text = stringResource(id = R.string.error_string))
+                    }
                 }
             }
         }

@@ -149,4 +149,10 @@
     <string name="protein_letter">P</string>
     <string name="carbs_letter">C</string>
     <string name="fats_letter">F</string>
+
+    <string name="weight_measurement_label">Weight</string>
+    <string name="reps_measurement_label">Reps</string>
+
+    <string name="weight_graph_label">Weight (kg)</string>
+    <string name="reps_graph_label">Reps</string>
 </resources>
