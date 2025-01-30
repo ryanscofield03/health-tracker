@@ -48,7 +48,6 @@ import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.SaveAndCancelButtons
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.services.getExerciseList
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
@@ -78,8 +77,6 @@ fun AddExercise(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ScreenHeader(headerStringId = R.string.add_exercise)
-
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             itemsIndexed(exerciseGroups) { _, exerciseGroup ->
                 Button(

@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Sleep
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.composables.TimeInputDisplay
 import com.healthtracking.app.services.calculateTimeSlept
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
@@ -65,8 +64,6 @@ fun SleepMain(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        ScreenHeader(headerStringId = R.string.track_your_sleep)
-
         Column(
             Modifier
                 .fillMaxWidth()

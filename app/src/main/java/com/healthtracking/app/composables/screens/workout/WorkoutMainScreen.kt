@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Workout
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 
 @Composable
@@ -50,8 +49,6 @@ fun WorkoutMain(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenHeader(headerStringId = R.string.my_workouts_title)
-
         val innerModifier = Modifier
             .fillMaxWidth()
             .weight(1f)

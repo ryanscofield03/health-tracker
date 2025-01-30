@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
 
 @Composable
@@ -25,11 +24,6 @@ fun StatsMain (
     viewModel: StatsScreenViewModel
 ) {
     Column(modifier = modifier) {
-        ScreenHeader(
-            headerStringId = R.string.stats_screen,
-            spacerSize = 8.dp
-        )
-
         val pagerState = rememberPagerState(pageCount = {
             3
         })

@@ -47,7 +47,6 @@ import androidx.compose.ui.window.Dialog
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.graphs.eat.BarChart
 import com.healthtracking.app.ui.theme.CaloriesColour
@@ -172,8 +171,6 @@ fun EatMain (
     viewModel: MealScreenViewModel
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        ScreenHeader(headerStringId = R.string.eat_title)
-
         val openUpdateDailyGoalDialog = rememberSaveable { mutableStateOf(false) }
         if (openUpdateDailyGoalDialog.value) {
             UpdateDailyGoalDialog(

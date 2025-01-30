@@ -28,7 +28,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 
 @Composable
@@ -39,9 +38,6 @@ fun SettingsMain (
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        ScreenHeader(
-            headerStringId = R.string.settings_screen
-        )
         LanguagePicker(
             languageSetting = viewModel.languageSetting.collectAsState().value,
             changeLanguageSetting = { viewModel.saveLanguageSetting(it) }

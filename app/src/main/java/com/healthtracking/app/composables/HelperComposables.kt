@@ -128,23 +128,6 @@ fun SaveAndCancelButtons(
 }
 
 @Composable
-fun ScreenHeader(
-    headerStringId: Int,
-    spacerSize: Dp = 12.dp
-) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(id = headerStringId),
-            style = MaterialTheme.typography.displaySmall
-        )
-    }
-
-    Spacer(modifier = Modifier.height(spacerSize))
-    HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f))
-    Spacer(modifier = Modifier.height(spacerSize))
-}
-
-@Composable
 fun SelectionDropDown(
     items: List<String>,
     selectedText: String,

@@ -34,7 +34,6 @@ import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.ErrorMessageComponent
 import com.healthtracking.app.composables.SaveAndCancelButtons
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
@@ -49,11 +48,6 @@ fun BuildWorkout(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenHeader(
-            headerStringId = R.string.build_workout,
-            spacerSize = 4.dp
-        )
-
         // Workout name input
         TextFieldWithErrorMessage(
             value = viewModel.name,

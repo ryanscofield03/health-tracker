@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.ScreenHeader
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import java.time.DayOfWeek
 
@@ -44,11 +43,6 @@ fun ScheduleWorkout(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ScreenHeader(
-            headerStringId = R.string.schedule_workout,
-            spacerSize = 16.dp
-        )
-
         daysOfWeek.forEach { (day, stringResId) ->
             ToggleDayButton(
                 dayName = stringResource(id = stringResId),
