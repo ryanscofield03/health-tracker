@@ -38,7 +38,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.healthtracking.app.composables.screens.eat.BuildMealScreen
+import com.healthtracking.app.composables.screens.eat.BuildMeal
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.screens.eat.EatMain
 import com.healthtracking.app.composables.screens.welcome.Welcome
@@ -263,8 +263,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "AddMeal") {
-                            BuildMealScreen(
+                            BuildMeal(
                                 modifier = Modifier.padding(padding),
+                                navController = navController,
                                 viewModel = buildMealViewModel
                             )
                         }
