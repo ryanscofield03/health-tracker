@@ -18,7 +18,8 @@ import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.MealScreenViewModel
+import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
+import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
@@ -48,7 +49,7 @@ val dataAccessModule = module {
     viewModel { SleepScreenViewModel(get<SleepViewModel>()) }
 
     viewModel { MealViewModel(get(), get<MealDao>()) }
-    viewModel { MealScreenViewModel(get<MealViewModel>()) }
+    viewModel { FoodViewModel(get<MealViewModel>()) }
 
     viewModel { StatsScreenViewModel(
         get<WorkoutViewModel>(),
@@ -59,11 +60,14 @@ val dataAccessModule = module {
         get<SleepViewModel>()
     ) }
 
+    viewModel { BuildMealViewModel(mealDao = get<MealDao>()) }
+
     viewModel { parameters -> RunWorkoutViewModel(
         savedStateHandle = get(),
         workout = parameters[0],
         exercises = parameters[1],
         exerciseHistoryViewModel = get(),
-        workoutBackupViewModel = get()
+        workoutBackupViewModel = get(),
+        workoutHistoryViewModel = get()
     ) }
 }

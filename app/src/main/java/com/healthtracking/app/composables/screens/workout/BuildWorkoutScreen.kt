@@ -37,7 +37,6 @@ import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BuildWorkout(
     modifier: Modifier,

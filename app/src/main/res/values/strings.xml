@@ -16,7 +16,7 @@
     <string name="welcome_subtitle">Your journey with fitness starts here.</string>
 
     // Sleep Screen Text
-    <string name="track_your_sleep">Track Your Sleep</string>
+    <string name="past_sleep_entries">Sleep history</string>
     <string name="no_existing_sleep_entries">No existing sleep entries, add one below!</string>
     <string name="save_sleep_entry">Save Entry</string>
     <string name="cannot_add_sleep_entry">Today\'s entry saved</string>

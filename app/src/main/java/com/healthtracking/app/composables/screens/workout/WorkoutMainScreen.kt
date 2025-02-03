@@ -1,15 +1,18 @@
 package com.healthtracking.app.composables.screens.workout
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
@@ -30,10 +33,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 
@@ -45,50 +50,71 @@ fun WorkoutMain(
 ) {
     val workoutList by workoutViewModel.allWorkouts.observeAsState(initial = emptyList())
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        val innerModifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-        if (workoutList.isEmpty()) {
-            Text(modifier = innerModifier, text= stringResource(id = R.string.no_existing_exercises))
-        } else {
-            LazyColumn(
-                modifier = innerModifier
-            ) {
-                itemsIndexed(workoutList) { _, workout ->
-                    WorkoutCard(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        workout = workout,
-                        deleteWorkout = { workoutViewModel.deleteWorkout(workout) },
-                        editWorkout = { navController.navigate("EditWorkout/${workout.id}") },
-                        runWorkout = {
-                            navController.navigate("RunWorkout/${workout.id}")
-                        }
+        BackgroundBorderBox{
+            Column(modifier = Modifier.fillMaxHeight(0.9f)) {
+                if (workoutList.isEmpty()) {
+                    NoWorkoutPlaceHolder()
+                } else {
+                    WorkoutCards(
+                        workoutList = workoutList,
+                        deleteWorkout = { workoutViewModel.deleteWorkout(it) },
+                        navController = navController
                     )
                 }
             }
         }
 
-        Button(
-            onClick = { navController.navigate("AddWorkout") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(
-                text = stringResource(id = R.string.add_workout),
-                style = MaterialTheme.typography.labelLarge
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+            Button(
+                onClick = { navController.navigate("AddWorkout") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(
+                    text = stringResource(id = R.string.add_workout),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun WorkoutCards(
+    workoutList: List<Workout>,
+    deleteWorkout: (workout: Workout) -> Unit,
+    navController: NavController
+) {
+    LazyColumn {
+        itemsIndexed(workoutList) { _, workout ->
+            WorkoutCard(
+                modifier = Modifier.padding(bottom = 12.dp),
+                workout = workout,
+                deleteWorkout = { deleteWorkout(workout) },
+                editWorkout = { navController.navigate("EditWorkout/${workout.id}") },
+                runWorkout = {
+                    navController.navigate("RunWorkout/${workout.id}")
+                }
             )
         }
     }
+}
+
+@Composable
+fun NoWorkoutPlaceHolder() {
+    Text(
+        text = stringResource(id = R.string.no_existing_exercises)
+    )
 }
 
 @Composable

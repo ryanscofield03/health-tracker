@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.services.getExerciseList
@@ -105,20 +106,22 @@ fun AddExercise(
             }
         ) { currentGroup ->
             val exerciseList = getExerciseList(context, currentGroup)
-            LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
-                if (exerciseList != null) {
-                    itemsIndexed(exerciseList) { _, exerciseName: String ->
-                        ExerciseDisplayItem(
-                            name = exerciseName,
-                            onClick = {
-                                if (selectedExercises.contains(exerciseName)) {
-                                    selectedExercises.removeAll{it == exerciseName}
-                                } else {
-                                    selectedExercises.add(exerciseName)
-                                }
-                            },
-                            isCurrentlySelected = selectedExercises.contains(exerciseName)
-                        )
+            BackgroundBorderBox {
+                LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
+                    if (exerciseList != null) {
+                        itemsIndexed(exerciseList) { _, exerciseName: String ->
+                            ExerciseDisplayItem(
+                                name = exerciseName,
+                                onClick = {
+                                    if (selectedExercises.contains(exerciseName)) {
+                                        selectedExercises.removeAll{it == exerciseName}
+                                    } else {
+                                        selectedExercises.add(exerciseName)
+                                    }
+                                },
+                                isCurrentlySelected = selectedExercises.contains(exerciseName)
+                            )
+                        }
                     }
                 }
             }

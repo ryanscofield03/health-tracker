@@ -441,7 +441,7 @@ fun EndWorkoutConfirmationDialog(
 @Composable
 fun RowScope.TableCell(
     text: String,
-    textColor: Color = Color.Black
+    textColor: Color = MaterialTheme.colorScheme.onTertiary
 ) {
     Box(
         contentAlignment = Alignment.Center,

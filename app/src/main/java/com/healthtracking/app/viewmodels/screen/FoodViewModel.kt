@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.healthtracking.app.viewmodels.database.MealViewModel
 
-class MealScreenViewModel(private val mealViewModel: MealViewModel): ViewModel() {
+class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
     val goalCalories get() = mealViewModel.goalCalories
     val goalProtein get() = mealViewModel.goalProtein
     val goalCarbohydrates get() = mealViewModel.goalCarbohydrates

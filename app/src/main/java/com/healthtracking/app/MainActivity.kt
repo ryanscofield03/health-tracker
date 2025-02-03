@@ -1,24 +1,17 @@
 package com.healthtracking.app
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -29,28 +22,23 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.healthtracking.app.composables.screens.eat.BuildMealScreen
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.screens.eat.EatMain
 import com.healthtracking.app.composables.screens.welcome.Welcome
@@ -65,12 +53,12 @@ import com.healthtracking.app.composables.screens.workout.WorkoutMain
 import com.healthtracking.app.ui.theme.HealthTrackingTheme
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.MealScreenViewModel
+import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
+import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.androidx.viewmodel.ext.android.viewModel as koinViewModel
@@ -90,6 +78,7 @@ class MainActivity : ComponentActivity() {
             HealthTrackingTheme {
                 val navController = rememberNavController()
                 val addWorkoutViewModel: AddWorkoutViewModel by koinViewModel()
+                val buildMealViewModel: BuildMealViewModel by koinViewModel()
 
                 val workoutTab = TabBarItem(
                     title = stringResource(R.string.workout_screen),
@@ -142,7 +131,7 @@ class MainActivity : ComponentActivity() {
                 }) { innerPadding ->
                     val padding = PaddingValues(
                         start = 24.dp,
-                        top = 64.dp,
+                        top = 48.dp,
                         end = 24.dp,
                         bottom = 144.dp
                     )
@@ -266,10 +255,32 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("Eat"){
-                            val mealViewModel: MealScreenViewModel by koinViewModel()
+                            val mealViewModel: FoodViewModel by koinViewModel()
                             EatMain(
                                 modifier = Modifier.padding(padding),
+                                navController = navController,
                                 viewModel = mealViewModel
+                            )
+                        }
+                        composable(route = "AddMeal") {
+                            BuildMealScreen(
+                                modifier = Modifier.padding(padding),
+                                viewModel = buildMealViewModel
+                            )
+                        }
+                        composable(route = "EditMeal/{id}") { navBackStackEntry ->
+                            // get id, get workout, insert workout data into viewmodel for screen
+                            val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                            val workout = workoutViewModel
+                                .allWorkouts
+                                .value
+                                ?.find { it.id == parsedId }
+                            workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
+
+                            BuildWorkout(
+                                modifier = Modifier.padding(padding),
+                                navController = navController,
+                                viewModel = addWorkoutViewModel,
                             )
                         }
                         composable("Sleep"){

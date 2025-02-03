@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,9 +34,11 @@ import androidx.compose.material3.TimePickerColors
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,10 +48,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.composables.TimeInputDisplay
 import com.healthtracking.app.services.calculateTimeSlept
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,45 +67,72 @@ fun SleepMain(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        // past sleep entries
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.26f),
+                .weight(0.3f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (sleepEntries != null && sleepEntries!!.isNotEmpty()) {
-                PastSleepEntries(
-                    pastSleepEntries = sleepEntries!!,
-                    editSleepEntry = { viewModel.editSleepEntry(it) }
-                )
-            } else {
-                Text(text = stringResource(id = R.string.no_existing_sleep_entries))
+            BackgroundBorderBox {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = stringResource(id = R.string.past_sleep_entries),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+
+                    if (sleepEntries != null && sleepEntries!!.isNotEmpty()) {
+                        SleepEntriesList(
+                            pastSleepEntries = sleepEntries!!,
+                            editSleepEntry = { viewModel.editSleepEntry(it) }
+                        )
+                    } else {
+                        Text(text = stringResource(id = R.string.no_existing_sleep_entries))
+                    }
+                }
             }
         }
 
+
+        // state for adding new entry
+        val pastEntries by viewModel.pastSleepEntries.observeAsState()
+        val canAddNewEntry by remember {
+            derivedStateOf {
+                val hasEntryToday = pastEntries?.any { it.date == LocalDate.now() } ?: false
+
+                // can add new entry if there is no entry today or editSleepId is not null
+                viewModel.editSleepId != null || !hasEntryToday
+            }
+        }
+        // add/edit sleep entry box
         Column(
             modifier = Modifier.fillMaxSize().weight(0.7f),
             verticalArrangement = Arrangement.Bottom
         ) {
-            AddSleepEntry(
-                startTimePickerState = viewModel.startTimePickerState,
-                endTimePickerState = viewModel.endTimePickerState,
-                rating = viewModel.rating,
-                onRatingChange = { viewModel.updateRating(it) },
-                saveSleepEntry = { viewModel.saveSleepEntry() },
-                canAddNewEntry = viewModel.canAddNewEntry
-            )
+            BackgroundBorderBox {
+                AddSleepEntry(
+                    startTimePickerState = viewModel.startTimePickerState,
+                    endTimePickerState = viewModel.endTimePickerState,
+                    rating = viewModel.rating,
+                    onRatingChange = { viewModel.updateRating(it) },
+                    saveSleepEntry = { viewModel.saveSleepEntry() },
+                    canAddNewEntry = canAddNewEntry
+                )
+            }
         }
     }
 }
 
 @Composable
-fun PastSleepEntries(
+fun SleepEntriesList(
     pastSleepEntries: List<Sleep>,
     editSleepEntry: (Long) -> Unit
 ) {
-    LazyRow(modifier = Modifier.fillMaxWidth(), state = LazyListState(firstVisibleItemIndex = pastSleepEntries.size-1)) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        state = LazyListState(firstVisibleItemIndex = pastSleepEntries.size-1)
+    ) {
         itemsIndexed(pastSleepEntries) { _, pastSleepEntry ->
             PastSleepEntryCard(
                 pastSleepEntry = pastSleepEntry,
@@ -232,13 +262,6 @@ fun AddSleepEntry(
     val endTimePickerOpened = rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
-                shape = RoundedCornerShape(10.dp)
-            )
-            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

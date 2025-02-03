@@ -10,8 +10,10 @@ import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.entities.WorkoutBackup
+import com.healthtracking.app.entities.WorkoutHistory
 import com.healthtracking.app.viewmodels.database.ExerciseHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
+import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
+import java.time.LocalDate
 import java.time.Duration as JavaDuration
 import java.time.LocalDateTime
 
@@ -28,10 +31,11 @@ import java.time.LocalDateTime
  */
 class RunWorkoutViewModel(
     private val savedStateHandle: SavedStateHandle,
-    val workout: Workout,
-    var exercises: List<Exercise>,
-    val exerciseHistoryViewModel: ExerciseHistoryViewModel,
-    val workoutBackupViewModel: WorkoutBackupViewModel
+    private val workout: Workout,
+    private var exercises: List<Exercise>,
+    private val exerciseHistoryViewModel: ExerciseHistoryViewModel,
+    private val workoutBackupViewModel: WorkoutBackupViewModel,
+    private val workoutHistoryViewModel: WorkoutHistoryViewModel
 ) : ViewModel() {
     // store constants for savesStateHandle keys
     companion object {
@@ -316,6 +320,13 @@ class RunWorkoutViewModel(
      * Saves workout data (exercise entries) to persistence
      */
     fun saveWorkoutHistory() {
+        workoutHistoryViewModel.addWorkoutHistory(
+            workoutHistory = WorkoutHistory(
+                name = workoutName,
+                date = LocalDate.now()
+            )
+        )
+
         exercises.forEachIndexed { index, exercise ->
             val exerciseHistory = ExerciseHistory(
                 date = LocalDateTime.now(),

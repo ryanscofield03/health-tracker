@@ -44,7 +44,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
@@ -53,7 +55,7 @@ import com.healthtracking.app.ui.theme.CaloriesColour
 import com.healthtracking.app.ui.theme.CarbsColour
 import com.healthtracking.app.ui.theme.FatsColour
 import com.healthtracking.app.ui.theme.ProteinColour
-import com.healthtracking.app.viewmodels.screen.MealScreenViewModel
+import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,7 +170,8 @@ fun UpdateDailyGoalDialog(
 @Composable
 fun EatMain (
     modifier: Modifier,
-    viewModel: MealScreenViewModel
+    navController: NavController,
+    viewModel: FoodViewModel
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         val openUpdateDailyGoalDialog = rememberSaveable { mutableStateOf(false) }
@@ -196,82 +199,89 @@ fun EatMain (
         }
 
         // Display today's calories and macros
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f),
-            horizontalArrangement = Arrangement.spacedBy(12.dp))
-        {
-            val openEditGoalDialog = {
-                openUpdateDailyGoalDialog.value = true
-                viewModel.populateDialogEntries()
-            }
+        BackgroundBorderBox {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f),
+                horizontalArrangement = Arrangement.spacedBy(12.dp))
+            {
+                val openEditGoalDialog = {
+                    openUpdateDailyGoalDialog.value = true
+                    viewModel.populateDialogEntries()
+                }
 
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .weight(0.65f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                CaloriesCard(
-                    onClick = openEditGoalDialog,
-                    caloriesCurrent = 1800,
-                    caloriesTotal = viewModel.goalCalories
-                )
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(0.65f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    CaloriesCard(
+                        onClick = openEditGoalDialog,
+                        caloriesCurrent = 1800,
+                        caloriesTotal = viewModel.goalCalories
+                    )
 
-                WeeklyGraph()
-            }
-            Box(modifier = Modifier.weight(0.35f)) {
-                MacroCards(
-                    onClick = openEditGoalDialog,
-                    proteinCurrent = 80L,
-                    proteinTotal = viewModel.goalProtein,
-                    carbsCurrent = 120L,
-                    carbsTotal = viewModel.goalCarbohydrates,
-                    fatsCurrent = 15L,
-                    fatsTotal = viewModel.goalFats,
-                )
+                    WeeklyGraph()
+                }
+                Box(modifier = Modifier.weight(0.35f)) {
+                    MacroCards(
+                        onClick = openEditGoalDialog,
+                        proteinCurrent = 80L,
+                        proteinTotal = viewModel.goalProtein,
+                        carbsCurrent = 120L,
+                        carbsTotal = viewModel.goalCarbohydrates,
+                        fatsCurrent = 15L,
+                        fatsTotal = viewModel.goalFats,
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        
+        Spacer(modifier = Modifier.height(16.dp))
         // Allow for adding/editing/deleting food entries
-        AddMealEntry()
+        AddMealEntry(
+            addMealNavigation = { navController.navigate("AddMeal") }
+        )
+        Spacer(modifier = Modifier.height(4.dp))
 
         // Display current meal entries for this day
-        CurrentMealEntryList(
-            listOf(
-                Pair(
-                    Meal(
-                        name = "Breakfast Bagels",
-                        date = LocalDateTime.now()
+        BackgroundBorderBox {
+            CurrentMealEntryList(
+                editMealNavigation = { id: Long -> navController.navigate("EditMeal/$id") },
+                currentMealEntries = listOf(
+                    Pair(
+                        Meal(
+                            name = "Breakfast Bagels",
+                            date = LocalDateTime.now()
+                        ),
+                        listOf(
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                        )
                     ),
-                    listOf(
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f),
-                    )
-                ),
-                Pair(
-                    Meal(
-                        name = "Lunch Bagels",
-                        date = LocalDateTime.now()
+                    Pair(
+                        Meal(
+                            name = "Lunch Bagels",
+                            date = LocalDateTime.now()
+                        ),
+                        listOf(
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f)
+                        )
                     ),
-                    listOf(
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f),
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f)
-                    )
-                ),
-                Pair(
-                    Meal(
-                        name = "Dinner Bagels",
-                        date = LocalDateTime.now()
-                    ),
-                    listOf(
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f),
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f),
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f),
-                        Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fat = 1.5f)
+                    Pair(
+                        Meal(
+                            name = "Dinner Bagels",
+                            date = LocalDateTime.now()
+                        ),
+                        listOf(
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                            Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f)
+                        )
                     )
                 )
             )
-        )
+        }
     }
 }
 
@@ -293,7 +303,7 @@ fun ColumnScope.WeeklyGraph() {
                     .align(alignment = Alignment.CenterHorizontally)
                     .padding(top = 4.dp),
                 text = stringResource(id = R.string.weekly_calories_and_macros_graph_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onTertiary
             )
 
@@ -439,7 +449,9 @@ fun ColumnScope.MacroCard(
 }
 
 @Composable
-fun AddMealEntry() {
+fun AddMealEntry(
+    addMealNavigation: () -> Unit
+) {
     val mealEntryDialogOpen = rememberSaveable {mutableStateOf(false)}
     if (mealEntryDialogOpen.value) {
         AddMealEntryDialog()
@@ -448,7 +460,7 @@ fun AddMealEntry() {
     Button(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        onClick = { /*TODO open dialog */ }
+        onClick = addMealNavigation
     ) {
         Text(text = stringResource(id = R.string.add_meal_entry))
     }
@@ -463,9 +475,9 @@ fun AddMealEntryDialog() {
 
 @Composable
 fun CurrentMealEntryList(
+    editMealNavigation: (Long) -> Unit,
     currentMealEntries: List<Pair<Meal, List<Food>>>
 ) {
-    Spacer(modifier = Modifier.height(8.dp))
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         itemsIndexed(currentMealEntries) { _, mealEntry ->
             MealEntryCard(mealEntry)
@@ -478,8 +490,7 @@ fun MealEntryCard(
     mealEntry: Pair<Meal, List<Food>>
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(4.dp)
@@ -505,7 +516,7 @@ fun MealEntryCard(
                 val calories = formatter.format(mealEntry.second.sumOf { it.calories.toDouble() })
                 val protein = formatter.format(mealEntry.second.sumOf { it.protein.toDouble() })
                 val carbs = formatter.format(mealEntry.second.sumOf { it.carbohydrates.toDouble() })
-                val fats = formatter.format(mealEntry.second.sumOf { it.fat.toDouble() })
+                val fats = formatter.format(mealEntry.second.sumOf { it.fats.toDouble() })
 
                 NutrientItem(
                     label = "K",

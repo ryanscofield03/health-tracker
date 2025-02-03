@@ -1,11 +1,13 @@
 package com.healthtracking.app.composables.screens.eat
 
 import androidx.compose.runtime.Composable
-import com.healthtracking.app.viewmodels.screen.BuildMealScreenViewModel
+import androidx.compose.ui.Modifier
+import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 
 @Composable
 fun BuildMealScreen(
-    mealScreenViewModel: BuildMealScreenViewModel
+    modifier: Modifier,
+    viewModel: BuildMealViewModel
 ) {
 
 }
