@@ -2,6 +2,7 @@ package com.healthtracking.app.composables.screens.eat
 
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -480,93 +481,14 @@ fun CurrentMealEntryList(
 ) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         itemsIndexed(currentMealEntries) { _, mealEntry ->
-            MealEntryCard(mealEntry)
-        }
-    }
-}
-
-@Composable
-fun MealEntryCard(
-    mealEntry: Pair<Meal, List<Food>>
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                modifier = Modifier.padding(4.dp),
-                text = mealEntry.first.name,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onTertiary
+            NutritionCard(
+                modifier = Modifier.clickable { editMealNavigation(mealEntry.first.id) },
+                title = mealEntry.first.name,
+                calories = mealEntry.second.sumOf { it.calories.toDouble() },
+                protein = mealEntry.second.sumOf { it.protein.toDouble() },
+                carbs = mealEntry.second.sumOf { it.carbohydrates.toDouble() },
+                fats = mealEntry.second.sumOf { it.fats.toDouble() }
             )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                val formatter = DecimalFormat("0.#")
-                val calories = formatter.format(mealEntry.second.sumOf { it.calories.toDouble() })
-                val protein = formatter.format(mealEntry.second.sumOf { it.protein.toDouble() })
-                val carbs = formatter.format(mealEntry.second.sumOf { it.carbohydrates.toDouble() })
-                val fats = formatter.format(mealEntry.second.sumOf { it.fats.toDouble() })
-
-                NutrientItem(
-                    label = "K",
-                    value = "${calories}kcal",
-                    drawableId = R.drawable.calories,
-                    iconColour = CaloriesColour
-                )
-                NutrientItem(
-                    label = "P",
-                    value = "${protein}g",
-                    drawableId = R.drawable.protein,
-                    iconColour = ProteinColour
-                )
-                NutrientItem(
-                    label = "C",
-                    value = "${carbs}g",
-                    drawableId = R.drawable.carbs,
-                    iconColour = CarbsColour
-                )
-                NutrientItem(
-                    label = "F",
-                    value = "${fats}g",
-                    drawableId = R.drawable.fats,
-                    iconColour = FatsColour
-                )
-            }
         }
-    }
-}
-
-@Composable
-fun NutrientItem(label: String, value: String, drawableId: Int, iconColour: Color) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(id = drawableId),
-            contentDescription = label,
-            tint = iconColour,
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onTertiary
-        )
     }
 }

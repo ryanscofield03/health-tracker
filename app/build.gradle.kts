@@ -9,6 +9,10 @@ android {
     namespace = "com.healthtracking.app"
     compileSdk = 35
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.healthtracking.app"
         minSdk = 26
@@ -20,6 +24,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val nutritionalApiKey: String? = System.getenv("NUTRITIONAL_API_KEY")
+
+        buildConfigField(
+            type = "String",
+            name = "NUTRITIONAL_API_KEY",
+            value = "\"$nutritionalApiKey\""
+        )
     }
 
     buildTypes {
