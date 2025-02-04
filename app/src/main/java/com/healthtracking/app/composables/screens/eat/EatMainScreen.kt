@@ -1,7 +1,5 @@
 package com.healthtracking.app.composables.screens.eat
 
-import android.icu.text.DecimalFormat
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -26,8 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,10 +33,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -50,7 +43,6 @@ import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
-import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.graphs.eat.BarChart
 import com.healthtracking.app.ui.theme.CaloriesColour
 import com.healthtracking.app.ui.theme.CarbsColour
@@ -58,115 +50,6 @@ import com.healthtracking.app.ui.theme.FatsColour
 import com.healthtracking.app.ui.theme.ProteinColour
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import java.time.LocalDateTime
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UpdateDailyGoalDialog(
-    onSubmit: () -> Boolean,
-    onDismissRequest: () -> Unit,
-    caloriesGoal: String,
-    proteinGoal: String?,
-    updateProteinGoal: (String?) -> Unit,
-    validProteinGoal: Boolean,
-    proteinErrorMessageId: Int,
-    carbsGoal: String?,
-    updateCarbsGoal: (String?) -> Unit,
-    validCarbsGoal: Boolean,
-    carbsErrorMessageId: Int,
-    fatsGoal: String?,
-    updateFatsGoal: (String?) -> Unit,
-    validFatsGoal: Boolean,
-    fatsErrorMessageId: Int
-) {
-    BasicAlertDialog(onDismissRequest = onDismissRequest) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 4.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.update_daily_food_goal),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                Text(
-                    text = stringResource(id = R.string.dialog_calories_display, caloriesGoal),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                // Protein Goal Input Field
-                TextFieldWithErrorMessage(
-                    value = proteinGoal ?: "",
-                    onValueChange = { updateProteinGoal(it) },
-                    labelId = R.string.protein_goal_label,
-                    placeholderId = R.string.protein_goal_label,
-                    hasError = !validProteinGoal,
-                    errorMessageId = proteinErrorMessageId
-                )
-
-                // Carbs Goal Input Field
-                TextFieldWithErrorMessage(
-                    value = carbsGoal ?: "",
-                    onValueChange = { updateCarbsGoal(it) },
-                    labelId = R.string.carbs_goal_label,
-                    placeholderId = R.string.carbs_goal_placeholder,
-                    hasError = !validCarbsGoal,
-                    errorMessageId = carbsErrorMessageId
-                )
-
-                // Fats Goal Input Field
-                TextFieldWithErrorMessage(
-                    value = fatsGoal ?: "",
-                    onValueChange = { updateFatsGoal(it) },
-                    labelId = R.string.fats_goal_label,
-                    placeholderId = R.string.fats_goal_placeholder,
-                    hasError = !validFatsGoal,
-                    errorMessageId = fatsErrorMessageId
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = {
-                        if (onSubmit()) {
-                            onDismissRequest()
-                        }
-                    }) {
-                        Text(
-                            text = stringResource(id = R.string.add),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    TextButton(onClick = { onDismissRequest() })
-                    {
-                        Text(
-                            text = stringResource(id = R.string.cancel),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun EatMain (
@@ -183,19 +66,16 @@ fun EatMain (
                     openUpdateDailyGoalDialog.value = false
                     viewModel.clearDialog()
                 },
-                caloriesGoal = viewModel.getCalorieGoal(),
+                caloriesGoal = viewModel.dialogCaloriesGoal,
                 proteinGoal = viewModel.dialogProteinValue,
                 updateProteinGoal = { viewModel.updateDialogProtein(it) },
-                validProteinGoal = viewModel.proteinDialogValueValid,
-                proteinErrorMessageId = R.string.invalid_protein_goal,
                 carbsGoal = viewModel.dialogCarbohydratesValue,
                 updateCarbsGoal = { viewModel.updateDialogCarbohydrates(it) },
-                validCarbsGoal = viewModel.carbsDialogValueValid,
-                carbsErrorMessageId = R.string.invalid_carbs_goal,
                 fatsGoal = viewModel.dialogFatsValue,
                 updateFatsGoal = { viewModel.updateDialogFats(it) },
-                validFatsGoal = viewModel.fatDialogValueValid,
-                fatsErrorMessageId = R.string.invalid_fats_goal
+                maxProtein = viewModel.getMaxProtein(),
+                maxCarbs = viewModel.getMaxCarbs(),
+                maxFats = viewModel.getMaxFats()
             )
         }
 
@@ -286,8 +166,96 @@ fun EatMain (
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ColumnScope.WeeklyGraph() {
+fun UpdateDailyGoalDialog(
+    onSubmit: () -> Boolean,
+    onDismissRequest: () -> Unit,
+    caloriesGoal: String,
+    proteinGoal: Float,
+    updateProteinGoal: (Float) -> Unit,
+    carbsGoal: Float,
+    updateCarbsGoal: (Float) -> Unit,
+    fatsGoal: Float,
+    updateFatsGoal: (Float) -> Unit,
+    maxProtein: Float,
+    maxCarbs: Float,
+    maxFats: Float
+) {
+    BasicAlertDialog(onDismissRequest = onDismissRequest) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 4.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.update_daily_food_goal),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.dialog_calories_display, caloriesGoal.toString()),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                MacroPieChart(
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    protein = proteinGoal,
+                    carbs = carbsGoal,
+                    fats = fatsGoal,
+                    updateProtein = { updateProteinGoal(it) },
+                    updateCarbs = { updateCarbsGoal(it) },
+                    updateFats = { updateFatsGoal(it) },
+                    maxProtein = maxProtein,
+                    maxCarbs = maxCarbs,
+                    maxFats = maxFats
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = {
+                        if (onSubmit()) {
+                            onDismissRequest()
+                        }
+                    }) {
+                        Text(
+                            text = stringResource(id = R.string.save),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    TextButton(onClick = { onDismissRequest() }) {
+                        Text(
+                            text = stringResource(id = R.string.cancel),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.WeeklyGraph() {
     Card(
         modifier = Modifier
             .weight(2 / 3f)
@@ -319,7 +287,7 @@ fun ColumnScope.WeeklyGraph() {
 }
 
 @Composable
-fun ColumnScope.CaloriesCard(
+private fun ColumnScope.CaloriesCard(
     caloriesCurrent: Long,
     caloriesTotal: Int,
     onClick: () -> Unit
@@ -360,7 +328,7 @@ fun ColumnScope.CaloriesCard(
 }
 
 @Composable
-fun MacroCards(
+private fun MacroCards(
     onClick: () -> Unit,
     proteinCurrent: Long,
     proteinTotal: Int,

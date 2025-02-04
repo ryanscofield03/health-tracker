@@ -1,7 +1,7 @@
 package com.healthtracking.app.viewmodels.screen
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.lifecycle.ViewModel
 import com.healthtracking.app.viewmodels.database.MealViewModel
 
@@ -11,106 +11,84 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
     val goalCarbohydrates get() = mealViewModel.goalCarbohydrates
     val goalFats get() = mealViewModel.goalFats
 
-    private val _dialogProteinValue: MutableState<String?> = mutableStateOf(null)
-    val dialogProteinValue: String? get() = _dialogProteinValue.value
-    private val proteinCanError: MutableState<Boolean> = mutableStateOf(false)
-    private val dialogProteinValueValid: Boolean get() = dialogProteinValue != null &&
-            dialogProteinValue!!.toIntOrNull() != null &&
-            dialogProteinValue!!.toInt() >= 0
-    val proteinDialogValueValid: Boolean get() = dialogProteinValueValid || !proteinCanError.value
+    val dialogCaloriesGoal: String get() = dialogProteinValue.toInt().times(4)
+        .plus(dialogCarbohydratesValue.toInt().times(4))
+        .plus(dialogFatsValue.toInt().times(9)).toString()
 
-    private val _dialogCarbohydratesValue: MutableState<String?> = mutableStateOf(null)
-    val dialogCarbohydratesValue: String? get() = _dialogCarbohydratesValue.value
-    private val carbsCanError: MutableState<Boolean> = mutableStateOf(false)
-    private val dialogCarbohydratesValueValid: Boolean get() = dialogCarbohydratesValue != null &&
-            dialogCarbohydratesValue!!.toIntOrNull() != null &&
-            dialogCarbohydratesValue!!.toInt() >= 0
-    val carbsDialogValueValid: Boolean get() = dialogCarbohydratesValueValid || !carbsCanError.value
+    private val _dialogProteinValue: MutableState<Float> = mutableFloatStateOf(goalProtein.toFloat())
+    val dialogProteinValue: Float get() = _dialogProteinValue.value
 
-    private val _dialogFatsValue: MutableState<String?> = mutableStateOf(null)
-    val dialogFatsValue: String? get() = _dialogFatsValue.value
-    private val fatsCanError: MutableState<Boolean> = mutableStateOf(false)
-    private val dialogFatsValueValid: Boolean get() = dialogFatsValue != null &&
-                dialogFatsValue!!.toIntOrNull() != null &&
-                dialogFatsValue!!.toInt() >= 0
-    val fatDialogValueValid: Boolean get() = dialogFatsValueValid || !fatsCanError.value
+    private val _dialogCarbohydratesValue: MutableState<Float> = mutableFloatStateOf(goalCarbohydrates.toFloat())
+    val dialogCarbohydratesValue: Float get() = _dialogCarbohydratesValue.value
+
+    private val _dialogFatsValue: MutableState<Float> = mutableFloatStateOf(goalFats.toFloat())
+    val dialogFatsValue: Float get() = _dialogFatsValue.value
 
     /**
      * Populate the dialog box with the current goals
      */
     fun populateDialogEntries() {
-        _dialogProteinValue.value = goalProtein.toString()
-        _dialogCarbohydratesValue.value = goalCarbohydrates.toString()
-        _dialogFatsValue.value = goalFats.toString()
-    }
-
-    /**
-     * Calculate the calories goal based on the macros
-     */
-    fun getCalorieGoal(): String {
-        return if (dialogProteinValue?.toIntOrNull() != null &&
-            dialogCarbohydratesValue?.toIntOrNull() != null &&
-            dialogFatsValue?.toIntOrNull() != null)
-        {
-            (dialogProteinValue!!.toInt() * 4 + dialogCarbohydratesValue!!.toInt() * 4 +
-                    dialogFatsValue!!.toInt() * 9).toString()
-        } else {
-            "error"
-        }
+        _dialogProteinValue.value = goalProtein.toFloat()
+        _dialogCarbohydratesValue.value = goalCarbohydrates.toFloat()
+        _dialogFatsValue.value = goalFats.toFloat()
     }
 
     /**
      * Update the string value of the dialog for protein
      */
-    fun updateDialogProtein(newProteinValue: String?) {
+    fun updateDialogProtein(newProteinValue: Float) {
         _dialogProteinValue.value = newProteinValue
-
-        proteinCanError.value = true
     }
 
     /**
      * Update the string value of the dialog for carbs
      */
-    fun updateDialogCarbohydrates(newCarbohydratesValue: String?) {
+    fun updateDialogCarbohydrates(newCarbohydratesValue: Float) {
         _dialogCarbohydratesValue.value = newCarbohydratesValue
-
-        carbsCanError.value = true
     }
 
     /**
      * Update the string value of the dialog for fats
      */
-    fun updateDialogFats(newFatsValue: String?) {
+    fun updateDialogFats(newFatsValue: Float) {
         _dialogFatsValue.value = newFatsValue
+    }
 
-        fatsCanError.value = true
+    /**
+     * Get the maximum possible protein given calories
+     */
+    fun getMaxProtein(): Float {
+        return 500f
+    }
+
+    /**
+     * Get the maximum possible carbs given calories
+     */
+    fun getMaxCarbs(): Float {
+        return 1000f
+    }
+
+    /**
+     * Get the maximum possible fats given calories
+     */
+    fun getMaxFats(): Float {
+        return 250f
     }
 
     /**
      * Updates the goals of the user's calories and macros to what is in the dialog if valid
      */
     fun updateGoals(): Boolean {
-        if (dialogProteinValueValid  && dialogCarbohydratesValueValid && dialogFatsValueValid) {
-            mealViewModel.updateProteinGoal(dialogProteinValue!!.toInt())
-            mealViewModel.updateCarbohydratesGoal(dialogCarbohydratesValue!!.toInt())
-            mealViewModel.updateFatsGoal(dialogFatsValue!!.toInt())
+        mealViewModel.updateProteinGoal(dialogProteinValue.toInt())
+        mealViewModel.updateCarbohydratesGoal(dialogCarbohydratesValue.toInt())
+        mealViewModel.updateFatsGoal(dialogFatsValue.toInt())
 
-            return true
-        }
-
-        proteinCanError.value = true
-        carbsCanError.value = true
-        fatsCanError.value = true
-
-        return false
+        return true
     }
 
     /**
      * Clears the dialog box
      */
     fun clearDialog() {
-        proteinCanError.value = false
-        carbsCanError.value = false
-        fatsCanError.value = false
     }
 }
