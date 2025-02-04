@@ -1,6 +1,9 @@
 package com.healthtracking.app.composables.screens.stats
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,19 +16,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun StatsMain (
@@ -33,9 +41,7 @@ fun StatsMain (
     viewModel: StatsScreenViewModel
 ) {
     Column(modifier = modifier) {
-        val pagerState = rememberPagerState(pageCount = {
-            3
-        })
+        val pagerState = rememberPagerState(pageCount = { 3 })
 
         HorizontalPager(state = pagerState) { page ->
             val title = when (page) {
@@ -45,7 +51,7 @@ fun StatsMain (
                 else -> stringResource(id = R.string.error_screen)
             }
 
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxHeight(0.9f).fillMaxWidth()) {
                 // title
                 Text(
                     text = title,
@@ -56,7 +62,7 @@ fun StatsMain (
                 HorizontalDivider()
                 Spacer(Modifier.height(10.dp))
 
-                Box(modifier = Modifier.padding(8.dp).fillMaxHeight(0.9f)) {
+                Box(modifier = Modifier.padding(8.dp)) {
                     // graphs
                     when (page) {
                         0 -> WorkoutStats(
@@ -68,46 +74,72 @@ fun StatsMain (
                             selectedExerciseWeightData = viewModel.getSelectedExerciseWeightData(),
                             selectedExerciseRepsData = viewModel.getSelectedExerciseRepsData()
                         )
+
                         1 -> EatStats(
                             caloriesData = viewModel.getCaloriesData(),
                             proteinData = viewModel.getProteinData(),
                             carbsData = viewModel.getCarbsData(),
                             fatsData = viewModel.getFatsData()
                         )
+
                         2 -> SleepStats(
                             hoursSleptData = viewModel.getHoursSleptData(),
                             sleepRatingsData = viewModel.getSleepRatingsData()
                         )
+
                         else -> Text(text = stringResource(id = R.string.error_string))
                     }
                 }
-
-                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
-                    PageSelectedIcons(selectedIndex = page, totalPages = 3)
-                }
             }
         }
+
+        PageSelectedIcons(pagerState = pagerState)
     }
 }
 
 @Composable
-fun PageSelectedIcons(selectedIndex: Int, totalPages: Int) {
+private fun PageSelectedIcons(
+    pagerState: PagerState,
+) {
+    val scope = rememberCoroutineScope()
+
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.Center
+            .fillMaxSize()
+            .padding(bottom = 16.dp)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+
+                    if (dragAmount.x > 0) {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    } else if (dragAmount.x < 0) {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                }
+            },
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
     ) {
-        repeat(totalPages) { index ->
+        repeat(pagerState.pageCount) { index ->
             Box(
                 modifier = Modifier
                     .padding(4.dp)
                     .size(8.dp)
                     .clip(shape = CircleShape)
                     .background(
-                        color = if (selectedIndex == index) MaterialTheme.colorScheme.onSurface
+                        color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.onSurface
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                     )
+                    .clickable {
+                        scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }
             )
         }
     }
