@@ -105,7 +105,7 @@ internal fun MacroPieChart(
 }
 
 @Composable
-fun PieChart(
+private fun PieChart(
     data: List<PieChartData>,
 ) {
     val total = data.sumOf { it.value.toDouble() }.toFloat()
