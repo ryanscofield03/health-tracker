@@ -49,6 +49,7 @@ fun BuildWorkout(
     ) {
         // Workout name input
         TextFieldWithErrorMessage(
+            modifier = Modifier.fillMaxWidth(),
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
             labelId = R.string.workout_name_label,
@@ -58,6 +59,7 @@ fun BuildWorkout(
         )
 
         TextFieldWithErrorMessage(
+            modifier = Modifier.fillMaxWidth(),
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
             labelId = R.string.description_label,

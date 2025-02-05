@@ -37,6 +37,8 @@
     <string name="protein">Protein</string>
     <string name="carbs">Carbs</string>
     <string name="fats">Fats</string>
+    <string name="todays_entries_title">Today\'s Entries</string>
+    <string name="dashboard_title">Dashboard</string>
     <string name="add_meal_entry">Add Meal Entry</string>
     <string name="update_daily_food_goal">Update Daily Goals</string>
     <string name="weekly_calories_and_macros_graph_title">Weekly Goal Progress</string>
@@ -59,6 +61,8 @@
     <string name="protein_goal_placeholder">Enter protein goal</string>
     <string name="carbs_goal_placeholder">Enter carbs goal</string>
     <string name="fats_goal_placeholder">Enter fats goal</string>
+
+    <string name="search_previous_meals">Search previous meals</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

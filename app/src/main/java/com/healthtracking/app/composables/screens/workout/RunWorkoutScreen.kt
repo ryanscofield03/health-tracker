@@ -328,6 +328,7 @@ fun EntryDialog(
 
                 // Weight Input Field
                 TextFieldWithErrorMessage(
+                    modifier = Modifier.fillMaxWidth(),
                     value = weight,
                     onValueChange = updateWeight,
                     labelId = R.string.weight_label,
@@ -338,6 +339,7 @@ fun EntryDialog(
 
                 // Reps Input Field
                 TextFieldWithErrorMessage(
+                    modifier = Modifier.fillMaxWidth(),
                     value = reps,
                     onValueChange = updateReps,
                     labelId = R.string.reps_label,
