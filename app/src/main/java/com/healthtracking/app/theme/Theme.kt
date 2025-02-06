@@ -1,4 +1,4 @@
-package com.healthtracking.app.ui.theme
+package com.healthtracking.app.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -29,6 +29,7 @@ private val DarkColorScheme = darkColorScheme(
     error = ErrorRed,
     errorContainer = ErrorRedDark,
     onError = Color.White,
+    surfaceVariant = DisabledGrayDark,
     surfaceDim = DimTertiaryDark
 )
 
@@ -46,7 +47,7 @@ private val LightColorScheme = lightColorScheme(
     error = ErrorRed,
     errorContainer = ErrorRedLight,
     onError = Color.White,
-    surfaceVariant = DisabledGray,
+    surfaceVariant = DisabledGrayLight,
     surfaceDim = DimTertiaryLight
 )
 

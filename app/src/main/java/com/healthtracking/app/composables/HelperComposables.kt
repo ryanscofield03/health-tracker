@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -26,10 +27,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -37,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -181,9 +184,10 @@ fun SelectionDropDown(
  */
 @Composable
 fun BackgroundBorderBox(
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    Box(modifier = Modifier
+    Box(modifier = modifier
         .background(
             color = MaterialTheme.colorScheme.surfaceDim,
             shape = RoundedCornerShape(10.dp)
@@ -191,5 +195,116 @@ fun BackgroundBorderBox(
         .padding(12.dp)
     ) {
         content()
+    }
+}
+
+/**
+ * Content wrapper to make a dim background with padding
+ */
+@Composable
+fun BackgroundBorderBoxDark(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(modifier = modifier
+        .background(
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+            shape = RoundedCornerShape(10.dp)
+        )
+        .padding(12.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun HeaderAndListBox(
+    modifier: Modifier = Modifier,
+    header: @Composable () -> Unit,
+    listContent: @Composable () -> Unit,
+    isContentEmpty: Boolean = false,
+    contentPlaceholderText: String = ""
+) {
+    BackgroundBorderBox(
+        modifier = Modifier
+    ) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            header()
+
+            if (isContentEmpty) {
+                BackgroundBorderBoxDark(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.CenterHorizontally),
+                    content = {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = contentPlaceholderText,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                )
+            } else {
+                BackgroundBorderBoxDark(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.CenterHorizontally),
+                    content = listContent
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun SliderWithLabel(
+    label: String,
+    value: Float,
+    color: Color,
+    onValueChange: (Float) -> Unit,
+    maxSliderValue: Float,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.End
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .background(color, shape = CircleShape)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            colors = SliderDefaults.colors(
+                thumbColor = color,
+                activeTrackColor = color,
+                inactiveTrackColor = color.copy(alpha = 0.2f)
+            ),
+            valueRange = 0f..maxSliderValue,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

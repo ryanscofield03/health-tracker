@@ -14,6 +14,13 @@ import java.time.LocalDateTime
 class BuildMealViewModel(
     private val mealDao: MealDao
 ): ViewModel() {
+    companion object {
+        val MEASUREMENT_OPTIONS = listOf(
+            "1 Unit",
+            "1 Cup"
+        )
+    }
+
     // store meal name
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name.asStateFlow()
@@ -28,6 +35,68 @@ class BuildMealViewModel(
 
     private val _foodItemsErrorMessageId = MutableStateFlow<Int?>(null)
     val foodItemsErrorMessageId: StateFlow<Int?> = _foodItemsErrorMessageId.asStateFlow()
+
+    private val _dialogFoodName = MutableStateFlow<String?>(null)
+    val dialogFoodName get() = _dialogFoodName
+
+    private val _dialogMeasurement = MutableStateFlow(MEASUREMENT_OPTIONS[0])
+    val dialogMeasurement get() = _dialogMeasurement
+
+    private val _dialogProtein = MutableStateFlow(0f)
+    val dialogProtein get() = _dialogProtein
+
+    private val _dialogCarbs = MutableStateFlow(0f)
+    val dialogCarbs get() = _dialogCarbs
+
+    private val _dialogFats = MutableStateFlow(0f)
+    val dialogFats get() = _dialogFats
+
+    private val _dialogQuantity = MutableStateFlow(1f)
+    val dialogQuantity get() = _dialogQuantity
+
+    val dialogCalories get() = (dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value
+
+    /**
+     * Updates the name of the food item
+     */
+    fun updateDialogFoodName(newName: String) {
+        _dialogFoodName.value = newName
+    }
+
+    /**
+     * Updates the measurement of the food item
+     */
+    fun updateDialogMeasurement(newMeasurement: String) {
+        _dialogMeasurement.value = newMeasurement
+    }
+
+    /**
+     * Updates the protein value of the food item
+     */
+    fun updateDialogProtein(newProtein: Float) {
+        _dialogProtein.value = newProtein
+    }
+
+    /**
+     * Updates the carbs value of the food item
+     */
+    fun updateDialogCarbs(newCarbs: Float) {
+        _dialogCarbs.value = newCarbs
+    }
+
+    /**
+     * Updates the fats value of the food item
+     */
+    fun updateDialogFats(newFats: Float) {
+        _dialogFats.value = newFats
+    }
+
+    /**
+     * Updates the quantity of the food item
+     */
+    fun updateDialogQuantity(newQuantity: Float) {
+        _dialogQuantity.value = newQuantity
+    }
 
     /**
      * Updates the name of the meal

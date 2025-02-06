@@ -37,6 +37,12 @@
     <string name="protein">Protein</string>
     <string name="carbs">Carbs</string>
     <string name="fats">Fats</string>
+
+    <string name="protein_formatted">Protein: %1$sg</string>
+    <string name="carbs_formatted">Carbs: %1$sg</string>
+    <string name="fats_formatted">Fats: %1$sg</string>
+    <string name="quantity_formatted">Quantity: %1$s</string>
+
     <string name="todays_entries_title">Today\'s Entries</string>
     <string name="dashboard_title">Dashboard</string>
     <string name="add_meal_entry">Add Meal Entry</string>
@@ -44,37 +50,28 @@
     <string name="weekly_calories_and_macros_graph_title">Weekly Goal Progress</string>
     <string name="dialog_calories_display">Total Calories: %1$s kcal</string>
     <string name="meal_name_label">Meal Name</string>
-    <string name="meal_name_placeholder">Enter meal name</string>
+    <string name="meal_name_placeholder">Pesto Pasta</string>
     <string name="add_food_button">Add a food item</string>
+    <string name="food_items_title">Food items</string>
 
-    <string name="invalid_calories_goal">Calories must be a positive number.</string>
-    <string name="invalid_protein_goal">Protein goal must be a positive number.</string>
-    <string name="invalid_carbs_goal">Carbs goal must be a positive number.</string>
-    <string name="invalid_fats_goal">Fats goal must be a positive number.</string>
-
-    <string name="calories_goal_label">Calories Goal</string>
-    <string name="protein_goal_label">Protein Goal</string>
-    <string name="carbs_goal_label">Carbs Goal</string>
-    <string name="fats_goal_label">Fats Goal</string>
-
-    <string name="calories_goal_placeholder">Enter calories goal</string>
-    <string name="protein_goal_placeholder">Enter protein goal</string>
-    <string name="carbs_goal_placeholder">Enter carbs goal</string>
-    <string name="fats_goal_placeholder">Enter fats goal</string>
+    <string name="food_name_label">Food name</string>
+    <string name="food_name_placeholder">Egg</string>
 
     <string name="search_previous_meals">Search previous meals</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>
-    <string name="no_existing_exercises">No existing workouts, try adding one!</string>
+    <string name="no_existing_workouts">Add a workout with the button below!</string>
+    <string name="no_existing_exercises">Add an exercise with the plus button!</string>
     <string name="build_workout">Build Your Workout</string>
     <string name="enter_workout_name">Enter workout name</string>
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
     <string name="schedule_workout">Schedule Workout</string>
     <string name="exercise_name">Exercise Name</string>
-    <string name="exercise_search_placeholder">Enter or search an exercise name</string>
+    <string name="exercise_search_placeholder">Bench Press</string>
     <string name="search_exercise">Search for an Exercise</string>
+    <string name="exercises_title">Exercises</string>
 
     // Run Workout Screen
     <string name="add_exercise_entry">Add Exercise Entry</string>
@@ -91,8 +88,8 @@
     // Workout Screen Textbox Labels and Placeholders
     <string name="workout_name_label">Workout Name</string>
     <string name="description_label">Description</string>
-    <string name="workout_name_placeholder">Enter workout name</string>
-    <string name="description_placeholder">Enter a short description</string>
+    <string name="workout_name_placeholder">Chest Day</string>
+    <string name="description_placeholder">Hit chest, triceps, and shoulders</string>
 
     // Workout Screen Error Messages
     <string name="name_error_message">Name cannot be empty.</string>

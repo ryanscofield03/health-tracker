@@ -2,6 +2,7 @@ package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,14 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,8 +36,10 @@ import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.ErrorMessageComponent
+import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.screens.eat.AddMealEntry
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @Composable
@@ -68,39 +73,36 @@ fun BuildWorkout(
             errorMessageId = viewModel.descriptionErrorMessageId
         )
 
-        // Add exercise button
-        Button(
-            onClick = { navController.navigate("AddExercise") },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            shape = MaterialTheme.shapes.small
-        ) {
-            Text(stringResource(id = R.string.add_exercise))
-        }
         Spacer(modifier = Modifier.height(7.dp))
-        // Display exercises
-        LazyColumn(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.55f)
-            .border(
-                width = 1.dp,
-                color =
-                if (viewModel.exercisesErrorMessageId != null) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(10.dp)
-            )
-        ) {
-            items (viewModel.exercises) { exercise ->
-                ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
-            }
-        }
-        ErrorMessageComponent(
-            hasError = viewModel.exercisesErrorMessageId != null,
-            errorMessageId = viewModel.exercisesErrorMessageId
+
+        HeaderAndListBox(
+            modifier = Modifier.fillMaxHeight(0.7f),
+            header = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.exercises_title),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onTertiary
+                    )
+                    // Allow for adding exercise
+                    AddExerciseButton(onClick = { navController.navigate("AddExercise") })
+                }
+            },
+            listContent = {
+                LazyColumn() {
+                    items (viewModel.exercises) { exercise ->
+                        ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
+                    }
+                }
+            },
+            isContentEmpty = viewModel.exercises.isEmpty(),
+            contentPlaceholderText = stringResource(id = R.string.no_existing_exercises)
         )
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Schedule workout button
         Button(
@@ -139,7 +141,21 @@ fun BuildWorkout(
 }
 
 @Composable
-fun ExerciseCard(
+private fun AddExerciseButton(
+    onClick: () -> Unit
+) {
+    IconButton(
+        modifier = Modifier.size(20.dp),
+        onClick = onClick
+    ) {
+        Icon(imageVector = Icons.Default.Add,
+            contentDescription = stringResource(id = R.string.add_exercise)
+        )
+    }
+}
+
+@Composable
+private fun ExerciseCard(
     exercise: Exercise,
     removeExercise: () -> Unit
 ) {

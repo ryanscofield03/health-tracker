@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.graphs.generic.DatedLineChartWithYInterceptLine
-import com.healthtracking.app.ui.theme.CarbsColour
-import com.healthtracking.app.ui.theme.FatsColour
-import com.healthtracking.app.ui.theme.ProteinColour
+import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.FatsColour
+import com.healthtracking.app.theme.ProteinColour
 import java.time.LocalDate
 
 private const val ProteinValue: Int = 0

@@ -22,9 +22,10 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.xr.runtime.math.toRadians
-import com.healthtracking.app.ui.theme.CarbsColour
-import com.healthtracking.app.ui.theme.FatsColour
-import com.healthtracking.app.ui.theme.ProteinColour
+import com.healthtracking.app.composables.SliderWithLabel
+import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.FatsColour
+import com.healthtracking.app.theme.ProteinColour
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -62,45 +63,19 @@ internal fun MacroPieChart(
 
     // Macro Labels and slider
     data.forEach { slice ->
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.End
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 4.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .background(slice.color, shape = CircleShape)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "${slice.value.toInt()}g",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+        SliderWithLabel(
+            label = slice.label,
+            value = slice.value,
+            color = slice.color,
+            maxSliderValue = slice.maxValue,
+            onValueChange = { newValue ->
+                when (slice.label) {
+                    "Protein" -> updateProtein(newValue)
+                    "Carbs" -> updateCarbs(newValue)
+                    "Fats" -> updateFats(newValue)
+                }
             }
-
-            Slider(
-                value = slice.value,
-                onValueChange = { newValue ->
-                    when (slice.label) {
-                        "Protein" -> updateProtein(newValue)
-                        "Carbs" -> updateCarbs(newValue)
-                        "Fats" -> updateFats(newValue)
-                    }
-                },
-                colors = SliderDefaults.colors(
-                    thumbColor = slice.color,
-                    activeTrackColor = slice.color,
-                    inactiveTrackColor = slice.color.copy(alpha = 0.2f)
-                ),
-                valueRange = 0f..slice.maxValue,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        )
     }
 }
 

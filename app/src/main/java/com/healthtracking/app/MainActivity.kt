@@ -50,7 +50,7 @@ import com.healthtracking.app.composables.screens.workout.BuildWorkout
 import com.healthtracking.app.composables.screens.workout.RunWorkout
 import com.healthtracking.app.composables.screens.workout.ScheduleWorkout
 import com.healthtracking.app.composables.screens.workout.WorkoutMain
-import com.healthtracking.app.ui.theme.HealthTrackingTheme
+import com.healthtracking.app.theme.HealthTrackingTheme
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel

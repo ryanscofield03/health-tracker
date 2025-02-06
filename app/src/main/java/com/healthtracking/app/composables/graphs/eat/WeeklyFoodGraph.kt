@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.graph.rememberMarker
-import com.healthtracking.app.ui.theme.CaloriesColour
-import com.healthtracking.app.ui.theme.CarbsColour
-import com.healthtracking.app.ui.theme.FatsColour
-import com.healthtracking.app.ui.theme.ProteinColour
+import com.healthtracking.app.theme.CaloriesColour
+import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.FatsColour
+import com.healthtracking.app.theme.ProteinColour
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent

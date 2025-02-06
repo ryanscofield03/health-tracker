@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.graphs.generic.DatedLineChartWithYInterceptLine
-import com.healthtracking.app.ui.theme.CaloriesColour
+import com.healthtracking.app.theme.CaloriesColour
 import java.time.LocalDate
 
 @Composable

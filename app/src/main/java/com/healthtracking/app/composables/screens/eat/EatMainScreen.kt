@@ -1,6 +1,5 @@
 package com.healthtracking.app.composables.screens.eat
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,11 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,7 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
@@ -47,13 +43,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.composables.graphs.eat.BarChart
-import com.healthtracking.app.ui.theme.CaloriesColour
-import com.healthtracking.app.ui.theme.CarbsColour
-import com.healthtracking.app.ui.theme.FatsColour
-import com.healthtracking.app.ui.theme.ProteinColour
+import com.healthtracking.app.theme.CaloriesColour
+import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.FatsColour
+import com.healthtracking.app.theme.ProteinColour
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import java.time.LocalDateTime
 
@@ -133,9 +130,8 @@ fun EatMain (
         Spacer(modifier = Modifier.height(24.dp))
 
         Column(modifier = Modifier.fillMaxSize()) {
-            // Display current meal entries for this day
-            BackgroundBorderBox {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            HeaderAndListBox(
+                header = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -148,6 +144,8 @@ fun EatMain (
                         // Allow for adding/editing/deleting food entries
                         AddMealEntry(addMealNavigation = { navController.navigate("AddMeal") })
                     }
+                },
+                listContent = {
                     CurrentMealEntryList(
                         modifier = Modifier.fillMaxHeight(1f),
                         editMealNavigation = { id: Long -> navController.navigate("EditMeal/$id") },
@@ -185,9 +183,8 @@ fun EatMain (
                             )
                         )
                     )
-
                 }
-            }
+            )
         }
     }
 }
@@ -292,7 +289,8 @@ private fun ColumnScope.WeeklyGraph() {
     ) {
         Column(modifier = Modifier
             .padding(vertical = 8.dp)
-            .fillMaxSize()) {
+            .fillMaxSize()
+        ) {
             Text(
                 modifier = Modifier
                     .align(alignment = Alignment.CenterHorizontally)

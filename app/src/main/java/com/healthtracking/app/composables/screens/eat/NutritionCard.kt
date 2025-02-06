@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,14 +28,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
-import com.healthtracking.app.ui.theme.CaloriesColour
-import com.healthtracking.app.ui.theme.CarbsColour
-import com.healthtracking.app.ui.theme.FatsColour
-import com.healthtracking.app.ui.theme.ProteinColour
+import com.healthtracking.app.theme.CaloriesColour
+import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.FatsColour
+import com.healthtracking.app.theme.ProteinColour
 
 /**
  * Card for displaying name, cals, protein, carbs, and fats of a meal/food item
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NutritionCard(
     modifier: Modifier = Modifier,
@@ -62,9 +65,10 @@ fun NutritionCard(
                 color = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f)
             )
 
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 val formatter = DecimalFormat("0.#")
                 NutrientItem(
@@ -102,7 +106,7 @@ private fun NutrientItem(label: String, value: String, drawableId: Int, iconColo
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = 4.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -114,7 +118,7 @@ private fun NutrientItem(label: String, value: String, drawableId: Int, iconColo
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onTertiary
         )
     }

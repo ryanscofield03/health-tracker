@@ -1,4 +1,4 @@
-package com.healthtracking.app.ui.theme
+package com.healthtracking.app.theme
 
 import androidx.compose.ui.graphics.Color
 
@@ -14,7 +14,8 @@ val TertiaryDark = Color(0xFF394C6D)
 val DimTertiaryDark = Color(0x33536992)
 
 val DarkGray = Color(0xFF29292B)
-val DisabledGray = Color(0xFFBFBFC1)
+val DisabledGrayLight = Color(0xFFBFBFC1)
+val DisabledGrayDark = Color(0xFF404042)
 val LightGray = Color(0xFFD9D9D9)
 
 val ErrorRedDark = Color(0xFFAC2424)
