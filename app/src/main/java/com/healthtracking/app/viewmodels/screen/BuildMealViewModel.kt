@@ -58,7 +58,7 @@ class BuildMealViewModel(
     val dialogQuantity get() = _dialogQuantity
 
     val dialogCalories get() =
-        ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value).toDecimalPoints(1)
+        ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value).toDecimalPoints(0)
 
     /**
      * Updates the name of the food item
