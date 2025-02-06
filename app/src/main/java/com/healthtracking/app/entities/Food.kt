@@ -10,8 +10,10 @@ import androidx.room.Entity
 )
 data class Food(
     val name: String,
+    val measurement: String,
     val calories: Float,
     val protein: Float,
     val fats: Float,
-    val carbohydrates: Float
+    val carbohydrates: Float,
+    val quantity: Float
 )

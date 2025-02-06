@@ -33,10 +33,12 @@ class NutritionalDataAPI {
     private fun getNutritionalData(foodItem: String, measurement: String): Food {
         return Food(
             name = "$foodItem + ($measurement)",
+            measurement = "1 Unit",
             calories = 100f,
             protein = 10f,
             carbohydrates = 10f,
-            fats = 10f
+            fats = 10f,
+            quantity = 1f
         )
     }
 }

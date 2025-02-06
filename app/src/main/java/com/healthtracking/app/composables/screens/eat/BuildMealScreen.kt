@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -73,8 +74,10 @@ fun BuildMeal(
         isOpen = foodDialogOpen.value,
         onDismissRequest = { foodDialogOpen.value = false },
         onSave = {
-            foodDialogOpen.value = false
-            viewModel.addFoodItem(it)
+            if (viewModel.validFoodDialog()) {
+                viewModel.addFoodItem()
+                foodDialogOpen.value = false
+            }
         },
         name = viewModel.dialogFoodName.collectAsState().value,
         measurement = viewModel.dialogMeasurement.collectAsState().value,
@@ -154,7 +157,7 @@ fun BuildMeal(
             },
             listContent = {
                 FoodItemsList(
-                    modifier = modifier,
+                    modifier = Modifier,
                     foodItemsFlow = viewModel.foodItems,
                     removeFoodItem = { viewModel.removeFoodItem(it) }
                 )
@@ -185,8 +188,10 @@ private fun FoodItemsList(
     foodItemsFlow: StateFlow<List<Food>>,
     removeFoodItem: (Food) -> Unit,
 ) {
-    LazyColumn() {
-        itemsIndexed (foodItemsFlow.value) { _, food ->
+    val foodItems by foodItemsFlow.collectAsState(emptyList())
+
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        itemsIndexed (foodItems) { _, food ->
             NutritionCard(
                 modifier = modifier.clickable { removeFoodItem(food) },
                 title = food.name,
@@ -224,7 +229,7 @@ private fun FoodDialog(
     modifier: Modifier = Modifier,
     isOpen: Boolean,
     onDismissRequest: () -> Unit,
-    onSave: (Food) -> Unit,
+    onSave: () -> Unit,
     name: String?,
     measurement: String,
     protein: Float,
@@ -243,7 +248,7 @@ private fun FoodDialog(
     if (isOpen) {
         BasicAlertDialog(onDismissRequest = {}) {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(16.dp),
@@ -325,7 +330,9 @@ private fun FoodDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = {}) {
+                        TextButton(
+                            onClick = onSave
+                        ) {
                             Text(
                                 text = "Save",
                                 color = MaterialTheme.colorScheme.onSurface,

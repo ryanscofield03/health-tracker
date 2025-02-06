@@ -156,7 +156,15 @@ fun EatMain (
                                     date = LocalDateTime.now()
                                 ),
                                 listOf(
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    )
                                 )
                             ),
                             Pair(
@@ -165,8 +173,24 @@ fun EatMain (
                                     date = LocalDateTime.now()
                                 ),
                                 listOf(
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f)
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    ),
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    )
                                 )
                             ),
                             Pair(
@@ -175,10 +199,42 @@ fun EatMain (
                                     date = LocalDateTime.now()
                                 ),
                                 listOf(
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f),
-                                    Food(name = "Bagel", calories = 250f, protein = 10f, carbohydrates = 49f, fats = 1.5f)
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    ),
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    ),
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    ),
+                                    Food(
+                                        name = "Bagel",
+                                        measurement = "1 Unit",
+                                        calories = 250f,
+                                        protein = 10f,
+                                        carbohydrates = 49f,
+                                        fats = 1.5f,
+                                        quantity = 1f
+                                    )
                                 )
                             )
                         )

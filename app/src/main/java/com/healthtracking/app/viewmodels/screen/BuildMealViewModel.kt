@@ -5,11 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
+import com.healthtracking.app.services.toDecimalPoints
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDateTime
+import kotlin.math.roundToInt
 
 class BuildMealViewModel(
     private val mealDao: MealDao
@@ -54,7 +57,8 @@ class BuildMealViewModel(
     private val _dialogQuantity = MutableStateFlow(1f)
     val dialogQuantity get() = _dialogQuantity
 
-    val dialogCalories get() = (dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value
+    val dialogCalories get() =
+        ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value).toDecimalPoints(1)
 
     /**
      * Updates the name of the food item
@@ -74,28 +78,28 @@ class BuildMealViewModel(
      * Updates the protein value of the food item
      */
     fun updateDialogProtein(newProtein: Float) {
-        _dialogProtein.value = newProtein
+        _dialogProtein.value = newProtein.toDecimalPoints(1)
     }
 
     /**
      * Updates the carbs value of the food item
      */
     fun updateDialogCarbs(newCarbs: Float) {
-        _dialogCarbs.value = newCarbs
+        _dialogCarbs.value = newCarbs.toDecimalPoints(1)
     }
 
     /**
      * Updates the fats value of the food item
      */
     fun updateDialogFats(newFats: Float) {
-        _dialogFats.value = newFats
+        _dialogFats.value = newFats.toDecimalPoints(1)
     }
 
     /**
      * Updates the quantity of the food item
      */
     fun updateDialogQuantity(newQuantity: Float) {
-        _dialogQuantity.value = newQuantity
+        _dialogQuantity.value = newQuantity.toDecimalPoints(0)
     }
 
     /**
@@ -106,10 +110,30 @@ class BuildMealViewModel(
     }
 
     /**
+     * Return true if food dialog has all valid data
+     */
+    fun validFoodDialog(): Boolean {
+        return dialogFoodName.value != null && dialogFoodName.value!!.isNotBlank()
+    }
+
+    /**
      * Adds a food item to the list of food items
      */
-    fun addFoodItem(foodItem: Food) {
-        _foodItems.value += foodItem
+    fun addFoodItem() {
+        if (validFoodDialog()) {
+            val foodItem = Food(
+                name = dialogFoodName.value!!,
+                measurement = dialogMeasurement.value,
+                calories = dialogCalories,
+                protein = dialogProtein.value,
+                carbohydrates = dialogCarbs.value,
+                fats = dialogFats.value,
+                quantity = dialogQuantity.value
+            )
+
+            _foodItems.value += foodItem
+        }
+
     }
 
     /**
@@ -128,9 +152,11 @@ class BuildMealViewModel(
             Food(
                 name = "egg",
                 calories = 155f,
+                measurement = "1 Unit",
                 protein = 12f,
                 carbohydrates = 15f,
-                fats = 10f
+                fats = 10f,
+                quantity = 1f
             )
         )
     }
