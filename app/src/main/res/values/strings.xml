@@ -137,7 +137,7 @@
 
     //Settings
     <string name="select_language">Select language</string>
-    <string name="select_measurement">Select measurement</string>
+    <string name="select_measurement">Measurement</string>
     <string name="metric">Metric</string>
     <string name="imperial">Imperial</string>
     <string name="select_notification">Notifications</string>
@@ -148,6 +148,9 @@
     <string name="error_string">Uh oh.. something went wrong. Try restarting the app.</string>
     <string name="hours_slept_axis_title">Hours Slept</string>
     <string name="sleep_ratings_axis_title">Sleep Ratings</string>
+    <string name="select_exercise">Exercise</string>
+    <string name="missing_exercise_graph_data">Currently no data to be graphed</string>
+    <string name="unselected_exercise_graph_error">Select an exercise before it can be displayed</string>
 
     <string name="calories_intercept">Calories Goal</string>
     <string name="protein_intercept">Protein Goal</string>

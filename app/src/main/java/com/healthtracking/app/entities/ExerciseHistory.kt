@@ -10,5 +10,5 @@ import java.time.LocalDateTime
 data class ExerciseHistory (
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val date: LocalDateTime,
-    val data: List<Pair<Int, Int>>
+    val data: List<Pair<Float, Int>>
 )

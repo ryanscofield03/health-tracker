@@ -10,7 +10,7 @@ import java.time.LocalDate
 @Composable
 fun MakeSleepRatingsGraph(
     modifier: Modifier,
-    data: Map<LocalDate, Double>
+    data: Map<LocalDate, Float>
 ) {
     DatedBarChart(
         modifier = modifier,

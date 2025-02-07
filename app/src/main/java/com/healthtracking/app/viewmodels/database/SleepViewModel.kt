@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.SleepDao
 import com.healthtracking.app.entities.Sleep
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -59,6 +60,12 @@ class SleepViewModel(
     suspend fun getSleepEntries(): LiveData<List<Sleep>?> {
         return withContext(Dispatchers.IO) {
             sleepDao.getAllSleepEntries()
+        }
+    }
+
+    suspend fun getSleepEntriesFlow(): Flow<List<Sleep>?> {
+        return withContext(Dispatchers.IO) {
+            sleepDao.getAllSleepEntriesFlow()
         }
     }
 

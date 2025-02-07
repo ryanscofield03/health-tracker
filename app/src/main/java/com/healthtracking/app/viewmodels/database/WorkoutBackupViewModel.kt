@@ -14,7 +14,7 @@ class WorkoutBackupViewModel(
 ) : ViewModel() {
     fun addWorkoutBackup(workoutId: Long,
                          exerciseIndex: Int,
-                         entries: List<List<Pair<Int, Int>>>,
+                         entries: List<List<Pair<Float, Int>>>,
                          timerStart: LocalDateTime) {
         viewModelScope.launch {
             val workoutBackup = WorkoutBackup(

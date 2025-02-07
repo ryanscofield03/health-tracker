@@ -26,7 +26,7 @@ interface WorkoutDao {
     @Query("DELETE FROM Workout WHERE id = :workoutId")
     suspend fun deleteWorkout(workoutId: Long)
 
-    @Query("DELETE FROM WorkoutExerciseCrossRef WHERE workoutId = :workoutId")
+    @Query("DELETE FROM workout_exercise_cross_ref WHERE workoutId = :workoutId")
     suspend fun deleteWorkoutExerciseCrossRefs(workoutId: Long)
 
     @Query("""
@@ -34,7 +34,7 @@ interface WorkoutDao {
         WHERE id IN (
             SELECT e.id
             FROM Exercise e
-            INNER JOIN WorkoutExerciseCrossRef wecr ON e.id = wecr.exerciseId
+            INNER JOIN workout_exercise_cross_ref wecr ON e.id = wecr.exerciseId
             WHERE wecr.workoutId = :workoutId
         )
     """)
@@ -42,7 +42,7 @@ interface WorkoutDao {
 
     @Query("""
         DELETE 
-        FROM WorkoutExerciseCrossRef 
+        FROM workout_exercise_cross_ref 
         WHERE workoutId = :workoutId AND exerciseId = :exerciseId
         """)
     suspend fun deleteWorkoutExerciseCrossRef(workoutId: Long, exerciseId: Long)
@@ -53,7 +53,7 @@ interface WorkoutDao {
     @Query("""
         SELECT e.* 
         FROM Exercise e
-        INNER JOIN WorkoutExerciseCrossRef wecr ON e.id = wecr.exerciseId
+        INNER JOIN workout_exercise_cross_ref wecr ON e.id = wecr.exerciseId
         WHERE wecr.workoutId = :workoutId
     """)
     fun getExercisesForWorkout(workoutId: Long): List<Exercise>

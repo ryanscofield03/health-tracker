@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
+    tableName = "exercise_history_cross_ref",
     primaryKeys = ["exerciseId", "exerciseHistoryId"],
     foreignKeys = [
         ForeignKey(

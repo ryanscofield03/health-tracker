@@ -10,6 +10,6 @@ import java.time.LocalDateTime
 data class WorkoutBackup(
     @PrimaryKey val id: Long,
     val exerciseIndex: Int,
-    val entries: List<List<Pair<Int, Int>>>,
+    val entries: List<List<Pair<Float, Int>>>,
     val timerStart: LocalDateTime
 )

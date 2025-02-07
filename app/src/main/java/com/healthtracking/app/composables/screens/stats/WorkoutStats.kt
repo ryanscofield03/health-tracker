@@ -17,12 +17,12 @@ import java.time.LocalDate
 @Composable
 fun WorkoutStats(
     workoutData: List<WorkoutHistory>,
-    workoutAttendance: Double,
+    workoutAttendance: Float,
     selectedExercise: String,
     exercises: List<Exercise>,
     updateSelectedExercise: (String) -> Unit,
-    selectedExerciseWeightData: Map<LocalDate, List<Double>>,
-    selectedExerciseRepsData: Map<LocalDate, List<Double>>
+    selectedExerciseWeightData: Map<LocalDate, List<Float>>,
+    selectedExerciseRepsData: Map<LocalDate, List<Float>>
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),

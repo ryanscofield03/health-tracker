@@ -6,12 +6,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.healthtracking.app.daos.ExerciseHistoryDao
+import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.ExerciseHistoryCrossRef
+import kotlinx.coroutines.flow.Flow
 
 class ExerciseHistoryViewModel(
     private val workoutHistoryDao: ExerciseHistoryDao
 ) : ViewModel() {
+    suspend fun getExerciseHistory(exerciseName: String): Flow<List<ExerciseHistory>?> {
+        return withContext(Dispatchers.IO) {
+            workoutHistoryDao.getHistoryForExerciseName(exerciseName = exerciseName)
+        }
+    }
+
     fun addExerciseHistory(exerciseId: Long, exerciseHistory: ExerciseHistory) {
         viewModelScope.launch {
             val workoutHistoryId = workoutHistoryDao.upsertWorkoutHistory(exerciseHistory)

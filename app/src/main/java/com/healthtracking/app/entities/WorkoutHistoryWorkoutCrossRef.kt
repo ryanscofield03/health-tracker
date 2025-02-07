@@ -2,9 +2,9 @@ package com.healthtracking.app.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 
 @Entity(
+    tableName = "workout_history_workout_cross_ref",
     primaryKeys = ["workoutId", "workoutHistoryId"],
     foreignKeys = [
         ForeignKey(

@@ -357,12 +357,13 @@ private fun FoodDialog(
 }
 
 @Composable
-fun MeasurementDropdown(
+private fun MeasurementDropdown(
     measurement: String,
     measurementOptions: List<String>,
     updateMeasurement: (String) -> Unit
 ) {
     SelectionDropDown(
+        label = stringResource(id = R.string.select_measurement),
         items = measurementOptions,
         selectedText = measurement,
         onItemClick = updateMeasurement

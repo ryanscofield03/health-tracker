@@ -1,6 +1,7 @@
 package com.healthtracking.app.entities
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * Entity for food which stores necessary fields (name, calories, and macros)
@@ -9,6 +10,7 @@ import androidx.room.Entity
     tableName = "food"
 )
 data class Food(
+    @PrimaryKey(autoGenerate = true) val id : Long = 0,
     val name: String,
     val measurement: String,
     val calories: Float,

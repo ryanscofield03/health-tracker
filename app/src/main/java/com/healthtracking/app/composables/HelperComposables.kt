@@ -23,23 +23,33 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -133,17 +143,24 @@ fun SaveAndCancelButtons(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectionDropDown(
+    label: String,
     items: List<String>,
     selectedText: String,
     onItemClick: (String) -> Unit
 ) {
     val expanded = rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
-    Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+    ExposedDropdownMenuBox(
+        modifier = Modifier.fillMaxWidth(),
+        expanded = expanded.value,
+        onExpandedChange = { expanded.value = !expanded.value }
+    ) {
         Button(
-            onClick = { expanded.value = true },
+            onClick = { focusRequester.requestFocus(); expanded.value = true },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
@@ -162,7 +179,24 @@ fun SelectionDropDown(
             )
         }
 
-        DropdownMenu(
+        TextField(
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            value = selectedText,
+            textStyle = MaterialTheme.typography.bodyMedium,
+            readOnly = true,
+            onValueChange = {},
+            maxLines = 1,
+            label = { Text(text = label, style = MaterialTheme.typography.labelSmall) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value) },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                focusedIndicatorColor = Transparent,
+                unfocusedIndicatorColor = Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        )
+
+        ExposedDropdownMenu(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .background(MaterialTheme.colorScheme.surface),

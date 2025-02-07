@@ -5,22 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
+import com.healthtracking.app.entities.MealFoodCrossRef
 import com.healthtracking.app.services.toDecimalPoints
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 class BuildMealViewModel(
     private val mealDao: MealDao
 ): ViewModel() {
     companion object {
         val MEASUREMENT_OPTIONS = listOf(
-            "1 Unit",
-            "1 Cup"
+            "1 unit",
+            "1 cup",
+            "100 g",
+            "50 g",
+            "1 tbsp"
         )
     }
 
@@ -174,17 +177,20 @@ class BuildMealViewModel(
     fun save() {
         if (!validateMeal()) return
 
-        viewModelScope.launch {
-            mealDao.upsertMealEntity(
-                Meal(
+        viewModelScope.launch(Dispatchers.IO) {
+            val mealId = mealDao.upsertMealEntity(
+                mealEntity = Meal(
                     name = _name.value,
                     date = LocalDateTime.now()
                 )
             )
 
-//            _foodItems.value.forEach { foodItem ->
-//                mealDao.insertFood(mealId = mealId, foodItem = foodItem)
-//            }
+            _foodItems.value.forEach { foodItem: Food ->
+                val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
+                val mealFoodCrossRef = MealFoodCrossRef(mealId = mealId, foodId = foodId)
+                println(mealFoodCrossRef)
+                mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
+            }
         }
     }
 

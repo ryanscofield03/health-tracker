@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ContentInfoCompat.Flags
 import com.healthtracking.app.entities.WorkoutHistory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -23,7 +24,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun WorkoutAttendanceGraph(
     workoutData: List<WorkoutHistory>,
-    workoutAttendance: Double
+    workoutAttendance: Float
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -42,14 +43,11 @@ fun WorkoutAttendanceGraph(
 private fun WorkoutCards(
     workoutData: List<WorkoutHistory>
 ) {
-    val allDates = generateSequence(workoutData.first().date) { it.plusDays(1) }
-        .takeWhile { it <= workoutData.last().date }
-        .toList()
-
+    val dateList: List<LocalDate> = generateLocalDates(data = workoutData)
     val workoutMap = workoutData.groupBy { it.date }
 
-    LazyRow(state = rememberLazyListState(initialFirstVisibleItemIndex = allDates.size - 1)) {
-        items(allDates) { date ->
+    LazyRow(state = rememberLazyListState(initialFirstVisibleItemIndex = dateList.size - 1)) {
+        items(dateList) { date ->
             val workoutForDate = workoutMap[date]
 
             WorkoutHistoryCard(
@@ -58,6 +56,18 @@ private fun WorkoutCards(
             )
         }
     }
+}
+
+private fun generateLocalDates(data: List<WorkoutHistory>): List<LocalDate> {
+    val uniqueDays = data.map { it.date }.toSet()
+    val daysToAdd = if (uniqueDays.size < 7) 7 - uniqueDays.size else 0
+    val startDate = data.firstOrNull()?.date?.minusDays(daysToAdd.toLong()) ?: LocalDate.now().minusDays(7)
+
+    val listOfDates: List<LocalDate> = generateSequence(startDate) { it.plusDays(1) }
+        .takeWhile { it <= (data.lastOrNull()?.date ?: LocalDate.now()) }
+        .toList()
+
+    return listOfDates
 }
 
 @Composable
@@ -113,7 +123,7 @@ private fun WorkoutHistoryCard(
 
 @Composable
 private fun AttendanceData(
-    workoutAttendance: Double
+    workoutAttendance: Float
 ) {
     Text(text = "Workout Attendance: $workoutAttendance days/week")
 }

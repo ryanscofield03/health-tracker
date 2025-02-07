@@ -1,56 +1,72 @@
 package com.healthtracking.app.viewmodels.screen
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
+import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.Exercise
+import com.healthtracking.app.entities.ExerciseHistory
+import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.entities.WorkoutHistory
+import com.healthtracking.app.services.calculateTimeSleptFloat
+import com.healthtracking.app.services.toDecimalPoints
 import com.healthtracking.app.viewmodels.database.ExerciseHistoryViewModel
 import com.healthtracking.app.viewmodels.database.ExerciseViewModel
 import com.healthtracking.app.viewmodels.database.MealViewModel
 import com.healthtracking.app.viewmodels.database.SleepViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class StatsScreenViewModel(
-    val workoutViewModel: WorkoutViewModel,
-    val exerciseViewModel: ExerciseViewModel,
-    val workoutHistoryViewModel: WorkoutHistoryViewModel,
-    val exerciseHistoryViewModel: ExerciseHistoryViewModel,
-    val mealViewModel: MealViewModel,
-    val sleepViewModel: SleepViewModel
+    private val workoutViewModel: WorkoutViewModel,
+    private val exerciseViewModel: ExerciseViewModel,
+    private val workoutHistoryViewModel: WorkoutHistoryViewModel,
+    private val exerciseHistoryViewModel: ExerciseHistoryViewModel,
+    private val mealViewModel: MealViewModel,
+    private val mealDao: MealDao,
+    private val sleepViewModel: SleepViewModel
 ): ViewModel() {
-    fun getHoursSleptData(): Map<LocalDate, Double> {
-        return mapOf(
-            Pair(LocalDate.now().minusDays(13), 7.5),
-            Pair(LocalDate.now().minusDays(12), 6.0),
-            Pair(LocalDate.now().minusDays(11), 7.5),
-            Pair(LocalDate.now().minusDays(10), 8.0),
-            Pair(LocalDate.now().minusDays(9), 7.5),
-            Pair(LocalDate.now().minusDays(8), 6.0),
-            Pair(LocalDate.now().minusDays(7), 7.5),
-            Pair(LocalDate.now().minusDays(6), 8.0),
-            Pair(LocalDate.now().minusDays(5), 6.0),
-            Pair(LocalDate.now().minusDays(4), 7.0),
-            Pair(LocalDate.now().minusDays(3), 6.5),
-            Pair(LocalDate.now().minusDays(2), 8.0),
-            Pair(LocalDate.now().minusDays(1), 7.5),
-            Pair(LocalDate.now(), 8.0)
-        )
+    private val _sleepData: MutableStateFlow<List<Sleep>?> = MutableStateFlow(emptyList())
+    private val _workoutHistoryData: MutableStateFlow<List<WorkoutHistory>?> = MutableStateFlow(emptyList())
+    private val _exerciseHistoryData: MutableStateFlow<List<ExerciseHistory>?> = MutableStateFlow(emptyList())
+
+    private val _selectedExercise: MutableStateFlow<String?> = MutableStateFlow(null)
+    val selectedExercise get() = _selectedExercise
+
+    init {
+        viewModelScope.launch {
+            sleepViewModel.getSleepEntriesFlow().collect{ _sleepData.value = it }
+            workoutHistoryViewModel.allWorkoutHistory.collect{ _workoutHistoryData.value = it }
+        }
     }
 
-    fun getSleepRatingsData(): Map<LocalDate, Double> {
-        return mapOf(
-            Pair(LocalDate.now().minusDays(9), 1.0),
-            Pair(LocalDate.now().minusDays(8), 2.0),
-            Pair(LocalDate.now().minusDays(7), 3.0),
-            Pair(LocalDate.now().minusDays(6), 4.0),
-            Pair(LocalDate.now().minusDays(5), 2.0),
-            Pair(LocalDate.now().minusDays(4), 5.0),
-            Pair(LocalDate.now().minusDays(3), 4.0),
-            Pair(LocalDate.now().minusDays(2), 3.0),
-            Pair(LocalDate.now().minusDays(1), 2.0),
-            Pair(LocalDate.now(), 3.0)
+    fun getSleepHoursData(): Map<LocalDate, Float> {
+        return _sleepData.value?.associateBy(
+            { it.date },
+            {
+                calculateTimeSleptFloat(startTime = it.startTime, endTime = it.endTime)
+                    .toDecimalPoints(1)
+            }
         )
+            ?: mapOf(Pair(LocalDate.now(), 0f))
+    }
+
+    fun getSleepRatingsData(): Map<LocalDate, Float> {
+        return _sleepData.value?.associateBy(
+            { it.date },
+            { it.rating.toFloat() }
+        )
+            ?: mapOf(Pair(LocalDate.now(), 0f))
     }
 
     fun getCaloriesData(): Map<LocalDate, Double> {
@@ -129,48 +145,55 @@ class StatsScreenViewModel(
         )
     }
 
+    fun getWorkoutAttendance(): Float {
+        return if (_workoutHistoryData.value != null && _workoutHistoryData.value!!.isNotEmpty()) {
+            val firstDate = _workoutHistoryData.value!!.minOf { it.date }
+            val lastDate = LocalDate.now()
+
+            val daysSinceFirstDate = lastDate.toEpochDay() - firstDate.toEpochDay()
+            val workoutsAttended = _workoutHistoryData.value!!.size
+            (workoutsAttended / (daysSinceFirstDate/7 + 1)).toFloat()
+        } else {
+            0f
+        }
+    }
+
     fun getWorkoutHistory(): List<WorkoutHistory> {
-        return listOf(
-            WorkoutHistory(name = "Legs", date = LocalDate.now().minusDays(5)),
-            WorkoutHistory(name = "Back", date = LocalDate.now().minusDays(2)),
-            WorkoutHistory(name = "Bench", date = LocalDate.now())
+        return if (_workoutHistoryData.value != null && _workoutHistoryData.value!!.isNotEmpty()) {
+            _workoutHistoryData.value!!
+        } else {
+            return listOf()
+        }
+    }
+
+    fun getExercises(): StateFlow<List<Exercise>?> {
+        return exerciseViewModel.allExercises.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = listOf()
         )
     }
 
-    fun getWorkoutAttendance(): Double {
-        return 3.2
+    fun updateSelectedExercise(exercise: String) {
+        _selectedExercise.value = exercise
+
+        viewModelScope.launch {
+            exerciseHistoryViewModel.getExerciseHistory(exerciseName = exercise)
+                .collect{ _exerciseHistoryData.value = it }
+        }
     }
 
-    fun getSelectedExercise(): String {
-        return "Lateral Raises"
+    fun getSelectedExerciseWeightData(): Map<LocalDate, List<Float>> {
+        return _exerciseHistoryData.value?.associateBy(
+            { it.date.toLocalDate() },
+            { it.data.map { weightSetPair -> weightSetPair.first } }
+        ) ?: mapOf(Pair(LocalDate.now(), listOf(0f)))
     }
 
-    fun getExercises(): List<Exercise> {
-        return listOf(
-            Exercise(name = "Lateral Raises"),
-            Exercise(name = "Bench Press"),
-            Exercise(name = "Squat")
-        )
-    }
-
-    fun getSelectedExerciseWeightData(): Map<LocalDate, List<Double>> {
-        return mapOf(
-            Pair(LocalDate.now().minusDays(3), listOf(40.0, 25.0, 12.0)),
-            Pair(LocalDate.now().minusDays(2), listOf(40.0, 25.0)),
-            Pair(LocalDate.now().minusDays(1), listOf(40.0, 25.0, 20.0)),
-            Pair(LocalDate.now(), listOf(25.0, 50.0))
-        )
-    }
-
-    fun getSelectedExerciseRepsData(): Map<LocalDate, List<Double>> {
-        return mapOf(
-            Pair(LocalDate.now().minusDays(2), listOf(10.0, 9.0, 8.0)),
-            Pair(LocalDate.now().minusDays(1), listOf(10.0, 10.0)),
-            Pair(LocalDate.now(), listOf(10.0, 10.0, 9.0))
-        )
-    }
-
-    fun updateSelectedExercise(newExercise: String) {
-
+    fun getSelectedExerciseRepData(): Map<LocalDate, List<Float>> {
+        return _exerciseHistoryData.value?.associateBy(
+            { it.date.toLocalDate() },
+            { it.data.map { weightSetPair -> weightSetPair.second.toFloat() } }
+        ) ?: mapOf(Pair(LocalDate.now(), listOf(0f)))
     }
 }

@@ -60,10 +60,10 @@ class RunWorkoutViewModel(
 
     // user entries for the workout - user controlled
     private val _exerciseEntries = MutableStateFlow(
-        value = savedStateHandle.get<List<MutableList<Pair<Int, Int>>>>(EXERCISE_ENTRIES_KEY)
+        value = savedStateHandle.get<List<MutableList<Pair<Float, Int>>>>(EXERCISE_ENTRIES_KEY)
             ?: exercises.map { mutableListOf() }
     )
-    val exerciseEntries: StateFlow<List<MutableList<Pair<Int, Int>>>> = _exerciseEntries.asStateFlow()
+    val exerciseEntries: StateFlow<List<MutableList<Pair<Float, Int>>>> = _exerciseEntries.asStateFlow()
 
     // data for new entry
     private val _newWeight = mutableStateOf("")
@@ -192,7 +192,7 @@ class RunWorkoutViewModel(
         _newWeightFieldCanError.value = true
 
         if (newRepsIsValid() && newWeightIsValid()) {
-            val pair = Pair(newWeight.toInt(), newReps.toInt())
+            val pair = Pair(newWeight.toFloat(), newReps.toInt())
 
             if (_editingEntryIndex.value != null) {
                 val updatedEntries = _exerciseEntries.value.map { it.toMutableList() }.toMutableList()

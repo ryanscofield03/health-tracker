@@ -16,8 +16,10 @@ import com.healthtracking.app.database.converters.Converters
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.ExerciseHistoryCrossRef
+import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.WorkoutHistory
 import com.healthtracking.app.entities.Meal
+import com.healthtracking.app.entities.MealFoodCrossRef
 import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.entities.WorkoutBackup
 import com.healthtracking.app.entities.Workout
@@ -37,8 +39,10 @@ import com.healthtracking.app.entities.WorkoutHistoryWorkoutCrossRef
                         ExerciseHistoryCrossRef::class,
                         WorkoutBackup::class,
                         Sleep::class,
-                        Meal::class
-                     ], version = 2, exportSchema = false)
+                        Meal::class,
+                        Food::class,
+                        MealFoodCrossRef::class
+                     ], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao

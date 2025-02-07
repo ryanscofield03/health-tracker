@@ -59,12 +59,12 @@ class Converters {
 
 
     @TypeConverter
-    fun fromListOfPairs(value: List<Pair<Int, Int>>): String {
+    fun fromListOfFloatIntPair(value: List<Pair<Float, Int>>): String {
         return value.joinToString(",") { "${it.first}:${it.second}" }
     }
 
     @TypeConverter
-    fun toListOfPairs(value: String): List<Pair<Int, Int>> {
+    fun toListOfFloatIntPair(value: String): List<Pair<Float, Int>> {
         if (value.isBlank()) {
             return emptyList()
         }
@@ -72,23 +72,23 @@ class Converters {
         return value.split(",")
             .map {
                 val (first, second) = it.split(":")
-                Pair(first.toInt(), second.toInt())
+                Pair(first.toFloat(), second.toInt())
             }
     }
 
     @TypeConverter
-    fun fromEntryBackupList(value: List<List<Pair<Int, Int>>>): String {
-        return value.joinToString(";") { fromListOfPairs(it) }
+    fun fromEntryBackupList(value: List<List<Pair<Float, Int>>>): String {
+        return value.joinToString(";") { fromListOfFloatIntPair(it) }
     }
 
     @TypeConverter
-    fun toEntryBackupList(value: String): List<List<Pair<Int, Int>>> {
+    fun toEntryBackupList(value: String): List<List<Pair<Float, Int>>> {
         if (value.isBlank()) {
             return emptyList()
         }
 
         return value.split(";")
-            .map { toListOfPairs(it) }
+            .map { toListOfFloatIntPair(it) }
     }
 
     @TypeConverter

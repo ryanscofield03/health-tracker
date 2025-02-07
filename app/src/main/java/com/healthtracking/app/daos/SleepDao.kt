@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.healthtracking.app.entities.Sleep
+import kotlinx.coroutines.flow.Flow
 
 /**
  * DAO for sleep entities
@@ -16,6 +17,9 @@ interface SleepDao {
 
     @Query("SELECT * FROM sleep ORDER BY id ASC")
     fun getAllSleepEntries(): LiveData<List<Sleep>?>
+
+    @Query("SELECT * FROM sleep ORDER BY id ASC")
+    fun getAllSleepEntriesFlow(): Flow<List<Sleep>?>
 
     @Query("SELECT * FROM SLEEP WHERE id = :sleepId")
     fun getSleepEntry(sleepId: Long): Sleep?

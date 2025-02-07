@@ -57,6 +57,7 @@ val dataAccessModule = module {
         get<WorkoutHistoryViewModel>(),
         get<ExerciseHistoryViewModel>(),
         get<MealViewModel>(),
+        get<MealDao>(),
         get<SleepViewModel>()
     ) }
 

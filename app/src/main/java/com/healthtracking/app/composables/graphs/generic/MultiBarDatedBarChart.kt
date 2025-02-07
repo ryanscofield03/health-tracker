@@ -35,26 +35,27 @@ import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.max
 
 private val LegendLabelKey = ExtraStore.Key<Set<String>>()
+private val BottomAxisLabelKey = ExtraStore.Key<List<String>>()
 
 @Composable
 internal fun MultiBarDatedBarChart(
     modifier: Modifier,
     stepSizeY: Double = 1.0,
-    data: Map<LocalDate, List<Double>>,
+    data: Map<LocalDate, List<Float>>,
     startAxisTitle: String,
 ) {
     val legendLabelComponent = rememberTextComponent(color = MaterialTheme.colorScheme.onSurface)
     val dates = data.keys.toList()
 
     val modelProducer = remember { CartesianChartModelProducer() }
-    val bottomAxisLabelKey = ExtraStore.Key<List<String>>()
     val bottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
-        context.model.extraStore[bottomAxisLabelKey][x.toInt()]
+        context.model.extraStore[BottomAxisLabelKey][x.toInt()]
     }
 
-    val numBars = data.values.maxBy { it.size }.size
+    val numBars = max(data.values.maxBy{ it.size }.size, 1)
     val columns = List(numBars) { index ->
         LineComponent(
             fill = fill(color = generateColor(index, numBars)),
@@ -63,14 +64,17 @@ internal fun MultiBarDatedBarChart(
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         modelProducer.runTransaction {
             columnSeries {
                 repeat(numBars) { barIndex ->
-                    series(data.values.map { it.getOrNull(barIndex) ?: 0.0 })
+                    var seriesData = data.values.map { it.getOrNull(barIndex) ?: 0.0 }
+                    if (seriesData.isEmpty()) seriesData = listOf(0)
+
+                    series(seriesData)
                 }
                 extras {
-                    it[bottomAxisLabelKey] = dates.map { localDate ->
+                    it[BottomAxisLabelKey] = dates.map { localDate ->
                         localDate.format(
                             DateTimeFormatter.ofPattern("d MMM yy")
                         )
@@ -128,7 +132,7 @@ internal fun MultiBarDatedBarChart(
     )
 }
 
-private fun getColumnProvider(columns: List<LineComponent>, values: Collection<List<Double>>) =
+private fun getColumnProvider(columns: List<LineComponent>, values: Collection<List<Float>>) =
     object : ColumnCartesianLayer.ColumnProvider {
         override fun getColumn(
             entry: ColumnCartesianLayerModel.Entry,

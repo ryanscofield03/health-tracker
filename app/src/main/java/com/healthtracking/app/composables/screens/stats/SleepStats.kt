@@ -7,14 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import com.healthtracking.app.composables.graphs.sleep.MakeHoursSleptGraph
 import com.healthtracking.app.composables.graphs.sleep.MakeSleepRatingsGraph
+import com.healthtracking.app.entities.Sleep
 import java.time.LocalDate
 
 @Composable
 fun SleepStats(
-    hoursSleptData: Map<LocalDate, Double>,
-    sleepRatingsData: Map<LocalDate, Double>
+    sleepHoursData: Map<LocalDate, Float>,
+    sleepRatingsData: Map<LocalDate, Float>
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
@@ -23,7 +25,7 @@ fun SleepStats(
         // graph of hours slept
         MakeHoursSleptGraph(
             modifier = Modifier,
-            data = hoursSleptData
+            data = sleepHoursData
         )
 
         // graph of ratings

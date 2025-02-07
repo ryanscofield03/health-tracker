@@ -235,7 +235,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 b = history?.data?.size ?: 0,
             )) {
                 item {
-                    val entry: Pair<Int, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
+                    val entry: Pair<Float, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
                     val weight = entry?.first ?: "-"
                     val reps = entry?.second ?: "-"
 

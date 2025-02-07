@@ -3,7 +3,6 @@ package com.healthtracking.app.composables.screens.stats
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,7 +50,9 @@ fun StatsMain (
                 else -> stringResource(id = R.string.error_screen)
             }
 
-            Column(modifier = Modifier.fillMaxHeight(0.9f).fillMaxWidth()) {
+            Column(modifier = Modifier
+                .fillMaxHeight(0.9f)
+                .fillMaxWidth()) {
                 // title
                 Text(
                     text = title,
@@ -68,11 +69,12 @@ fun StatsMain (
                         0 -> WorkoutStats(
                             workoutData = viewModel.getWorkoutHistory(),
                             workoutAttendance = viewModel.getWorkoutAttendance(),
-                            selectedExercise = viewModel.getSelectedExercise(),
-                            exercises = viewModel.getExercises(),
+                            selectedExercise = viewModel.selectedExercise.collectAsState().value
+                                ?: stringResource(id = R.string.select_exercise),
+                            exercises = viewModel.getExercises().collectAsState().value ?: listOf(),
                             updateSelectedExercise = { viewModel.updateSelectedExercise(it) },
                             selectedExerciseWeightData = viewModel.getSelectedExerciseWeightData(),
-                            selectedExerciseRepsData = viewModel.getSelectedExerciseRepsData()
+                            selectedExerciseRepsData = viewModel.getSelectedExerciseRepData()
                         )
 
                         1 -> EatStats(
@@ -83,7 +85,7 @@ fun StatsMain (
                         )
 
                         2 -> SleepStats(
-                            hoursSleptData = viewModel.getHoursSleptData(),
+                            sleepHoursData = viewModel.getSleepHoursData(),
                             sleepRatingsData = viewModel.getSleepRatingsData()
                         )
 

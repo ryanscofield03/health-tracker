@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,10 +25,10 @@ fun ExerciseProgressGraph(
     selectedExercise: String,
     updateSelectedExercise: (String) -> Unit,
     exercises: List<Exercise>,
-    selectedExerciseWeightData: Map<LocalDate, List<Double>>,
-    selectedExerciseRepsData: Map<LocalDate, List<Double>>
+    selectedExerciseWeightData: Map<LocalDate, List<Float>>,
+    selectedExerciseRepsData: Map<LocalDate, List<Float>>
 ) {
-    val exerciseMeasurementItems = listOf(
+    val exerciseMeasurementItems: List<String> = listOf(
         stringResource(id = R.string.weight_measurement_label),
         stringResource(id = R.string.reps_measurement_label)
     )
@@ -37,6 +39,7 @@ fun ExerciseProgressGraph(
             // exercises dropdown
             Box(modifier = Modifier.weight(0.5f)) {
                 SelectionDropDown(
+                    label = stringResource(id = R.string.select_exercise),
                     items = exercises.map { it.name },
                     selectedText = selectedExercise,
                     onItemClick = updateSelectedExercise
@@ -46,30 +49,50 @@ fun ExerciseProgressGraph(
             // reps/weight dropdown
             Box(modifier = Modifier.weight(0.5f)) {
                 SelectionDropDown(
+                    label = stringResource(id = R.string.select_measurement),
                     items = exerciseMeasurementItems,
                     selectedText = selectedExerciseMeasurement.value,
-                    onItemClick = { it: String -> selectedExerciseMeasurement.value = it }
+                    onItemClick = { selectedExerciseMeasurement.value = it }
                 )
             }
         }
+        if (selectedExerciseWeightData.isNotEmpty() && selectedExerciseRepsData.isNotEmpty()) {
+            when (selectedExerciseMeasurement.value) {
+                stringResource(id = R.string.weight_measurement_label) -> {
+                    MultiBarDatedBarChart(
+                        modifier = Modifier.fillMaxHeight(),
+                        data = selectedExerciseWeightData,
+                        stepSizeY = 10.0,
+                        startAxisTitle = stringResource(id = R.string.weight_graph_label)
+                    )
+                }
+                stringResource(id = R.string.reps_measurement_label) -> {
+                    MultiBarDatedBarChart(
+                        modifier = Modifier.fillMaxHeight(),
+                        data = selectedExerciseRepsData,
+                        stepSizeY = 1.0,
+                        startAxisTitle = stringResource(id = R.string.reps_graph_label)
+                    )
+                }
+                else -> {
+                    ErrorMessageBox(
+                        errorMessage = stringResource(id = R.string.unselected_exercise_graph_error)
+                    )
+                }
+            }
+        } else {
+            ErrorMessageBox(
+                errorMessage = stringResource(id = R.string.unselected_exercise_graph_error)
+            )
+        }
+    }
+}
 
-        when (selectedExerciseMeasurement.value) {
-            stringResource(id = R.string.weight_measurement_label) -> {
-                MultiBarDatedBarChart(
-                    modifier = Modifier.fillMaxHeight(),
-                    data = selectedExerciseWeightData,
-                    stepSizeY = 20.0,
-                    startAxisTitle = stringResource(id = R.string.weight_graph_label)
-                )
-            }
-            stringResource(id = R.string.reps_measurement_label) -> {
-                MultiBarDatedBarChart(
-                    modifier = Modifier.fillMaxHeight(),
-                    data = selectedExerciseRepsData,
-                    stepSizeY = 2.0,
-                    startAxisTitle = stringResource(id = R.string.reps_graph_label)
-                )
-            }
-        }
+@Composable
+private fun ErrorMessageBox(
+    errorMessage: String
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Text(text = errorMessage)
     }
 }

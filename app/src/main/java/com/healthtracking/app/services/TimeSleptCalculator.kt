@@ -22,3 +22,19 @@ fun calculateTimeSlept(
     val hoursSlept: Float = minutesSlept / 60
     return DecimalFormat("#.#").format(hoursSlept)
 }
+
+fun calculateTimeSleptFloat(
+    startTime: LocalTime,
+    endTime: LocalTime
+): Float {
+    val minutes = startTime.until(endTime, ChronoUnit.MINUTES).toFloat()
+
+    val minutesSlept = if (minutes < 0) {
+        minutes + (24 * 60)
+    } else {
+        minutes
+    }
+
+    val hoursSlept: Float = minutesSlept / 60
+    return hoursSlept
+}
