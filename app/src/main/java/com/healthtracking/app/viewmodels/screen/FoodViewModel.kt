@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.MealWithFoodList
+import com.healthtracking.app.services.toDecimalPoints
 import com.healthtracking.app.viewmodels.database.MealViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -122,21 +123,21 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Update the string value of the dialog for protein
      */
     fun updateDialogProtein(newProteinValue: Float) {
-        _dialogProteinValue.value = newProteinValue
+        _dialogProteinValue.value = newProteinValue.toDecimalPoints(0)
     }
 
     /**
      * Update the string value of the dialog for carbs
      */
     fun updateDialogCarbohydrates(newCarbohydratesValue: Float) {
-        _dialogCarbohydratesValue.value = newCarbohydratesValue
+        _dialogCarbohydratesValue.value = newCarbohydratesValue.toDecimalPoints(0)
     }
 
     /**
      * Update the string value of the dialog for fats
      */
     fun updateDialogFats(newFatsValue: Float) {
-        _dialogFatsValue.value = newFatsValue
+        _dialogFatsValue.value = newFatsValue.toDecimalPoints(0)
     }
 
     /**

@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.xr.runtime.math.toRadians
 import com.healthtracking.app.composables.SliderWithLabel
+import com.healthtracking.app.services.toDecimalPoints
+import com.healthtracking.app.services.toStringWithDecimalPoints
 import com.healthtracking.app.theme.CarbsColour
 import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
@@ -64,7 +66,7 @@ internal fun MacroPieChart(
     // Macro Labels and slider
     data.forEach { slice ->
         SliderWithLabel(
-            label = slice.label,
+            label = "${slice.label}: ${slice.value.toInt()}g",
             value = slice.value,
             color = slice.color,
             maxSliderValue = slice.maxValue,
