@@ -21,9 +21,9 @@ fun SleepStats(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        BackgroundBorderBox {
+        BackgroundBorderBox(Modifier.weight(0.5f)) {
             // graph of hours slept
             MakeHoursSleptGraph(
                 modifier = Modifier,
@@ -31,7 +31,7 @@ fun SleepStats(
             )
         }
 
-        BackgroundBorderBox {
+        BackgroundBorderBox(Modifier.weight(0.5f)) {
             // graph of ratings
             MakeSleepRatingsGraph(
                 modifier = Modifier,

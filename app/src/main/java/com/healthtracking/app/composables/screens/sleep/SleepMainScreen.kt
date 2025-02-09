@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,9 +48,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.composables.TimeInputDisplay
 import com.healthtracking.app.services.calculateTimeSlept
@@ -73,27 +77,28 @@ fun SleepMain(
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.3f),
+                .weight(0.5f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            BackgroundBorderBox {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            HeaderAndListBox(
+                header = {
                     Text(
+                        modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.past_sleep_entries),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Left
                     )
-
-                    if (sleepEntries != null && sleepEntries!!.isNotEmpty()) {
-                        SleepEntriesList(
-                            pastSleepEntries = sleepEntries!!,
-                            editSleepEntry = { viewModel.editSleepEntry(it) }
-                        )
-                    } else {
-                        Text(text = stringResource(id = R.string.no_existing_sleep_entries))
-                    }
-                }
-            }
+                },
+                listContent = {
+                    SleepEntriesList(
+                        pastSleepEntries = sleepEntries!!,
+                        editSleepEntry = { viewModel.editSleepEntry(it) }
+                    )
+                },
+                isContentEmpty = sleepEntries == null || sleepEntries!!.isEmpty(),
+                contentPlaceholderText = stringResource(id = R.string.no_existing_sleep_entries)
+            )
         }
 
 
@@ -108,11 +113,12 @@ fun SleepMain(
         }
         // add/edit sleep entry box
         Column(
-            modifier = Modifier.fillMaxSize().weight(0.7f),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Bottom
         ) {
             BackgroundBorderBox {
                 AddSleepEntry(
+                    dateOfEntry = viewModel.dateOfEntry,
                     startTimePickerState = viewModel.startTimePickerState,
                     endTimePickerState = viewModel.endTimePickerState,
                     rating = viewModel.rating,
@@ -243,6 +249,7 @@ fun PastSleepEntryCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSleepEntry(
+    dateOfEntry: LocalDate,
     startTimePickerState: TimePickerState,
     endTimePickerState: TimePickerState,
     rating: Int,
@@ -263,10 +270,19 @@ fun AddSleepEntry(
     val startTimePickerOpened = rememberSaveable { mutableStateOf(false) }
     val endTimePickerOpened = rememberSaveable { mutableStateOf(false) }
 
+
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = dateOfEntry.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
+        style = MaterialTheme.typography.labelMedium,
+        textAlign = TextAlign.Right
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Spacer(modifier = Modifier)
+
         if (startTimePickerOpened.value){
             TimeInputDialog(
                 title = stringResource(id = R.string.start_time_title),
@@ -275,7 +291,9 @@ fun AddSleepEntry(
                 colors = timeInputColours
             )
         }
-        Box(Modifier.clickable(enabled = canAddNewEntry, onClick = { startTimePickerOpened.value = true })) {
+        Box(modifier = Modifier
+            .clickable(enabled = canAddNewEntry, onClick = { startTimePickerOpened.value = true })
+        ) {
             TimeInputDisplay(
                 title = stringResource(id = R.string.start_time_title),
                 state = startTimePickerState,
@@ -292,7 +310,9 @@ fun AddSleepEntry(
                 colors = timeInputColours
             )
         }
-        Box(Modifier.clickable(enabled = canAddNewEntry, onClick = { endTimePickerOpened.value = true })) {
+        Box(modifier = Modifier
+            .clickable(enabled = canAddNewEntry, onClick = { startTimePickerOpened.value = true })
+        ) {
             TimeInputDisplay(
                 title = stringResource(id = R.string.end_time_title),
                 state = endTimePickerState,

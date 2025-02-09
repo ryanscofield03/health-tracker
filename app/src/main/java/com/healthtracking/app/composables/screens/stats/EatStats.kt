@@ -20,15 +20,15 @@ fun EatStats(
     fatsData: Map<LocalDate, Double>
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        BackgroundBorderBox {
+        BackgroundBorderBox(Modifier.weight(0.5f)) {
             // graph of calories eaten
             CaloriesEatenGraph(caloriesData = caloriesData)
         }
 
-        BackgroundBorderBox {
+        BackgroundBorderBox(Modifier.weight(0.5f)) {
             // graph of each macro in comparison to goal (x3)
             MacrosEatenGraph(
                 proteinData = proteinData,

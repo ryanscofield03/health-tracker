@@ -43,8 +43,8 @@
     <string name="fats_formatted">Fats: %1$sg</string>
     <string name="quantity_formatted">Quantity: %1$s</string>
 
-    <string name="todays_entries_title">Today\'s Entries</string>
-    <string name="dashboard_title">Dashboard</string>
+    <string name="todays_entries_title">Daily  Meal Entries</string>
+    <string name="dashboard_title">Nutritional Dashboard</string>
     <string name="add_meal_entry">Add Meal Entry</string>
     <string name="update_daily_food_goal">Update Daily Goals</string>
     <string name="weekly_calories_and_macros_graph_title">Weekly Goal Progress</string>
