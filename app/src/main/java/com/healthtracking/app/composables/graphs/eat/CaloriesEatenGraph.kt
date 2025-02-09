@@ -1,5 +1,6 @@
 package com.healthtracking.app.composables.graphs.eat
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -12,12 +13,16 @@ import java.time.LocalDate
 fun CaloriesEatenGraph(
     caloriesData: Map<LocalDate, Double>
 ) {
-    DatedLineChartWithYInterceptLine(
-        modifier = Modifier,
-        stepSize = 500.0,
-        lineColor = CaloriesColour,
-        interceptLineLabel = stringResource(id = R.string.calories_intercept),
-        interceptY = 2500.0,
-        data = caloriesData
-    )
+    if (caloriesData.values.isEmpty()) {
+        Text(text = "Insufficient data")
+    } else {
+        DatedLineChartWithYInterceptLine(
+            modifier = Modifier,
+            stepSize = 500.0,
+            lineColor = CaloriesColour,
+            interceptLineLabel = stringResource(id = R.string.calories_intercept),
+            interceptY = 2500.0,
+            data = caloriesData
+        )
+    }
 }

@@ -85,10 +85,14 @@ fun StatsMain (
                         )
 
                         1 -> EatStats(
-                            caloriesData = viewModel.getCaloriesData(),
-                            proteinData = viewModel.getProteinData(),
-                            carbsData = viewModel.getCarbsData(),
+                            caloriesData = viewModel.getCaloriesData()
+                                .collectAsStateWithLifecycle(mapOf()).value,
+                            proteinData = viewModel.getProteinData()
+                                .collectAsStateWithLifecycle(mapOf()).value,
+                            carbsData = viewModel.getCarbsData()
+                                .collectAsStateWithLifecycle(mapOf()).value,
                             fatsData = viewModel.getFatsData()
+                                .collectAsStateWithLifecycle(mapOf()).value
                         )
 
                         2 -> SleepStats(

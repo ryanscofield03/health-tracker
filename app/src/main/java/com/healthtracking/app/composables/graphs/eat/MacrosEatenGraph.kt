@@ -121,14 +121,18 @@ fun FatsProgressGraph(
     data: Map<LocalDate, Double>,
     fatsGoal: Double
 ) {
-    DatedLineChartWithYInterceptLine(
-        modifier = Modifier,
-        stepSize = 10.0,
-        lineColor = FatsColour,
-        interceptLineLabel = stringResource(id = R.string.fats_intercept),
-        interceptY = fatsGoal,
-        data = data,
-    )
+    if (data.values.isEmpty()) {
+        Text(text = "Insufficient data")
+    } else {
+        DatedLineChartWithYInterceptLine(
+            modifier = Modifier,
+            stepSize = 10.0,
+            lineColor = FatsColour,
+            interceptLineLabel = stringResource(id = R.string.fats_intercept),
+            interceptY = fatsGoal,
+            data = data,
+        )
+    }
 }
 
 @Composable
@@ -136,14 +140,18 @@ fun CarbsProgressGraph(
     data: Map<LocalDate, Double>,
     carbsGoal: Double
 ) {
-    DatedLineChartWithYInterceptLine(
-        modifier = Modifier,
-        stepSize = 100.0,
-        lineColor = CarbsColour,
-        interceptLineLabel = stringResource(id = R.string.carbs_intercept),
-        interceptY = carbsGoal,
-        data = data,
-    )
+    if (data.values.isEmpty()) {
+        Text(text = "Insufficient data")
+    } else {
+        DatedLineChartWithYInterceptLine(
+            modifier = Modifier,
+            stepSize = 50.0,
+            lineColor = CarbsColour,
+            interceptLineLabel = stringResource(id = R.string.carbs_intercept),
+            interceptY = carbsGoal,
+            data = data,
+        )
+    }
 }
 
 @Composable
@@ -151,12 +159,16 @@ fun ProteinProgressGraph(
     data: Map<LocalDate, Double>,
     proteinGoal: Double
 ) {
-    DatedLineChartWithYInterceptLine(
-        modifier = Modifier,
-        stepSize = 20.0,
-        lineColor = ProteinColour,
-        interceptLineLabel = stringResource(id = R.string.protein_intercept),
-        interceptY = proteinGoal,
-        data = data,
-    )
+    if (data.values.isEmpty()) {
+        Text(text = "Insufficient data")
+    } else {
+        DatedLineChartWithYInterceptLine(
+            modifier = Modifier,
+            stepSize = 25.0,
+            lineColor = ProteinColour,
+            interceptLineLabel = stringResource(id = R.string.protein_intercept),
+            interceptY = proteinGoal,
+            data = data,
+        )
+    }
 }

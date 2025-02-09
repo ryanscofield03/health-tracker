@@ -52,12 +52,10 @@ val dataAccessModule = module {
     viewModel { FoodViewModel(get<MealViewModel>()) }
 
     viewModel { StatsScreenViewModel(
-        get<WorkoutViewModel>(),
         get<ExerciseViewModel>(),
         get<WorkoutHistoryViewModel>(),
         get<ExerciseHistoryViewModel>(),
         get<MealViewModel>(),
-        get<MealDao>(),
         get<SleepViewModel>()
     ) }
 
