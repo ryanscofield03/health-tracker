@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.graphs.sleep.MakeHoursSleptGraph
 import com.healthtracking.app.composables.graphs.sleep.MakeSleepRatingsGraph
 import com.healthtracking.app.entities.Sleep
@@ -19,19 +20,23 @@ fun SleepStats(
     sleepRatingsData: Map<LocalDate, Float>
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(vertical = 20.dp),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // graph of hours slept
-        MakeHoursSleptGraph(
-            modifier = Modifier,
-            data = sleepHoursData
-        )
+        BackgroundBorderBox {
+            // graph of hours slept
+            MakeHoursSleptGraph(
+                modifier = Modifier,
+                data = sleepHoursData
+            )
+        }
 
-        // graph of ratings
-        MakeSleepRatingsGraph(
-            modifier = Modifier,
-            data = sleepRatingsData
-        )
+        BackgroundBorderBox {
+            // graph of ratings
+            MakeSleepRatingsGraph(
+                modifier = Modifier,
+                data = sleepRatingsData
+            )
+        }
     }
 }

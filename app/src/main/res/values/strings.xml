@@ -56,8 +56,10 @@
 
     <string name="food_name_label">Food name</string>
     <string name="food_name_placeholder">Egg</string>
-
     <string name="search_previous_meals">Search previous meals</string>
+
+    <string name="no_existing_meal_entries">No existing meal entries today</string>
+    <string name="no_existing_food_entries">Add a food item to complete the meal</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>
@@ -136,14 +138,15 @@
     <string name="arrow_right">Arrow Right</string>
 
     //Settings
-    <string name="select_language">Select language</string>
-    <string name="select_measurement">Measurement</string>
+    <string name="select_language_settings">Select language</string>
+    <string name="select_measurement_settings">Measurement</string>
     <string name="metric">Metric</string>
     <string name="imperial">Imperial</string>
     <string name="select_notification">Notifications</string>
     <string name="ask_for_help">Need more help? Click me!</string>
 
     // Stats/progress
+    <string name="select_measurement_stats">Metric</string>
     <string name="error_screen">Error</string>
     <string name="error_string">Uh oh.. something went wrong. Try restarting the app.</string>
     <string name="hours_slept_axis_title">Hours Slept</string>

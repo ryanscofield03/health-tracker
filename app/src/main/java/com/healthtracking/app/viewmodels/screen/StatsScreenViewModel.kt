@@ -19,10 +19,11 @@ import com.healthtracking.app.viewmodels.database.MealViewModel
 import com.healthtracking.app.viewmodels.database.SleepViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -44,7 +45,7 @@ class StatsScreenViewModel(
     val selectedExercise get() = _selectedExercise
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             sleepViewModel.getSleepEntriesFlow().collect{ _sleepData.value = it }
             workoutHistoryViewModel.allWorkoutHistory.collect{ _workoutHistoryData.value = it }
         }
@@ -158,12 +159,12 @@ class StatsScreenViewModel(
         }
     }
 
-    fun getWorkoutHistory(): List<WorkoutHistory> {
-        return if (_workoutHistoryData.value != null && _workoutHistoryData.value!!.isNotEmpty()) {
-            _workoutHistoryData.value!!
-        } else {
-            return listOf()
+    fun getWorkoutHistory(): StateFlow<List<WorkoutHistory>?> {
+        viewModelScope.launch {
+            workoutHistoryViewModel.allWorkoutHistory.collect{ _workoutHistoryData.value = it }
         }
+
+        return _workoutHistoryData
     }
 
     fun getExercises(): StateFlow<List<Exercise>?> {

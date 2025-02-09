@@ -49,7 +49,7 @@ fun ExerciseProgressGraph(
             // reps/weight dropdown
             Box(modifier = Modifier.weight(0.5f)) {
                 SelectionDropDown(
-                    label = stringResource(id = R.string.select_measurement),
+                    label = stringResource(id = R.string.select_measurement_stats),
                     items = exerciseMeasurementItems,
                     selectedText = selectedExerciseMeasurement.value,
                     onItemClick = { selectedExerciseMeasurement.value = it }

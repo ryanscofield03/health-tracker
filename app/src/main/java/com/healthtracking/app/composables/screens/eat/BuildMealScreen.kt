@@ -1,8 +1,6 @@
 package com.healthtracking.app.composables.screens.eat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -22,8 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,10 +28,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -43,9 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.ErrorMessageComponent
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.SelectionDropDown
@@ -65,26 +59,26 @@ fun BuildMeal(
     navController: NavController,
     viewModel: BuildMealViewModel,
 ) {
-    val mealName = viewModel.name.collectAsState().value
-    val nameErrorMessageId = viewModel.nameErrorMessageId.collectAsState().value
-    val foodItemsErrorMessageId = viewModel.foodItemsErrorMessageId.collectAsState().value
+    val mealName = viewModel.name.collectAsStateWithLifecycle().value
+    val nameErrorMessageId = viewModel.nameErrorMessageId.collectAsStateWithLifecycle().value
+    val foodItemsErrorMessageId = viewModel.foodItemsErrorMessageId.collectAsStateWithLifecycle().value
 
     val foodDialogOpen = rememberSaveable() { mutableStateOf(false) }
     FoodDialog(
         isOpen = foodDialogOpen.value,
-        onDismissRequest = { foodDialogOpen.value = false },
+        onDismissRequest = { foodDialogOpen.value = false; viewModel.clearFoodDialog() },
         onSave = {
             if (viewModel.validFoodDialog()) {
                 viewModel.addFoodItem()
                 foodDialogOpen.value = false
             }
         },
-        name = viewModel.dialogFoodName.collectAsState().value,
-        measurement = viewModel.dialogMeasurement.collectAsState().value,
-        protein = viewModel.dialogProtein.collectAsState().value,
-        carbs = viewModel.dialogCarbs.collectAsState().value,
-        fats = viewModel.dialogFats.collectAsState().value,
-        quantity = viewModel.dialogQuantity.collectAsState().value,
+        name = viewModel.dialogFoodName.collectAsStateWithLifecycle().value,
+        measurement = viewModel.dialogMeasurement.collectAsStateWithLifecycle().value,
+        protein = viewModel.dialogProtein.collectAsStateWithLifecycle().value,
+        carbs = viewModel.dialogCarbs.collectAsStateWithLifecycle().value,
+        fats = viewModel.dialogFats.collectAsStateWithLifecycle().value,
+        quantity = viewModel.dialogQuantity.collectAsStateWithLifecycle().value,
         calories = viewModel.dialogCalories,
         updateName = { viewModel.updateDialogFoodName(it) },
         updateMeasurement = { viewModel.updateDialogMeasurement(it) },
@@ -157,13 +151,12 @@ fun BuildMeal(
             },
             listContent = {
                 FoodItemsList(
-                    modifier = Modifier,
                     foodItemsFlow = viewModel.foodItems,
                     removeFoodItem = { viewModel.removeFoodItem(it) }
                 )
             },
-            isContentEmpty = false, // TODO
-            contentPlaceholderText = "FIX ME LATER" // TODO
+            isContentEmpty = viewModel.foodItems.collectAsStateWithLifecycle().value.isEmpty(),
+            contentPlaceholderText = stringResource(id = R.string.no_existing_food_entries)
         )
 
         // Save and cancel buttons
@@ -184,7 +177,6 @@ fun BuildMeal(
 
 @Composable
 private fun FoodItemsList(
-    modifier: Modifier = Modifier,
     foodItemsFlow: StateFlow<List<Food>>,
     removeFoodItem: (Food) -> Unit,
 ) {
@@ -193,12 +185,12 @@ private fun FoodItemsList(
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         itemsIndexed (foodItems) { _, food ->
             NutritionCard(
-                modifier = modifier.clickable { removeFoodItem(food) },
                 title = food.name,
                 calories = food.calories.toDouble(),
                 protein = food.protein.toDouble(),
                 carbs = food.carbohydrates.toDouble(),
-                fats = food.fats.toDouble()
+                fats = food.fats.toDouble(),
+                onDelete = { removeFoodItem(food) }
             )
         }
     }
@@ -282,7 +274,7 @@ private fun FoodDialog(
 
                     // display calculation of calories
                     Text(
-                        text = "Total calories: ${String.format(Locale.US, "%.0f", calories)}kcal",
+                        text = "Total calories: ${String.format(Locale.US, "%.0f", calories.times(quantity))}kcal",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onTertiary
                     )
@@ -363,7 +355,7 @@ private fun MeasurementDropdown(
     updateMeasurement: (String) -> Unit
 ) {
     SelectionDropDown(
-        label = stringResource(id = R.string.select_measurement),
+        label = stringResource(id = R.string.select_measurement_settings),
         items = measurementOptions,
         selectedText = measurement,
         onItemClick = updateMeasurement

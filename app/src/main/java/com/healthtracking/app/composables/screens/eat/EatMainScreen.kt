@@ -32,10 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,8 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
@@ -108,12 +104,14 @@ fun EatMain (
                     }
 
                     Column(modifier = Modifier
-                        .fillMaxSize().weight(0.6f),
+                        .fillMaxSize()
+                        .weight(0.55f),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         CaloriesCard(
                             onClick = openEditGoalDialog,
-                            caloriesCurrent = 1f,
+                            caloriesCurrent = viewModel.currentCalories
+                                .collectAsStateWithLifecycle(0f).value,
                             caloriesTotal = viewModel.goalCalories
                         )
 
@@ -122,11 +120,14 @@ fun EatMain (
                     Box(modifier = Modifier.weight(0.35f)) {
                         MacroCards(
                             onClick = openEditGoalDialog,
-                            proteinCurrent = 1f,
+                            proteinCurrent = viewModel.currentProtein
+                                .collectAsStateWithLifecycle(0f).value,
                             proteinTotal = viewModel.goalProtein,
-                            carbsCurrent = 1f,
+                            carbsCurrent = viewModel.currentCarbohydrates
+                                .collectAsStateWithLifecycle(0f).value,
                             carbsTotal = viewModel.goalCarbohydrates,
-                            fatsCurrent = 1f,
+                            fatsCurrent = viewModel.currentFats
+                                .collectAsStateWithLifecycle(0f).value,
                             fatsTotal = viewModel.goalFats,
                         )
                     }
@@ -155,10 +156,13 @@ fun EatMain (
                 listContent = {
                     CurrentMealEntryList(
                         modifier = Modifier.fillMaxHeight(1f),
-                        editMealNavigation = { id: Long -> navController.navigate("EditMeal/$id") },
-                        currentMealEntries = viewModel.currentMealEntries.collectAsState(listOf()).value ?: listOf()
+                        onCardClick = { id: Long -> navController.navigate("EditMeal/$id") },
+                        currentMealEntries = viewModel.currentMealEntries.collectAsState(listOf()).value ?: listOf(),
+                        onCardDelete = { viewModel.deleteMeal(it) }
                     )
-                }
+                },
+                isContentEmpty = viewModel.currentMealEntries.collectAsState(listOf()).value?.isEmpty() ?: false,
+                contentPlaceholderText = stringResource(id = R.string.no_existing_meal_entries)
             )
         }
     }
@@ -309,7 +313,7 @@ private fun ColumnScope.CaloriesCard(
         )
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
-            text = "$caloriesCurrent/${caloriesTotal}kcal",
+            text = "${caloriesCurrent.toStringWithDecimalPoints()}/${caloriesTotal}kcal",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onTertiary
         )
@@ -318,7 +322,7 @@ private fun ColumnScope.CaloriesCard(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .height(6.dp),
-                progress = { (caloriesCurrent.toFloat() / caloriesTotal).coerceIn(0f, 1f) },
+                progress = { (caloriesCurrent / caloriesTotal).coerceIn(0f, 1f) },
                 color = CaloriesColour,
                 trackColor = Color.White,
                 strokeCap = StrokeCap.Round
@@ -420,11 +424,6 @@ fun ColumnScope.MacroCard(
 
 @Composable
 fun AddMealEntry(addMealNavigation: () -> Unit) {
-    val mealEntryDialogOpen = rememberSaveable {mutableStateOf(false)}
-    if (mealEntryDialogOpen.value) {
-        AddMealEntryDialog()
-    }
-
     IconButton(
         modifier = Modifier.size(20.dp),
         onClick = addMealNavigation
@@ -434,30 +433,27 @@ fun AddMealEntry(addMealNavigation: () -> Unit) {
 }
 
 @Composable
-fun AddMealEntryDialog() {
-    Dialog(onDismissRequest = { /*TODO*/ }) {
-
-    }
-}
-
-@Composable
 fun CurrentMealEntryList(
     modifier: Modifier = Modifier,
-    editMealNavigation: (Long) -> Unit,
-    currentMealEntries: List<MealWithFoodList>
+    onCardClick: (Long) -> Unit,
+    onCardDelete: (Long) -> Unit,
+    currentMealEntries: List<MealWithFoodList>,
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(currentMealEntries) { _, mealEntry ->
+            val mealId = mealEntry.meal.id
+
             NutritionCard(
-                modifier = Modifier.clickable { editMealNavigation(mealEntry.meal.id) },
+                modifier = Modifier.clickable { onCardClick(mealId) },
                 title = mealEntry.meal.name,
                 calories = mealEntry.foodItems.sumOf { it.calories.toDouble() },
                 protein = mealEntry.foodItems.sumOf { it.protein.toDouble() },
                 carbs = mealEntry.foodItems.sumOf { it.carbohydrates.toDouble() },
-                fats = mealEntry.foodItems.sumOf { it.fats.toDouble() }
+                fats = mealEntry.foodItems.sumOf { it.fats.toDouble() },
+                onDelete = { onCardDelete(mealId) }
             )
         }
     }

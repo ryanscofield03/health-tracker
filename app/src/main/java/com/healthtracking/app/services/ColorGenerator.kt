@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color as ComposeColor
  */
 fun generateColor(index: Int, numColors: Int): ComposeColor {
     val hue = (360f / numColors) * index
-    val saturation = 0.6f
-    val lightness = 0.8f
+    val saturation = 0.5f
+    val lightness = 0.6f
     return ComposeColor(Color.HSVToColor(listOf(hue, saturation, lightness).toFloatArray()))
 }

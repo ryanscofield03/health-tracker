@@ -1,21 +1,26 @@
 package com.healthtracking.app.viewmodels.screen
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.viewmodels.database.MealViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
+    val currentCalories: Flow<Float> get() = calculateCurrentCalories()
+    val currentProtein: Flow<Float> get() = calculateCurrentProtein()
+    val currentCarbohydrates: Flow<Float> get() = calculateCurrentCarbohydrates()
+    val currentFats: Flow<Float> get() = calculateCurrentFats()
+
     val goalCalories get() = mealViewModel.goalCalories
     val goalProtein get() = mealViewModel.goalProtein
     val goalCarbohydrates get() = mealViewModel.goalCarbohydrates
@@ -41,6 +46,67 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
         viewModelScope.launch {
             _currentMealEntries.value = mealViewModel.getTodaysMealEntries()
         }
+    }
+
+    /**
+     * Deletes the meal from the database where id = mealId
+     */
+    fun deleteMeal(mealId: Long) {
+        viewModelScope.launch {
+            mealViewModel.deleteMeal(mealId)
+        }
+    }
+
+    /**
+     * Calculate the current calories consumed by the user on this day
+     */
+    private fun calculateCurrentCalories(): Flow<Float> {
+        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+            mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.calories.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum() ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Calculate the current protein consumed by the user on this day
+     */
+    private fun calculateCurrentProtein(): Flow<Float> {
+        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+            mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.protein.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum() ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Calculate the current carbs consumed by the user on this day
+     */
+    private fun calculateCurrentCarbohydrates(): Flow<Float> {
+        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+            mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.carbohydrates.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum() ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Calculate the current fats consumed by the user on this day
+     */
+    private fun calculateCurrentFats(): Flow<Float> {
+        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+            mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.fats.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum() ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
     }
 
     /**

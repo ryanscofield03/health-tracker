@@ -1,6 +1,7 @@
 package com.healthtracking.app.daos
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.healthtracking.app.entities.Food
@@ -34,6 +35,9 @@ interface MealDao {
 
     @Upsert
     fun upsertFoodEntity(foodEntity: Food): Long
+
+    @Query("DELETE FROM MEAL WHERE id = :mealId")
+    fun deleteMeal(mealId: Long): Int
 
     @Query("""
         SELECT * FROM meal 

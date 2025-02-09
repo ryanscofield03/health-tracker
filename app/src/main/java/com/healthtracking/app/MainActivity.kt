@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -51,6 +52,7 @@ import com.healthtracking.app.composables.screens.workout.RunWorkout
 import com.healthtracking.app.composables.screens.workout.ScheduleWorkout
 import com.healthtracking.app.composables.screens.workout.WorkoutMain
 import com.healthtracking.app.theme.HealthTrackingTheme
+import com.healthtracking.app.viewmodels.database.MealViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
@@ -70,6 +72,7 @@ data class TabBarItem (
 
 class MainActivity : ComponentActivity() {
     private val workoutViewModel: WorkoutViewModel by koinViewModel()
+    private val mealViewModel: MealViewModel by koinViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,6 +136,13 @@ class MainActivity : ComponentActivity() {
                         start = 24.dp,
                         top = 48.dp,
                         end = 24.dp,
+                        bottom = 144.dp
+                    )
+
+                    val verticalPadding = PaddingValues(
+                        start = 0.dp,
+                        top = 48.dp,
+                        end = 0.dp,
                         bottom = 144.dp
                     )
 
@@ -263,6 +273,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "AddMeal") {
+                            buildMealViewModel.clear()
                             BuildMeal(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
@@ -272,16 +283,17 @@ class MainActivity : ComponentActivity() {
                         composable(route = "EditMeal/{id}") { navBackStackEntry ->
                             // get id, get workout, insert workout data into viewmodel for screen
                             val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
-                            val workout = workoutViewModel
-                                .allWorkouts
+                            val mealWithFoodList = mealViewModel
+                                .allMeals
+                                .collectAsStateWithLifecycle(listOf())
                                 .value
-                                ?.find { it.id == parsedId }
-                            workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
+                                ?.find { it.meal.id == parsedId }
+                            mealWithFoodList?.let { buildMealViewModel.editMealInfo(mealWithFoodList = it) }
 
-                            BuildWorkout(
+                            BuildMeal(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
-                                viewModel = addWorkoutViewModel,
+                                viewModel = buildMealViewModel,
                             )
                         }
                         composable("Sleep"){
@@ -294,7 +306,7 @@ class MainActivity : ComponentActivity() {
                         composable("Progress"){
                             val statsScreenViewModel: StatsScreenViewModel by koinViewModel()
                             StatsMain(
-                                modifier = Modifier.padding(padding),
+                                modifier = Modifier.padding(verticalPadding),
                                 viewModel = statsScreenViewModel
                             )
                         }

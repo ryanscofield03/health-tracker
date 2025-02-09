@@ -1,5 +1,6 @@
 package com.healthtracking.app.composables.graphs.workout
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,8 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ContentInfoCompat.Flags
+import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.WorkoutHistory
+import com.healthtracking.app.theme.CustomCutCornerShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -26,17 +27,18 @@ fun WorkoutAttendanceGraph(
     workoutData: List<WorkoutHistory>,
     workoutAttendance: Float
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        AttendanceData(
-            workoutAttendance = workoutAttendance
-        )
-
-        WorkoutCards(
-            workoutData = workoutData
-        )
-    }
+    HeaderAndListBox(
+        header = {
+            AttendanceData(
+                workoutAttendance = workoutAttendance
+            )
+        },
+        listContent = {
+            WorkoutCards(
+                workoutData = workoutData
+            )
+        }
+    )
 }
 
 @Composable
@@ -46,7 +48,10 @@ private fun WorkoutCards(
     val dateList: List<LocalDate> = generateLocalDates(data = workoutData)
     val workoutMap = workoutData.groupBy { it.date }
 
-    LazyRow(state = rememberLazyListState(initialFirstVisibleItemIndex = dateList.size - 1)) {
+    LazyRow(
+        modifier = Modifier,
+        state = rememberLazyListState(initialFirstVisibleItemIndex = dateList.size - 1)
+    ) {
         items(dateList) { date ->
             val workoutForDate = workoutMap[date]
 
@@ -82,18 +87,18 @@ private fun WorkoutHistoryCard(
 
     Card(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
             .fillMaxWidth()
-            .fillMaxHeight(0.8f),
-        shape = RoundedCornerShape(12.dp),
+            .fillMaxHeight(1f),
+        shape = CustomCutCornerShape,
         colors = CardDefaults.cardColors(
             containerColor = cardColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
         ) {
             Text(
@@ -125,5 +130,5 @@ private fun WorkoutHistoryCard(
 private fun AttendanceData(
     workoutAttendance: Float
 ) {
-    Text(text = "Workout Attendance: $workoutAttendance days/week")
+    Text(text = "Workout Attendance: $workoutAttendance days/week", style = MaterialTheme.typography.bodyMedium)
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.graphs.eat.CaloriesEatenGraph
 import com.healthtracking.app.composables.graphs.eat.MacrosEatenGraph
 import java.time.LocalDate
@@ -22,14 +23,18 @@ fun EatStats(
         modifier = Modifier.fillMaxSize().padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // graph of calories eaten
-        CaloriesEatenGraph(caloriesData = caloriesData)
+        BackgroundBorderBox {
+            // graph of calories eaten
+            CaloriesEatenGraph(caloriesData = caloriesData)
+        }
 
-        // graph of each macro in comparison to goal (x3)
-        MacrosEatenGraph(
-            proteinData = proteinData,
-            carbsData = carbsData,
-            fatsData = fatsData
-        )
+        BackgroundBorderBox {
+            // graph of each macro in comparison to goal (x3)
+            MacrosEatenGraph(
+                proteinData = proteinData,
+                carbsData = carbsData,
+                fatsData = fatsData
+            )
+        }
     }
 }

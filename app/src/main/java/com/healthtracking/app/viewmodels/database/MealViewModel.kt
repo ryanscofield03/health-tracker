@@ -3,15 +3,9 @@ package com.healthtracking.app.viewmodels.database
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import com.healthtracking.app.daos.MealDao
-import com.healthtracking.app.entities.Food
-import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.entities.MealWithFoodList
-import com.healthtracking.app.entities.Sleep
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +15,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel() {
+    val allMeals: Flow<List<MealWithFoodList>?> = mealDao.getAllMealEntries()
+
     companion object {
         private const val PROTEIN_KEY = "PROTEIN"
         private const val PROTEIN_DEFAULT = 100
@@ -93,6 +89,12 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
             val endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX)
 
             mealDao.getTodaysMealEntries(startOfDay, endOfDay)
+        }
+    }
+
+    suspend fun deleteMeal(mealId: Long) {
+        withContext(Dispatchers.IO) {
+            mealDao.deleteMeal(mealId)
         }
     }
 }

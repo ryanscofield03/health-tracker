@@ -72,7 +72,7 @@ fun LanguagePicker(
     val languages = stringArrayResource(id = R.array.languages)
     
     Text(
-        text = stringResource(id = R.string.select_language),
+        text = stringResource(id = R.string.select_language_settings),
         style = MaterialTheme.typography.titleLarge
     )
     Spacer(modifier = Modifier.height(16.dp))
@@ -92,7 +92,7 @@ fun ToggleMeasurementType(
     toImperial: () -> Unit,
 ) {
     Text(
-        text = stringResource(id = R.string.select_measurement),
+        text = stringResource(id = R.string.select_measurement_settings),
         style = MaterialTheme.typography.titleLarge
     )
     Spacer(modifier = Modifier.height(16.dp))

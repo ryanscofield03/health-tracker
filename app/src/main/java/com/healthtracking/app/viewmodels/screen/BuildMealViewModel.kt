@@ -1,11 +1,14 @@
 package com.healthtracking.app.viewmodels.screen
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.entities.MealFoodCrossRef
+import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.services.toDecimalPoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +28,12 @@ class BuildMealViewModel(
             "50 g",
             "1 tbsp"
         )
+
+        private val DEFAULT_MEASUREMENT = MEASUREMENT_OPTIONS[0]
+        private const val DEFAULT_PROTEIN = 0f
+        private const val DEFAULT_CARBS = 0f
+        private const val DEFAULT_FATS = 0f
+        private const val DEFAULT_QUANTITY = 1f
     }
 
     // store meal name
@@ -45,23 +54,42 @@ class BuildMealViewModel(
     private val _dialogFoodName = MutableStateFlow<String?>(null)
     val dialogFoodName get() = _dialogFoodName
 
-    private val _dialogMeasurement = MutableStateFlow(MEASUREMENT_OPTIONS[0])
+    private val _dialogMeasurement = MutableStateFlow(DEFAULT_MEASUREMENT)
     val dialogMeasurement get() = _dialogMeasurement
 
-    private val _dialogProtein = MutableStateFlow(0f)
+    private val _dialogProtein = MutableStateFlow(DEFAULT_PROTEIN)
     val dialogProtein get() = _dialogProtein
 
-    private val _dialogCarbs = MutableStateFlow(0f)
+    private val _dialogCarbs = MutableStateFlow(DEFAULT_CARBS)
     val dialogCarbs get() = _dialogCarbs
 
-    private val _dialogFats = MutableStateFlow(0f)
+    private val _dialogFats = MutableStateFlow(DEFAULT_FATS)
     val dialogFats get() = _dialogFats
 
-    private val _dialogQuantity = MutableStateFlow(1f)
+    private val _dialogQuantity = MutableStateFlow(DEFAULT_QUANTITY)
     val dialogQuantity get() = _dialogQuantity
 
     val dialogCalories get() =
-        ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9) * dialogQuantity.value).toDecimalPoints(0)
+        ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9)).toDecimalPoints(0)
+
+    private val _editMealId: MutableState<Long?> = mutableStateOf(null)
+    val editMealId: Long? get() = _editMealId.value
+
+    /**
+     * Initialize data when editing an old entry
+     */
+    fun editMealInfo(mealWithFoodList: MealWithFoodList) {
+        _editMealId.value = mealWithFoodList.meal.id
+        reuseMealInfo(mealWithFoodList = mealWithFoodList)
+    }
+
+    /**
+     * Initialize data when reusing an old entry
+     */
+    fun reuseMealInfo(mealWithFoodList: MealWithFoodList) {
+        _name.value = mealWithFoodList.meal.name
+        _foodItems.value = mealWithFoodList.foodItems
+    }
 
     /**
      * Updates the name of the food item
@@ -135,8 +163,22 @@ class BuildMealViewModel(
             )
 
             _foodItems.value += foodItem
+
+            clearFoodDialog()
         }
 
+    }
+
+    /**
+     * Clears the food entry dialog (e.g. cancels or saves)
+     */
+    fun clearFoodDialog() {
+        _dialogFoodName.value = null
+        _dialogMeasurement.value = DEFAULT_MEASUREMENT
+        _dialogProtein.value = DEFAULT_PROTEIN
+        _dialogCarbs.value = DEFAULT_CARBS
+        _dialogFats.value = DEFAULT_FATS
+        _dialogQuantity.value = DEFAULT_QUANTITY
     }
 
     /**
@@ -178,6 +220,8 @@ class BuildMealViewModel(
         if (!validateMeal()) return
 
         viewModelScope.launch(Dispatchers.IO) {
+            // TODO handle case where editing is true and meal already exists
+
             val mealId = mealDao.upsertMealEntity(
                 mealEntity = Meal(
                     name = _name.value,
@@ -200,6 +244,7 @@ class BuildMealViewModel(
      * Clears the view model
      */
     fun clear() {
+        _editMealId.value = null
         _name.value = ""
         _foodItems.value = listOf()
     }

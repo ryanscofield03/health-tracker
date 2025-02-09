@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.healthtracking.app.R
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
 import kotlinx.coroutines.launch
@@ -42,7 +43,9 @@ fun StatsMain (
     Column(modifier = modifier) {
         val pagerState = rememberPagerState(pageCount = { 3 })
 
-        HorizontalPager(state = pagerState) { page ->
+        HorizontalPager(
+            state = pagerState
+        ) { page ->
             val title = when (page) {
                 0 -> stringResource(id = R.string.workout_screen)
                 1 -> stringResource(id = R.string.eat_screen)
@@ -50,9 +53,12 @@ fun StatsMain (
                 else -> stringResource(id = R.string.error_screen)
             }
 
+            // use passed in modifier here because we want to be able to see a gap between each page
             Column(modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .fillMaxWidth()) {
+                .padding(horizontal = 24.dp)
+                .fillMaxHeight(0.93f)
+                .fillMaxWidth()
+            ) {
                 // title
                 Text(
                     text = title,
@@ -63,14 +69,15 @@ fun StatsMain (
                 HorizontalDivider()
                 Spacer(Modifier.height(10.dp))
 
-                Box(modifier = Modifier.padding(8.dp)) {
+                Box {
                     // graphs
                     when (page) {
                         0 -> WorkoutStats(
-                            workoutData = viewModel.getWorkoutHistory(),
+                            workoutData = viewModel.getWorkoutHistory().collectAsStateWithLifecycle()
+                                .value ?: listOf(),
                             workoutAttendance = viewModel.getWorkoutAttendance(),
-                            selectedExercise = viewModel.selectedExercise.collectAsState().value
-                                ?: stringResource(id = R.string.select_exercise),
+                            selectedExercise = viewModel.selectedExercise.collectAsStateWithLifecycle()
+                                .value ?: stringResource(id = R.string.select_exercise),
                             exercises = viewModel.getExercises().collectAsState().value ?: listOf(),
                             updateSelectedExercise = { viewModel.updateSelectedExercise(it) },
                             selectedExerciseWeightData = viewModel.getSelectedExerciseWeightData(),
@@ -94,7 +101,6 @@ fun StatsMain (
                 }
             }
         }
-
         PageSelectedIcons(pagerState = pagerState)
     }
 }
@@ -107,8 +113,8 @@ private fun PageSelectedIcons(
 
     Row(
         modifier = Modifier
+            .padding(top = 8.dp)
             .fillMaxSize()
-            .padding(bottom = 16.dp)
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()

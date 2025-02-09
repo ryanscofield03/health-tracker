@@ -32,11 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
-import com.healthtracking.app.composables.ErrorMessageComponent
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
-import com.healthtracking.app.composables.screens.eat.AddMealEntry
 import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
