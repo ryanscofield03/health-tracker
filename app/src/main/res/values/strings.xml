@@ -149,7 +149,7 @@
     <string name="hours_slept_axis_title">Hours Slept</string>
     <string name="sleep_ratings_axis_title">Sleep Ratings</string>
     <string name="select_exercise">Exercise</string>
-    <string name="missing_exercise_graph_data">Currently no data to be graphed</string>
+    <string name="missing_exercise_graph_data">Insufficient data to be graphed</string>
     <string name="unselected_exercise_graph_error">Select an exercise before it can be displayed</string>
 
     <string name="calories_intercept">Calories Goal</string>

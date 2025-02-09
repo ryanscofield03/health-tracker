@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.theme.CaloriesColour
 import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
 
@@ -49,7 +50,7 @@ fun NutritionCard(
     Card(
         modifier = modifier.fillMaxWidth().clickable {  },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
-        shape = RoundedCornerShape(16.dp),
+        shape = CustomCutCornerShape,
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {

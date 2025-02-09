@@ -51,8 +51,11 @@ import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.graphs.eat.BarChart
 import com.healthtracking.app.entities.MealWithFoodList
+import com.healthtracking.app.services.toDecimalPoints
+import com.healthtracking.app.services.toStringWithDecimalPoints
 import com.healthtracking.app.theme.CaloriesColour
 import com.healthtracking.app.theme.CarbsColour
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
@@ -105,8 +108,9 @@ fun EatMain (
                     }
 
                     Column(modifier = Modifier
-                        .fillMaxSize()
-                        .weight(0.65f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        .fillMaxSize().weight(0.6f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         CaloriesCard(
                             onClick = openEditGoalDialog,
                             caloriesCurrent = 1f,
@@ -162,7 +166,7 @@ fun EatMain (
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateDailyGoalDialog(
+private fun UpdateDailyGoalDialog(
     onSubmit: () -> Boolean,
     onDismissRequest: () -> Unit,
     caloriesGoal: String,
@@ -292,6 +296,7 @@ private fun ColumnScope.CaloriesCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary
         ),
+        shape = CustomCutCornerShape,
         onClick = onClick,
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
@@ -339,24 +344,24 @@ private fun MacroCards(
         MacroCard(
             onClick = onClick,
             titleId = R.string.protein,
-            progressString = "$proteinCurrent/${proteinTotal}g",
-            progressFloat = (proteinCurrent.toFloat() / proteinTotal).coerceIn(0f, 1f),
+            progressString = "${proteinCurrent.toDecimalPoints(1).toStringWithDecimalPoints()}/${proteinTotal}g",
+            progressFloat = (proteinCurrent / proteinTotal).coerceIn(0f, 1f),
             progressColour = ProteinColour
         )
 
         MacroCard(
             onClick = onClick,
             titleId = R.string.carbs,
-            progressString = "$carbsCurrent/${carbsTotal}g",
-            progressFloat = (carbsCurrent.toFloat() / carbsTotal).coerceIn(0f, 1f),
+            progressString = "${carbsCurrent.toDecimalPoints(1).toStringWithDecimalPoints()}/${carbsTotal}g",
+            progressFloat = (carbsCurrent / carbsTotal).coerceIn(0f, 1f),
             progressColour = CarbsColour
         )
 
         MacroCard(
             onClick = onClick,
             titleId = R.string.fats,
-            progressString = "$fatsCurrent/${fatsTotal}g",
-            progressFloat = (fatsCurrent.toFloat() / fatsTotal).coerceIn(0f, 1f),
+            progressString = "${fatsCurrent.toDecimalPoints(1).toStringWithDecimalPoints()}/${fatsTotal}g",
+            progressFloat = (fatsCurrent / fatsTotal).coerceIn(0f, 1f),
             progressColour = FatsColour
         )
     }
@@ -377,6 +382,7 @@ fun ColumnScope.MacroCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary
         ),
+        shape = CustomCutCornerShape,
         onClick = onClick,
         elevation = CardDefaults.cardElevation(4.dp)
     ) {

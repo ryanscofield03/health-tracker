@@ -37,6 +37,7 @@ import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.screens.eat.AddMealEntry
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @Composable
@@ -89,7 +90,7 @@ fun BuildWorkout(
                 }
             },
             listContent = {
-                LazyColumn() {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     items (viewModel.exercises) { exercise ->
                         ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
                     }
@@ -158,20 +159,18 @@ private fun ExerciseCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .height(60.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.medium
+        shape = CustomCutCornerShape
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

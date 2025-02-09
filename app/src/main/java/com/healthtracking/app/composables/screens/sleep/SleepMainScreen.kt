@@ -53,6 +53,7 @@ import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.entities.Sleep
 import com.healthtracking.app.composables.TimeInputDisplay
 import com.healthtracking.app.services.calculateTimeSlept
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -209,6 +210,7 @@ fun PastSleepEntryCard(
             .clickable(onClick = {
                 openEditSleepEntry()
             }),
+        shape = CustomCutCornerShape,
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
     ) {

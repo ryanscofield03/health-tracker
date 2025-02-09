@@ -18,20 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -42,22 +37,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.healthtracking.app.R
+import com.healthtracking.app.theme.CustomCutCornerShape
 
 @Composable
 fun TextFieldWithErrorMessage(
@@ -80,6 +68,7 @@ fun TextFieldWithErrorMessage(
             placeholder = { Text(stringResource(id = placeholderId)) },
             maxLines = 1,
             isError = hasError,
+            shape = CustomCutCornerShape,
             colors = TextFieldDefaults.colors(
                 errorContainerColor = MaterialTheme.colorScheme.background,
                 focusedContainerColor = MaterialTheme.colorScheme.background,
@@ -227,7 +216,7 @@ fun BackgroundBorderBoxDark(
     Box(modifier = modifier
         .background(
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-            shape = RoundedCornerShape(10.dp)
+            shape = CustomCutCornerShape
         )
         .padding(12.dp)
     ) {

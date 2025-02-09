@@ -42,6 +42,7 @@ import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Workout
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
 
 @Composable
@@ -103,7 +104,7 @@ fun WorkoutMain(
 }
 
 @Composable
-fun WorkoutCards(
+private fun WorkoutCards(
     workoutList: List<Workout>,
     deleteWorkout: (workout: Workout) -> Unit,
     navController: NavController
@@ -124,7 +125,7 @@ fun WorkoutCards(
 }
 
 @Composable
-fun WorkoutCard(
+private fun WorkoutCard(
     modifier: Modifier = Modifier,
     workout: Workout,
     runWorkout: () -> Unit,
@@ -137,6 +138,7 @@ fun WorkoutCard(
         modifier = modifier
             .fillMaxWidth()
             .height(90.dp),
+        shape = CustomCutCornerShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary
