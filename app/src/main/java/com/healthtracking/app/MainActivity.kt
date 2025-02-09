@@ -120,7 +120,12 @@ class MainActivity : ComponentActivity() {
                                     ),
                                     label = { Text(text = item.title, style = MaterialTheme.typography.labelSmall)},
                                     selected = selectedTabIndex == index,
-                                    onClick = { navController.navigate(item.title); selectedTabIndex = index },
+                                    onClick = {
+                                        if (selectedTabIndex != index) {
+                                            navController.navigate(item.title)
+                                            selectedTabIndex = index
+                                        }
+                                    },
                                     icon = {
                                         Icon(
                                             imageVector = item.icon,
