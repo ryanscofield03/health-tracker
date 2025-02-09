@@ -8,7 +8,7 @@ val TertiaryLight = Color(0xFF9BB9EE)
 val TertiaryGray = Color(0xFF3F3F3F)
 val DimTertiaryLight = Color(0x3394A6C6)
 
-val PrimaryDark = Color(0xFF315692)
+val PrimaryDark = Color(0xFF264271)
 val SecondaryDark = Color(0xFF3C598F)
 val TertiaryDark = Color(0xFF394C6D)
 val DimTertiaryDark = Color(0x33536992)
