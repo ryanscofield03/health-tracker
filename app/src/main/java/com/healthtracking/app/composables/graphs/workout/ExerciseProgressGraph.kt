@@ -82,7 +82,7 @@ fun ExerciseProgressGraph(
             }
         } else {
             ErrorMessageBox(
-                errorMessage = stringResource(id = R.string.unselected_exercise_graph_error)
+                errorMessage = stringResource(id = R.string.missing_exercise_graph_data)
             )
         }
     }

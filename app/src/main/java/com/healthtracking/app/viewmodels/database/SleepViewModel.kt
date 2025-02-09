@@ -57,7 +57,7 @@ class SleepViewModel(
         }
     }
 
-    suspend fun getSleepEntries(): LiveData<List<Sleep>?> {
+    suspend fun getSleepEntries(): Flow<List<Sleep>?> {
         return withContext(Dispatchers.IO) {
             sleepDao.getAllSleepEntries()
         }

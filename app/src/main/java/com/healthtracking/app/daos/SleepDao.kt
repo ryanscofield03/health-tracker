@@ -16,7 +16,7 @@ interface SleepDao {
     suspend fun upsertSleepEntry(sleepEntry: Sleep): Long
 
     @Query("SELECT * FROM sleep ORDER BY id ASC")
-    fun getAllSleepEntries(): LiveData<List<Sleep>?>
+    fun getAllSleepEntries(): Flow<List<Sleep>?>
 
     @Query("SELECT * FROM sleep ORDER BY id ASC")
     fun getAllSleepEntriesFlow(): Flow<List<Sleep>?>

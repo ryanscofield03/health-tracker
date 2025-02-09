@@ -1,9 +1,19 @@
 package com.healthtracking.app.viewmodels.screen
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.viewmodels.database.MealViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
     val goalCalories get() = mealViewModel.goalCalories
@@ -23,6 +33,15 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
 
     private val _dialogFatsValue: MutableState<Float> = mutableFloatStateOf(goalFats.toFloat())
     val dialogFatsValue: Float get() = _dialogFatsValue.value
+
+    private val _currentMealEntries: MutableState<Flow<List<MealWithFoodList>?>> = mutableStateOf(flow{listOf<MealWithFoodList>()})
+    val currentMealEntries: Flow<List<MealWithFoodList>?> get() = _currentMealEntries.value
+
+    init {
+        viewModelScope.launch {
+            _currentMealEntries.value = mealViewModel.getTodaysMealEntries()
+        }
+    }
 
     /**
      * Populate the dialog box with the current goals

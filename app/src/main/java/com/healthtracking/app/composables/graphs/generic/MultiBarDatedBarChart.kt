@@ -12,6 +12,7 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
@@ -28,6 +29,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.LegendItem
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -59,8 +61,8 @@ internal fun MultiBarDatedBarChart(
     val columns = List(numBars) { index ->
         LineComponent(
             fill = fill(color = generateColor(index, numBars)),
-            thicknessDp = 20f,
-            shape = CorneredShape.rounded(topLeftPercent = 40, topRightPercent = 40),
+            thicknessDp = 10f,
+            shape = CorneredShape.rounded(topLeftPercent = 40, topRightPercent = 40)
         )
     }
 
@@ -92,7 +94,7 @@ internal fun MultiBarDatedBarChart(
         rememberCartesianChart(
             layers = arrayOf(
                 rememberColumnCartesianLayer(
-                    columnCollectionSpacing = 40.dp,
+                    columnCollectionSpacing = 20.dp,
                     columnProvider = remember(columns, data.values) {
                         getColumnProvider(columns = columns, values = data.values)
                     },
@@ -109,7 +111,7 @@ internal fun MultiBarDatedBarChart(
             bottomAxis = HorizontalAxis.rememberBottom(
                 line = rememberAxisLineComponent(fill(color = MaterialTheme.colorScheme.onBackground)),
                 label = TextComponent(textSizeSp = 12f, color = MaterialTheme.colorScheme.onSurface.toArgb()),
-                valueFormatter = bottomAxisValueFormatter,
+                valueFormatter = bottomAxisValueFormatter
             ),
             legend = rememberHorizontalLegend(
                 items = { extraStore ->

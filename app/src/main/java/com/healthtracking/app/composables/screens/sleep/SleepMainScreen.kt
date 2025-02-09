@@ -34,6 +34,7 @@ import androidx.compose.material3.TimePickerColors
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -62,7 +63,7 @@ fun SleepMain(
     modifier: Modifier,
     viewModel: SleepScreenViewModel
 ) {
-    val sleepEntries by viewModel.pastSleepEntries.observeAsState(emptyList())
+    val sleepEntries by viewModel.pastSleepEntries.collectAsState(emptyList())
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -96,10 +97,9 @@ fun SleepMain(
 
 
         // state for adding new entry
-        val pastEntries by viewModel.pastSleepEntries.observeAsState()
         val canAddNewEntry by remember {
             derivedStateOf {
-                val hasEntryToday = pastEntries?.any { it.date == LocalDate.now() } ?: false
+                val hasEntryToday = sleepEntries?.any { it.date == LocalDate.now() } ?: false
 
                 // can add new entry if there is no entry today or editSleepId is not null
                 viewModel.editSleepId != null || !hasEntryToday

@@ -31,7 +31,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,19 +44,18 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.HeaderAndListBox
-import com.healthtracking.app.entities.Food
-import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.composables.graphs.eat.BarChart
+import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.theme.CaloriesColour
 import com.healthtracking.app.theme.CarbsColour
 import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
-import java.time.LocalDateTime
 
 @Composable
 fun EatMain (
@@ -106,7 +109,7 @@ fun EatMain (
                         .weight(0.65f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         CaloriesCard(
                             onClick = openEditGoalDialog,
-                            caloriesCurrent = 1800,
+                            caloriesCurrent = 1f,
                             caloriesTotal = viewModel.goalCalories
                         )
 
@@ -115,11 +118,11 @@ fun EatMain (
                     Box(modifier = Modifier.weight(0.35f)) {
                         MacroCards(
                             onClick = openEditGoalDialog,
-                            proteinCurrent = 80L,
+                            proteinCurrent = 1f,
                             proteinTotal = viewModel.goalProtein,
-                            carbsCurrent = 120L,
+                            carbsCurrent = 1f,
                             carbsTotal = viewModel.goalCarbohydrates,
-                            fatsCurrent = 15L,
+                            fatsCurrent = 1f,
                             fatsTotal = viewModel.goalFats,
                         )
                     }
@@ -149,95 +152,7 @@ fun EatMain (
                     CurrentMealEntryList(
                         modifier = Modifier.fillMaxHeight(1f),
                         editMealNavigation = { id: Long -> navController.navigate("EditMeal/$id") },
-                        currentMealEntries = listOf(
-                            Pair(
-                                Meal(
-                                    name = "Breakfast Bagels",
-                                    date = LocalDateTime.now()
-                                ),
-                                listOf(
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    )
-                                )
-                            ),
-                            Pair(
-                                Meal(
-                                    name = "Lunch Bagels",
-                                    date = LocalDateTime.now()
-                                ),
-                                listOf(
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    ),
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    )
-                                )
-                            ),
-                            Pair(
-                                Meal(
-                                    name = "Dinner Bagels",
-                                    date = LocalDateTime.now()
-                                ),
-                                listOf(
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    ),
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    ),
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    ),
-                                    Food(
-                                        name = "Bagel",
-                                        measurement = "1 Unit",
-                                        calories = 250f,
-                                        protein = 10f,
-                                        carbohydrates = 49f,
-                                        fats = 1.5f,
-                                        quantity = 1f
-                                    )
-                                )
-                            )
-                        )
+                        currentMealEntries = viewModel.currentMealEntries.collectAsState(listOf()).value ?: listOf()
                     )
                 }
             )
@@ -368,7 +283,7 @@ private fun ColumnScope.WeeklyGraph() {
 
 @Composable
 private fun ColumnScope.CaloriesCard(
-    caloriesCurrent: Long,
+    caloriesCurrent: Float,
     caloriesTotal: Int,
     onClick: () -> Unit
 ) {
@@ -410,11 +325,11 @@ private fun ColumnScope.CaloriesCard(
 @Composable
 private fun MacroCards(
     onClick: () -> Unit,
-    proteinCurrent: Long,
+    proteinCurrent: Float,
     proteinTotal: Int,
-    carbsCurrent: Long,
+    carbsCurrent: Float,
     carbsTotal: Int,
-    fatsCurrent: Long,
+    fatsCurrent: Float,
     fatsTotal: Int
 ) {
     Column(
@@ -523,7 +438,7 @@ fun AddMealEntryDialog() {
 fun CurrentMealEntryList(
     modifier: Modifier = Modifier,
     editMealNavigation: (Long) -> Unit,
-    currentMealEntries: List<Pair<Meal, List<Food>>>
+    currentMealEntries: List<MealWithFoodList>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -531,12 +446,12 @@ fun CurrentMealEntryList(
     ) {
         itemsIndexed(currentMealEntries) { _, mealEntry ->
             NutritionCard(
-                modifier = Modifier.clickable { editMealNavigation(mealEntry.first.id) },
-                title = mealEntry.first.name,
-                calories = mealEntry.second.sumOf { it.calories.toDouble() },
-                protein = mealEntry.second.sumOf { it.protein.toDouble() },
-                carbs = mealEntry.second.sumOf { it.carbohydrates.toDouble() },
-                fats = mealEntry.second.sumOf { it.fats.toDouble() }
+                modifier = Modifier.clickable { editMealNavigation(mealEntry.meal.id) },
+                title = mealEntry.meal.name,
+                calories = mealEntry.foodItems.sumOf { it.calories.toDouble() },
+                protein = mealEntry.foodItems.sumOf { it.protein.toDouble() },
+                carbs = mealEntry.foodItems.sumOf { it.carbohydrates.toDouble() },
+                fats = mealEntry.foodItems.sumOf { it.fats.toDouble() }
             )
         }
     }

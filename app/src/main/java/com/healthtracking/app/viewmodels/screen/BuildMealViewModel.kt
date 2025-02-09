@@ -187,8 +187,10 @@ class BuildMealViewModel(
 
             _foodItems.value.forEach { foodItem: Food ->
                 val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
-                val mealFoodCrossRef = MealFoodCrossRef(mealId = mealId, foodId = foodId)
-                println(mealFoodCrossRef)
+                val mealFoodCrossRef = MealFoodCrossRef(
+                    mealId = mealId,
+                    foodId = foodId
+                )
                 mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
             }
         }

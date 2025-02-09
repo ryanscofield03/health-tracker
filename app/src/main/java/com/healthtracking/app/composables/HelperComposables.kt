@@ -51,8 +51,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.healthtracking.app.R
 
 @Composable
@@ -152,37 +156,16 @@ fun SelectionDropDown(
     onItemClick: (String) -> Unit
 ) {
     val expanded = rememberSaveable { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
 
     ExposedDropdownMenuBox(
         modifier = Modifier.fillMaxWidth(),
         expanded = expanded.value,
         onExpandedChange = { expanded.value = !expanded.value }
     ) {
-        Button(
-            onClick = { focusRequester.requestFocus(); expanded.value = true },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                text = selectedText,
-                color = MaterialTheme.colorScheme.onTertiary
-            )
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown Icon",
-                tint = MaterialTheme.colorScheme.onTertiary
-            )
-        }
-
         TextField(
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
             value = selectedText,
-            textStyle = MaterialTheme.typography.bodyMedium,
+            textStyle = MaterialTheme.typography.labelSmall,
             readOnly = true,
             onValueChange = {},
             maxLines = 1,
@@ -192,7 +175,8 @@ fun SelectionDropDown(
                 focusedIndicatorColor = Transparent,
                 unfocusedIndicatorColor = Transparent,
                 focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
 
