@@ -266,7 +266,7 @@ class RunWorkoutViewModel(
      * @return true if it is not null and it can currently error
      */
     fun newWeightIsValid(): Boolean {
-        return !_newWeightFieldCanError.value || newWeight.toIntOrNull() != null
+        return !_newWeightFieldCanError.value || newWeight.toFloatOrNull() != null
     }
 
     /**

@@ -2,6 +2,7 @@ package com.healthtracking.app.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -13,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 
 private val DarkColorScheme = darkColorScheme(
@@ -54,6 +56,8 @@ private val LightColorScheme = lightColorScheme(
 val primaryFont = FontFamily(
     Font(R.font.primary_font, FontWeight.Normal)
 )
+
+val CustomCutCornerShape = CutCornerShape(bottomStart = 8.dp, topEnd = 8.dp)
 
 @Composable
 fun HealthTrackingTheme(

@@ -48,6 +48,8 @@ import com.healthtracking.app.R
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.entities.ExerciseHistory
+import com.healthtracking.app.services.toStringWithDecimalPoints
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import java.time.Duration
 import java.util.Locale
@@ -121,7 +123,7 @@ fun RunWorkout(
 }
 
 @Composable
-fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
+private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -236,16 +238,16 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             )) {
                 item {
                     val entry: Pair<Float, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
-                    val weight = entry?.first ?: "-"
-                    val reps = entry?.second ?: "-"
+                    val weight: String = entry?.first?.toStringWithDecimalPoints() ?: "-"
+                    val reps: String = entry?.second?.toString() ?: "-"
 
-                    var historyWeight = "-"
-                    var historyReps = "-"
+                    var historyWeight: String = "-"
+                    var historyReps: String = "-"
                     if (exerciseHistory.size > viewModel.currentExerciseIndex &&
                         exerciseHistory[viewModel.currentExerciseIndex] != null)
                     {
                         val historyData = exerciseHistory[viewModel.currentExerciseIndex]!!.data.getOrNull(i)
-                        historyWeight = historyData?.first?.toString() ?: "-"
+                        historyWeight = historyData?.first?.toStringWithDecimalPoints() ?: "-"
                         historyReps = historyData?.second?.toString() ?: "-"
                     }
 
@@ -269,8 +271,8 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                     ) {
                         TableCell(text = historyWeight)
                         TableCell(text = historyReps)
-                        TableCell(text = weight.toString())
-                        TableCell(text = reps.toString())
+                        TableCell(text = weight)
+                        TableCell(text = reps)
                     }
                 }
             }
@@ -290,7 +292,7 @@ fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryDialog(
+private fun EntryDialog(
     saveEntry: () -> Boolean,
     clearEntry: () -> Unit,
     onDismiss: () -> Unit,
@@ -382,7 +384,7 @@ fun EntryDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EndWorkoutConfirmationDialog(
+private fun EndWorkoutConfirmationDialog(
     onSaveWorkout: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -441,7 +443,7 @@ fun EndWorkoutConfirmationDialog(
 }
 
 @Composable
-fun RowScope.TableCell(
+private fun RowScope.TableCell(
     text: String,
     textColor: Color = MaterialTheme.colorScheme.onTertiary
 ) {
@@ -458,14 +460,14 @@ fun RowScope.TableCell(
 }
 
 @Composable
-fun StopWatch(
+private fun StopWatch(
     duration: Duration
 ) {
     val errorAlphaValue = 0.2f + duration.seconds * 0.005.toFloat()
 
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(CustomCutCornerShape)
             .background(color = MaterialTheme.colorScheme.error.copy(alpha = errorAlphaValue))
             .padding(8.dp),
         contentAlignment = Alignment.Center,
