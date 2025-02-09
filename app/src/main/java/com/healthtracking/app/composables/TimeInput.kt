@@ -47,7 +47,8 @@ fun TimeInputDisplay(
     ) {
         Text(
             title,
-            color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (enabled) MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleSmall
         )
 
@@ -68,7 +69,8 @@ fun TimeInputDisplay(
                 text = ":",
                 modifier = Modifier.padding(horizontal = 4.dp),
                 style = TextStyle(
-                    color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (enabled) MaterialTheme.colorScheme.onSurface
+                    else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = MaterialTheme.typography.displayMedium.fontSize
                 ),
             )
@@ -138,8 +140,8 @@ private fun ColumnScope.PeriodButtonDisplay(
             .fillMaxWidth()
             .weight(1f)
             .background(
-                color = if (!enabled && selected) MaterialTheme.colorScheme.surface
-                else if (!enabled) MaterialTheme.colorScheme.surfaceVariant
+                color = if (!enabled && selected) MaterialTheme.colorScheme.surfaceVariant
+                else if (!enabled) MaterialTheme.colorScheme.surface
                 else if (selected) colors.periodSelectorSelectedContainerColor
                 else colors.periodSelectorUnselectedContainerColor,
                 shape = RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp)

@@ -248,7 +248,7 @@ fun PastSleepEntryCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddSleepEntry(
+private fun AddSleepEntry(
     dateOfEntry: LocalDate,
     startTimePickerState: TimePickerState,
     endTimePickerState: TimePickerState,
@@ -292,7 +292,10 @@ fun AddSleepEntry(
             )
         }
         Box(modifier = Modifier
-            .clickable(enabled = canAddNewEntry, onClick = { startTimePickerOpened.value = true })
+            .clickable(
+                enabled = canAddNewEntry,
+                onClick = { startTimePickerOpened.value = true }
+            )
         ) {
             TimeInputDisplay(
                 title = stringResource(id = R.string.start_time_title),
@@ -311,7 +314,10 @@ fun AddSleepEntry(
             )
         }
         Box(modifier = Modifier
-            .clickable(enabled = canAddNewEntry, onClick = { startTimePickerOpened.value = true })
+            .clickable(
+                enabled = canAddNewEntry,
+                onClick = { startTimePickerOpened.value = true }
+            )
         ) {
             TimeInputDisplay(
                 title = stringResource(id = R.string.end_time_title),
@@ -321,7 +327,11 @@ fun AddSleepEntry(
             )
         }
 
-        RatingPicker(rating = rating, onRatingChange = onRatingChange, enabled = canAddNewEntry)
+        RatingPicker(
+            rating = rating,
+            onRatingChange = onRatingChange,
+            enabled = canAddNewEntry
+        )
 
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -340,7 +350,7 @@ fun AddSleepEntry(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimeInputDialog(
+private fun TimeInputDialog(
     title: String,
     state: TimePickerState,
     onDismissRequest: () -> Unit,
@@ -370,7 +380,10 @@ fun TimeInputDialog(
 
                 TimePicker(state = state, colors = colors)
 
-                TextButton(modifier = Modifier.align(alignment = Alignment.End), onClick = onDismissRequest) {
+                TextButton(
+                    modifier = Modifier.align(alignment = Alignment.End),
+                    onClick = onDismissRequest)
+                {
                     Text(stringResource(id = R.string.close))
                 }
             }
@@ -379,7 +392,7 @@ fun TimeInputDialog(
 }
 
 @Composable
-fun RatingPicker(
+private fun RatingPicker(
     rating: Int,
     onRatingChange: (Int) -> Unit,
     enabled: Boolean = true
@@ -424,7 +437,7 @@ fun RatingPicker(
 }
 
 @Composable
-fun SleepRatingButton(
+private fun SleepRatingButton(
     iconId: Int,
     descriptionId: Int,
     enabled: Boolean = true,
