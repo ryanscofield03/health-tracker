@@ -9,6 +9,7 @@ import com.healthtracking.app.entities.MealWithFoodList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -44,9 +45,9 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                PROTEIN_KEY -> _goalProtein.value = sharedPreferences.getInt(PROTEIN_KEY, PROTEIN_DEFAULT)
-                CARBOHYDRATES_KEY -> _goalCarbohydrates.value = sharedPreferences.getInt(CARBOHYDRATES_KEY, CARBOHYDRATES_DEFAULT)
-                FATS_KEY -> _goalFats.value = sharedPreferences.getInt(FATS_KEY, FATS_DEFAULT)
+                PROTEIN_KEY -> _goalProtein.update { sharedPreferences.getInt(PROTEIN_KEY, PROTEIN_DEFAULT) }
+                CARBOHYDRATES_KEY -> _goalCarbohydrates.update { sharedPreferences.getInt(CARBOHYDRATES_KEY, CARBOHYDRATES_DEFAULT) }
+                FATS_KEY -> _goalFats.update { sharedPreferences.getInt(FATS_KEY, FATS_DEFAULT) }
             }
         }
     }

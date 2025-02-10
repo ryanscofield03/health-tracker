@@ -92,7 +92,11 @@ fun StatsMain (
                             carbsData = viewModel.getCarbsData()
                                 .collectAsStateWithLifecycle(mapOf()).value,
                             fatsData = viewModel.getFatsData()
-                                .collectAsStateWithLifecycle(mapOf()).value
+                                .collectAsStateWithLifecycle(mapOf()).value,
+                            caloriesGoal = viewModel.caloriesGoal.toDouble(),
+                            proteinGoal = viewModel.proteinGoal.toDouble(),
+                            carbsGoal = viewModel.carbsGoal.toDouble(),
+                            fatsGoal = viewModel.fatsGoal.toDouble()
                         )
 
                         2 -> SleepStats(

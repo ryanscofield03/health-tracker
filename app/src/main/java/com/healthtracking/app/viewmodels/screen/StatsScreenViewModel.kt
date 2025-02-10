@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,9 +40,14 @@ class StatsScreenViewModel(
     private val _selectedExercise: MutableStateFlow<String?> = MutableStateFlow(null)
     val selectedExercise get() = _selectedExercise
 
+    val caloriesGoal get() = mealViewModel.goalCalories
+    val proteinGoal get() = mealViewModel.goalProtein
+    val carbsGoal get() = mealViewModel.goalCarbohydrates
+    val fatsGoal get() = mealViewModel.goalFats
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            mealViewModel.getTodaysMealEntries().collect{ _mealData.value = it }
+            mealViewModel.allMeals.collect{ _mealData.value = it }
         }
         viewModelScope.launch(Dispatchers.IO) {
             sleepViewModel.getSleepEntriesFlow().collect{ _sleepData.value = it }
@@ -71,9 +77,9 @@ class StatsScreenViewModel(
     }
 
     fun getCaloriesData(): Flow<Map<LocalDate, Double>> {
-        return _mealData.map { mealsList ->
+        val data = _mealData.map { mealsList ->
             mealsList
-                ?.groupBy { it.meal.date.toLocalDate() }
+                ?.groupBy { it.meal.date }
                 ?.mapValues { entry ->
                     entry.value.map { meal: MealWithFoodList ->
                         if (meal.foodItems.isNotEmpty()) {
@@ -84,12 +90,18 @@ class StatsScreenViewModel(
                     }.sumOf { it.toDouble() }
                 } ?: mapOf()
         }
+
+        viewModelScope.launch {
+            println(_mealData.value)
+            data.collect { println(it) }
+        }
+        return data
     }
 
     fun getProteinData(): Flow<Map<LocalDate, Double>> {
         return _mealData.map { mealsList ->
             mealsList
-                ?.groupBy { it.meal.date.toLocalDate() }
+                ?.groupBy { it.meal.date }
                 ?.mapValues { entry ->
                     entry.value.map { meal: MealWithFoodList ->
                         if (meal.foodItems.isNotEmpty()) {
@@ -105,7 +117,7 @@ class StatsScreenViewModel(
     fun getCarbsData(): Flow<Map<LocalDate, Double>> {
         return _mealData.map { mealsList ->
             mealsList
-                ?.groupBy { it.meal.date.toLocalDate() }
+                ?.groupBy { it.meal.date }
                 ?.mapValues { entry ->
                     entry.value.map { meal: MealWithFoodList ->
                         if (meal.foodItems.isNotEmpty()) {
@@ -121,7 +133,7 @@ class StatsScreenViewModel(
     fun getFatsData(): Flow<Map<LocalDate, Double>> {
         return _mealData.map { mealsList ->
             mealsList
-                ?.groupBy { it.meal.date.toLocalDate() }
+                ?.groupBy { it.meal.date }
                 ?.mapValues { entry ->
                     entry.value.map { meal: MealWithFoodList ->
                         if (meal.foodItems.isNotEmpty()) {

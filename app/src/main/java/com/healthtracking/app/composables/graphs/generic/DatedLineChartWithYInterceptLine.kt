@@ -1,5 +1,6 @@
 package com.healthtracking.app.composables.graphs.generic
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,20 +25,28 @@ import com.patrykandpatrick.vico.compose.common.insets
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.Insets
 import com.patrykandpatrick.vico.core.common.Position
+import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Composable
 internal fun DatedLineChartWithYInterceptLine(
@@ -64,13 +73,22 @@ internal fun DatedLineChartWithYInterceptLine(
             LineCartesianLayer.AreaFill.single(
                 fill(
                     ShaderProvider.verticalGradient(
-                        arrayOf(lineColor.copy(alpha = 0.6f), lineColor.copy(alpha = 0.2f))
+                        arrayOf(lineColor.copy(alpha = 0.2f), lineColor.copy(alpha = 0f))
                     )
                 )
             )
         } else {
             null
         }
+
+    val rangeProvider = object : CartesianLayerRangeProvider
+    {
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+            0.0
+
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+            maxOf(stepSize * ceil(maxY / stepSize), interceptY) + 20.0
+    }
 
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
@@ -94,9 +112,11 @@ internal fun DatedLineChartWithYInterceptLine(
                         fill = LineCartesianLayer.LineFill.single(fill(color = lineColor)),
                         areaFill = areaFill,
                     )
-                )
+                ),
+                rangeProvider = rangeProvider
             ),
             startAxis = VerticalAxis.rememberStart(
+                size = BaseAxis.Size.Auto(),
                 title = startAxisTitle,
                 titleComponent = TextComponent(
                     color = MaterialTheme.colorScheme.onSurface.toArgb(),
@@ -113,7 +133,10 @@ internal fun DatedLineChartWithYInterceptLine(
                 valueFormatter = bottomAxisValueFormatter,
             ),
             decorations = listOf(
-                rememberComposeHorizontalLine(label = interceptLineLabel, height = interceptY)
+                getHorizontalLine(
+                    label = interceptLineLabel,
+                    height = interceptY
+                )
             )
         ),
         modelProducer = modelProducer,
@@ -121,30 +144,23 @@ internal fun DatedLineChartWithYInterceptLine(
     )
 }
 
+/**
+ * Mostly copy and pasted from sample
+ */
 @Composable
-private fun rememberComposeHorizontalLine(
-    label: String,
-    height: Double
-): HorizontalLine {
-    val fill = fill(Color(MaterialTheme.colorScheme.surfaceVariant.toArgb()))
-    val line = rememberLineComponent(fill = fill, thickness = 2.dp)
-    val labelComponent =
-        rememberTextComponent(
-            margins = insets(start = 6.dp),
-            padding = insets(start = 8.dp, end = 8.dp, bottom = 2.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            background = shapeComponent(
-                fill = fill,
-                shape = CorneredShape.rounded(bottomLeft = 4.dp, bottomRight = 4.dp)
-            )
-        )
-    return remember {
-        HorizontalLine(
-            y = { height },
-            line = line,
-            labelComponent = labelComponent,
-            label = { label },
-            verticalLabelPosition = Position.Vertical.Bottom,
-        )
-    }
+private fun getHorizontalLine(label: String, height: Double): HorizontalLine {
+    val fill = Fill(MaterialTheme.colorScheme.tertiary.toArgb())
+    return HorizontalLine(
+        y = { height },
+        line = LineComponent(fill = fill, thicknessDp = 2f),
+        labelComponent =
+        TextComponent(
+            margins = Insets(startDp = 6f),
+            padding = Insets(startDp = 8f, endDp = 8f, bottomDp = 2f),
+            background =
+            ShapeComponent(fill, CorneredShape.rounded(bottomLeftDp = 4f, bottomRightDp = 4f)),
+        ),
+        label = { label },
+        verticalLabelPosition = Position.Vertical.Bottom,
+    )
 }

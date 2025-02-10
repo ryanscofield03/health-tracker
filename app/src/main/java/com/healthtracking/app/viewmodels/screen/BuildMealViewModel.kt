@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class BuildMealViewModel(
     private val mealDao: MealDao
@@ -225,7 +227,8 @@ class BuildMealViewModel(
             val mealId = mealDao.upsertMealEntity(
                 mealEntity = Meal(
                     name = _name.value,
-                    date = LocalDateTime.now()
+                    date = LocalDate.now(),
+                    time = LocalTime.now()
                 )
             )
 

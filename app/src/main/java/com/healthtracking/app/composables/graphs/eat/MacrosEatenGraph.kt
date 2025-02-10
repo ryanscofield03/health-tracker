@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
@@ -26,6 +27,8 @@ import com.healthtracking.app.theme.CarbsColour
 import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
 import java.time.LocalDate
+import kotlin.math.abs
+import kotlin.math.floor
 
 private const val ProteinValue: Int = 0
 private const val CarbsValue: Int = 1
@@ -35,7 +38,10 @@ private const val FatsValue: Int = 2
 fun MacrosEatenGraph(
     proteinData: Map<LocalDate, Double>,
     carbsData: Map<LocalDate, Double>,
-    fatsData: Map<LocalDate, Double>
+    fatsData: Map<LocalDate, Double>,
+    proteinGoal: Double,
+    carbsGoal: Double,
+    fatsGoal: Double
 ) {
     val currentMacroChart = rememberSaveable() { mutableIntStateOf( 0 ) }
 
@@ -72,19 +78,25 @@ fun MacrosEatenGraph(
 
         Box(modifier = Modifier.weight(0.8f)) {
             when (currentMacroChart.intValue) {
-                ProteinValue -> ProteinProgressGraph(
+                ProteinValue -> NutrientProgressGraph(
                     data = proteinData,
-                    proteinGoal = 100.0
+                    goal = proteinGoal,
+                    goalLabel = stringResource(id = R.string.protein_intercept),
+                    barColour = ProteinColour
                 )
 
-                CarbsValue -> CarbsProgressGraph(
+                CarbsValue -> NutrientProgressGraph(
                     data = carbsData,
-                    carbsGoal = 400.0
+                    goal = carbsGoal,
+                    goalLabel = stringResource(id = R.string.carbs_intercept),
+                    barColour = CarbsColour
                 )
 
-                FatsValue -> FatsProgressGraph(
+                FatsValue -> NutrientProgressGraph(
                     data = fatsData,
-                    fatsGoal = 40.0
+                    goal = fatsGoal,
+                    goalLabel = stringResource(id = R.string.fats_intercept),
+                    barColour = FatsColour
                 )
             }
         }
@@ -92,7 +104,7 @@ fun MacrosEatenGraph(
 }
 
 @Composable
-fun ColumnScope.MacroSelectionButton(
+private fun ColumnScope.MacroSelectionButton(
     text: String,
     onClick: () -> Unit,
     isSelected: Boolean
@@ -117,57 +129,23 @@ fun ColumnScope.MacroSelectionButton(
 }
 
 @Composable
-fun FatsProgressGraph(
+internal fun NutrientProgressGraph(
     data: Map<LocalDate, Double>,
-    fatsGoal: Double
+    goal: Double,
+    goalLabel: String,
+    barColour: Color
 ) {
     if (data.values.isEmpty()) {
-        Text(text = "Insufficient data")
+        Text(text = stringResource(id = R.string.missing_graph_data))
     } else {
-        DatedLineChartWithYInterceptLine(
-            modifier = Modifier,
-            stepSize = 10.0,
-            lineColor = FatsColour,
-            interceptLineLabel = stringResource(id = R.string.fats_intercept),
-            interceptY = fatsGoal,
-            data = data,
-        )
-    }
-}
+        val stepSize = if (goal > 0) 20*(floor(abs((goal)/(2 * 20)))) else 20.0
 
-@Composable
-fun CarbsProgressGraph(
-    data: Map<LocalDate, Double>,
-    carbsGoal: Double
-) {
-    if (data.values.isEmpty()) {
-        Text(text = "Insufficient data")
-    } else {
         DatedLineChartWithYInterceptLine(
             modifier = Modifier,
-            stepSize = 50.0,
-            lineColor = CarbsColour,
-            interceptLineLabel = stringResource(id = R.string.carbs_intercept),
-            interceptY = carbsGoal,
-            data = data,
-        )
-    }
-}
-
-@Composable
-fun ProteinProgressGraph(
-    data: Map<LocalDate, Double>,
-    proteinGoal: Double
-) {
-    if (data.values.isEmpty()) {
-        Text(text = "Insufficient data")
-    } else {
-        DatedLineChartWithYInterceptLine(
-            modifier = Modifier,
-            stepSize = 25.0,
-            lineColor = ProteinColour,
-            interceptLineLabel = stringResource(id = R.string.protein_intercept),
-            interceptY = proteinGoal,
+            stepSize = stepSize,
+            lineColor = barColour,
+            interceptLineLabel = goalLabel,
+            interceptY = goal,
             data = data,
         )
     }
