@@ -42,7 +42,6 @@ import androidx.navigation.compose.rememberNavController
 import com.healthtracking.app.composables.screens.eat.BuildMeal
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.screens.eat.EatMain
-import com.healthtracking.app.composables.screens.welcome.Welcome
 import com.healthtracking.app.composables.screens.settings.SettingsMain
 import com.healthtracking.app.composables.screens.sleep.SleepMain
 import com.healthtracking.app.composables.screens.stats.StatsMain
@@ -151,11 +150,11 @@ class MainActivity : ComponentActivity() {
                         bottom = 144.dp
                     )
 
-                    val routeList = listOf("Welcome", "Workout", "Eat", "Sleep", "Progress", "Settings")
+                    val routeList = listOf("Workout", "Eat", "Sleep", "Progress", "Settings")
 
                     NavHost(
                         navController = navController,
-                        startDestination = "Welcome",
+                        startDestination = "Workout",
                         modifier = Modifier.fillMaxSize(),
                         enterTransition = {
                             val initialRoute = navController.previousBackStackEntry?.destination?.route
@@ -194,12 +193,6 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     ) {
-                        composable("Welcome") {
-                            Welcome(
-                                modifier = Modifier.padding(innerPadding),
-                                navController = navController
-                            )
-                        }
                         composable(route = "Workout") {
                             WorkoutMain(
                                 modifier = Modifier.padding(padding),
