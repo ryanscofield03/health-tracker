@@ -7,11 +7,10 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-
 class SettingsViewModel(context: Context) : ViewModel() {
     companion object {
         const val LANGUAGE_KEY = "language"
-        const val LANGUAGE_DEFAULT = "english"
+        const val LANGUAGE_DEFAULT = "English (US)"
 
         const val MEASUREMENTS_KEY = "measurements"
         const val MEASUREMENTS_METRIC = "metric"
@@ -26,27 +25,34 @@ class SettingsViewModel(context: Context) : ViewModel() {
 
     private val _languageSetting = MutableStateFlow(sharedPreferences.getString(
         LANGUAGE_KEY, LANGUAGE_DEFAULT) ?: LANGUAGE_DEFAULT)
-    val languageSetting: StateFlow<String> get() = _languageSetting
+    val languageSetting: StateFlow<String> = _languageSetting
 
     private val _measurementsSetting = MutableStateFlow(sharedPreferences.getString(
         MEASUREMENTS_KEY, MEASUREMENTS_METRIC) ?: MEASUREMENTS_METRIC)
-    val measurementsSetting: StateFlow<String> get() = _measurementsSetting
+    val measurementsSetting: StateFlow<String> = _measurementsSetting
 
     private val _notificationsSetting = MutableStateFlow(sharedPreferences.getBoolean(
         NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT))
-    val notificationsSetting: StateFlow<Boolean> get() = _notificationsSetting
+    val notificationsSetting: StateFlow<Boolean> = _notificationsSetting
+
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            LANGUAGE_KEY -> _languageSetting.value = sharedPreferences.getString(
+                LANGUAGE_KEY, LANGUAGE_DEFAULT) ?: LANGUAGE_DEFAULT
+            MEASUREMENTS_KEY -> _measurementsSetting.value = sharedPreferences.getString(
+                MEASUREMENTS_KEY, MEASUREMENTS_METRIC) ?: MEASUREMENTS_METRIC
+            NOTIFICATIONS_KEY -> _notificationsSetting.value = sharedPreferences.getBoolean(
+                NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT)
+        }
+    }
 
     init {
-        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            when (key) {
-                LANGUAGE_KEY -> _languageSetting.value = sharedPreferences.getString(
-                    LANGUAGE_KEY, LANGUAGE_DEFAULT) ?: LANGUAGE_DEFAULT
-                MEASUREMENTS_KEY -> _measurementsSetting.value = sharedPreferences.getString(
-                    MEASUREMENTS_KEY, MEASUREMENTS_METRIC) ?: MEASUREMENTS_METRIC
-                NOTIFICATIONS_KEY -> _notificationsSetting.value = sharedPreferences.getBoolean(
-                    NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT)
-            }
-        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     fun saveLanguageSetting(newLanguage: String) {
@@ -68,10 +74,5 @@ class SettingsViewModel(context: Context) : ViewModel() {
             .edit()
             .putBoolean(NOTIFICATIONS_KEY, !notificationsSetting.value)
             .apply()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener { _, _ -> }
     }
 }

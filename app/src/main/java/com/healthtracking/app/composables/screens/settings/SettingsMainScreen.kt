@@ -27,7 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.HeaderAndListBox
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.SettingsViewModel
 
 @Composable
@@ -36,25 +40,22 @@ fun SettingsMain (
     viewModel: SettingsViewModel
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         LanguagePicker(
-            languageSetting = viewModel.languageSetting.collectAsState().value,
+            languageSetting = viewModel.languageSetting.collectAsStateWithLifecycle().value,
             changeLanguageSetting = { viewModel.saveLanguageSetting(it) }
         )
-        Spacer(modifier = Modifier.height(48.dp))
         ToggleMeasurementType(
-            measurementsSetting = viewModel.measurementsSetting.collectAsState().value,
+            measurementsSetting = viewModel.measurementsSetting.collectAsStateWithLifecycle().value,
             toMetric = { viewModel.saveMeasurementsSetting(SettingsViewModel.MEASUREMENTS_METRIC) },
             toImperial = { viewModel.saveMeasurementsSetting(SettingsViewModel.MEASUREMENTS_IMPERIAL) }
         )
-        Spacer(modifier = Modifier.height(48.dp))
         ToggleNotifications(
-            notificationsSetting = viewModel.notificationsSetting.collectAsState().value,
+            notificationsSetting = viewModel.notificationsSetting.collectAsStateWithLifecycle().value,
             changeNotificationsSetting = { viewModel.saveNotificationsSetting() }
         )
-        Spacer(modifier = Modifier.height(40.dp))
-
         Column(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.Bottom
@@ -70,19 +71,35 @@ fun LanguagePicker(
     changeLanguageSetting: (String) -> Unit
 ) {
     val languages = stringArrayResource(id = R.array.languages)
-    
-    Text(
-        text = stringResource(id = R.string.select_language_settings),
-        style = MaterialTheme.typography.titleLarge
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(languages) { language ->
-            Button(onClick = { /*TODO*/ }, shape = RoundedCornerShape(0.dp)) {
-                Text(text = language)
+
+    HeaderAndListBox(
+        modifier = Modifier.fillMaxHeight(0.2f),
+        header = {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.select_language_settings),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        listContent = {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(languages) { language ->
+                    Button(
+                        onClick = { changeLanguageSetting(language) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (languageSetting == language)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                        ),
+                        shape = CustomCutCornerShape
+                    ) {
+                        Text(text = language)
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -91,48 +108,52 @@ fun ToggleMeasurementType(
     toMetric: () -> Unit,
     toImperial: () -> Unit,
 ) {
-    Text(
-        text = stringResource(id = R.string.select_measurement_settings),
-        style = MaterialTheme.typography.titleLarge
-    )
-    Spacer(modifier = Modifier.height(16.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Button(
-            modifier = Modifier.weight(0.5f),
-            shape = RoundedCornerShape(0.dp),
-            onClick = {
-                toMetric()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor =
-                if (measurementsSetting == "metric")
-                    MaterialTheme.colorScheme.secondary
-                else
-                    MaterialTheme.colorScheme.tertiary
-            )
-        ) {
-            Text(text = stringResource(id = R.string.metric))
-        }
-        Button(
-            modifier = Modifier.weight(0.5f),
-            shape = RoundedCornerShape(0.dp),
-            onClick = {
-                toImperial()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor =
-                if (measurementsSetting == "imperial")
-                    MaterialTheme.colorScheme.secondary
-                else
-                    MaterialTheme.colorScheme.tertiary
-            )
-        ) {
+    BackgroundBorderBox {
+        Column {
             Text(
-                text = stringResource(id = R.string.imperial)
+                text = stringResource(id = R.string.select_measurement_settings),
+                style = MaterialTheme.typography.titleMedium
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Button(
+                    modifier = Modifier.weight(0.5f),
+                    shape = CustomCutCornerShape,
+                    onClick = {
+                        toMetric()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =
+                        if (measurementsSetting == "metric")
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                    )
+                ) {
+                    Text(text = stringResource(id = R.string.metric))
+                }
+                Button(
+                    modifier = Modifier.weight(0.5f),
+                    shape = CustomCutCornerShape,
+                    onClick = {
+                        toImperial()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =
+                        if (measurementsSetting == "imperial")
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                    )
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.imperial)
+                    )
+                }
+            }
         }
     }
 }
@@ -142,16 +163,18 @@ fun ToggleNotifications(
     notificationsSetting: Boolean,
     changeNotificationsSetting: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(id = R.string.select_notification),
-            style = MaterialTheme.typography.titleLarge
-        )
-        Switch(checked = notificationsSetting, onCheckedChange = { changeNotificationsSetting() })
+    BackgroundBorderBox {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.select_notification),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Switch(checked = notificationsSetting, onCheckedChange = { changeNotificationsSetting() })
+        }
     }
 }
 

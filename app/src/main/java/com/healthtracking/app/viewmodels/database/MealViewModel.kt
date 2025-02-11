@@ -52,14 +52,21 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
         initialValue = _goalProtein.value * 4 + _goalCarbohydrates.value * 4 + _goalFats.value * 9
     )
 
-    init {
-        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            when (key) {
-                PROTEIN_KEY -> _goalProtein.update { sharedPreferences.getInt(PROTEIN_KEY, PROTEIN_DEFAULT) }
-                CARBOHYDRATES_KEY -> _goalCarbohydrates.update { sharedPreferences.getInt(CARBOHYDRATES_KEY, CARBOHYDRATES_DEFAULT) }
-                FATS_KEY -> _goalFats.update { sharedPreferences.getInt(FATS_KEY, FATS_DEFAULT) }
-            }
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        when (key) {
+            PROTEIN_KEY -> _goalProtein.update { sharedPreferences.getInt(PROTEIN_KEY, PROTEIN_DEFAULT) }
+            CARBOHYDRATES_KEY -> _goalCarbohydrates.update { sharedPreferences.getInt(CARBOHYDRATES_KEY, CARBOHYDRATES_DEFAULT) }
+            FATS_KEY -> _goalFats.update { sharedPreferences.getInt(FATS_KEY, FATS_DEFAULT) }
         }
+    }
+
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     fun updateProteinGoal(newProteinGoal: Int) {
@@ -87,11 +94,6 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
             .apply()
 
         _goalFats.value = newFatsGoal
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener { _, _ -> }
     }
 
     suspend fun getTodaysMealEntries(): Flow<List<MealWithFoodList>?> {

@@ -36,6 +36,7 @@ val dataAccessModule = module {
     single { get<AppDatabase>().sleepDao() }
     single { get<AppDatabase>().mealDao() }
     single { get<AppDatabase>().workoutHistoryDao()}
+    single { MealViewModel(get(), get<MealDao>()) }
 
     viewModel { WorkoutViewModel(get<WorkoutDao>()) }
     viewModel { ExerciseViewModel(get<ExerciseDao>()) }
@@ -43,13 +44,12 @@ val dataAccessModule = module {
     viewModel { ExerciseHistoryViewModel(get<ExerciseHistoryDao>()) }
     viewModel { AddWorkoutViewModel(get<WorkoutViewModel>(), get<ExerciseViewModel>()) }
     viewModel { WorkoutBackupViewModel(get<WorkoutBackupDao>()) }
-    viewModel { SettingsViewModel(get()) }
 
     viewModel { SleepViewModel(get<SleepDao>()) }
     viewModel { SleepScreenViewModel(get<SleepViewModel>()) }
 
-    single { MealViewModel(get(), get<MealDao>()) }
     viewModel { FoodViewModel(get<MealViewModel>()) }
+    viewModel { SettingsViewModel(get()) }
 
     viewModel { StatsScreenViewModel(
         get<ExerciseViewModel>(),

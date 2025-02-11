@@ -235,7 +235,7 @@ fun PastSleepEntryCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Slept $hoursSlept hours",
+                    text = stringResource(R.string.hours_slept_substring, hoursSlept),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onTertiary
                 )

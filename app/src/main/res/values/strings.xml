@@ -21,6 +21,7 @@
     <string name="save_sleep_entry">Save Entry</string>
     <string name="cannot_add_sleep_entry">Today\'s entry saved</string>
     <string name="sleep_entry_title">Sleep Entry</string>
+    <string name="hours_slept_substring">Slept %1$s hours</string>
 
     // Sleep Rating Button Descriptions
     <string name="terrible">Terrible</string>
@@ -145,7 +146,7 @@
 
     //Settings
     <string name="select_language_settings">Select language</string>
-    <string name="select_measurement_settings">Measurement</string>
+    <string name="select_measurement_settings">Measurements</string>
     <string name="metric">Metric</string>
     <string name="imperial">Imperial</string>
     <string name="select_notification">Notifications</string>

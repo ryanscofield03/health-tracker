@@ -3,8 +3,7 @@
     <string-array name="languages">
         <item>English (US)</item>
         <item>English (UK)</item>
-        <item>French</item>
-        <item>Spanish</item>
-        <item>...</item>
+        <item>Français</item>
+        <item>Español</item>
     </string-array>
 </resources>
