@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,16 +43,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.table.TableCell
+import com.healthtracking.app.composables.table.TableCellType
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.services.toStringWithDecimalPoints
 import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import java.time.Duration
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.max
 
@@ -147,136 +153,18 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
             )
         }
 
-        val timeoutMillis = 200L
-        val lastActionTime = rememberSaveable{ mutableLongStateOf(0L) }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures(
-                        onHorizontalDrag = { _, dragAmount ->
-                            val currentTime = System.currentTimeMillis()
-                            if (currentTime.minus(lastActionTime.longValue) >= timeoutMillis) {
-                                lastActionTime.longValue = currentTime
-                                when {
-                                    // Dragging left
-                                    dragAmount < 0 -> {
-                                        viewModel.goToNextExercise()
-                                    }
-                                    // Dragging right
-                                    dragAmount > 0 -> {
-                                        viewModel.goToPreviousExercise()
-                                    }
-                                }
-                            }
-                        }
-                    )
-                },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = stringResource(id = R.string.arrow_left),
-                tint =
-                if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.secondary
-                else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-            )
+        ExerciseBlockHeader(viewModel = viewModel)
 
-            // Exercise Name
-            Text(
-                text = viewModel.currentExercise.name,
-                style = MaterialTheme.typography.titleMedium,
-            )
-
-            Icon(
-                modifier = Modifier.size(32.dp),
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = stringResource(id = R.string.arrow_right),
-                tint =
-                    if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.secondary
-                    else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-            )
-        }
-
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp), horizontalArrangement = Arrangement.SpaceAround) {
-            Text(
-                style = MaterialTheme.typography.titleMedium,
-                text = "Previous"
-            )
-            Text(
-                style = MaterialTheme.typography.titleMedium,
-                text = "Current"
-            )
-        }
-
-        // Header Row
-        Row(Modifier.background(MaterialTheme.colorScheme.tertiary)) {
-            TableCell(text = "Weight", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
-            TableCell(text = "Reps", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
-            TableCell(text = "Weight", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
-            TableCell(text = "Reps", textColor = MaterialTheme.colorScheme.onTertiary) // TODO fix
-        }
-
-        val exerciseEntries by viewModel.exerciseEntries.collectAsState()
-        val exerciseHistory by viewModel.exerciseHistory.collectAsState()
-        var history: ExerciseHistory? = null
-        if (exerciseHistory.size > viewModel.currentExerciseIndex
-            && exerciseHistory[viewModel.currentExerciseIndex] != null) {
-            history = exerciseHistory[viewModel.currentExerciseIndex]!!
-        }
-
-        LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
-            // Data rows
-            for (i in 0..< max(
-                a = exerciseEntries[viewModel.currentExerciseIndex].size + 1,
-                b = history?.data?.size ?: 0,
-            )) {
-                item {
-                    val entry: Pair<Float, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
-                    val weight: String = entry?.first?.toStringWithDecimalPoints() ?: "-"
-                    val reps: String = entry?.second?.toString() ?: "-"
-
-                    var historyWeight: String = "-"
-                    var historyReps: String = "-"
-                    if (exerciseHistory.size > viewModel.currentExerciseIndex &&
-                        exerciseHistory[viewModel.currentExerciseIndex] != null)
-                    {
-                        val historyData = exerciseHistory[viewModel.currentExerciseIndex]!!.data.getOrNull(i)
-                        historyWeight = historyData?.first?.toStringWithDecimalPoints() ?: "-"
-                        historyReps = historyData?.second?.toString() ?: "-"
-                    }
-
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(
-                                if (i % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
-                                else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
-                            )
-                            .pointerInput(Unit) {
-                                detectTapGestures(
-                                    onDoubleTap = {
-                                        if (viewModel.canEditEntry(index = i)) {
-                                            openEntryDialog.value = true
-                                            viewModel.updateEditingEntryIndex(index = i)
-                                        }
-                                    }
-                                )
-                            }
-                    ) {
-                        TableCell(text = historyWeight)
-                        TableCell(text = historyReps)
-                        TableCell(text = weight)
-                        TableCell(text = reps)
-                    }
+        ExerciseTableHeader(viewModel = viewModel)
+        ExerciseTableData(
+            viewModel = viewModel,
+            editExerciseEntry = {
+                if (viewModel.canEditEntry(index = it)) {
+                    openEntryDialog.value = true
+                    viewModel.updateEditingEntryIndex(index = it)
                 }
             }
-        }
+        )
 
         Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.Bottom) {
             Button(
@@ -287,6 +175,195 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 Text(text = stringResource(id = R.string.add_exercise_entry))
             }
         }
+    }
+}
+
+@Composable
+private fun ExerciseTableData(
+    viewModel: RunWorkoutViewModel,
+    editExerciseEntry: (Int) -> Unit
+) {
+    val exerciseEntries = viewModel.exerciseEntries.collectAsState().value
+    val exerciseHistory = viewModel.exerciseHistory.collectAsState().value
+
+    var history: ExerciseHistory? = null
+    if (exerciseHistory.size > viewModel.currentExerciseIndex
+        && exerciseHistory[viewModel.currentExerciseIndex] != null)
+    {
+        history = exerciseHistory[viewModel.currentExerciseIndex]!!
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
+        // Data rows
+        for (i in 0..< max(
+            a = exerciseEntries[viewModel.currentExerciseIndex].size + 1,
+            b = history?.data?.size ?: 0,
+        )) {
+            item {
+                val entry: Pair<Float, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
+                val weight: String = entry?.first?.toStringWithDecimalPoints() ?: "-"
+                val reps: String = entry?.second?.toString() ?: "-"
+
+                var historyWeight: String = "-"
+                var historyReps: String = "-"
+                if (exerciseHistory.size > viewModel.currentExerciseIndex &&
+                    exerciseHistory[viewModel.currentExerciseIndex] != null)
+                {
+                    val historyData = exerciseHistory[viewModel.currentExerciseIndex]!!.data.getOrNull(i)
+                    historyWeight = historyData?.first?.toStringWithDecimalPoints() ?: "-"
+                    historyReps = historyData?.second?.toString() ?: "-"
+                }
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onDoubleTap = { editExerciseEntry(i) }
+                            )
+                        }
+                ) {
+                    val backgroundColor = if (i % 2 == 0) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
+                    else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
+
+                    TableCell(
+                        text = historyWeight,
+                        backgroundColor = backgroundColor
+                    )
+                    TableCell(
+                        text = historyReps,
+                        backgroundColor = backgroundColor
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    TableCell(
+                        text = weight,
+                        backgroundColor = backgroundColor
+                    )
+                    TableCell(
+                        text = reps,
+                        backgroundColor = backgroundColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseTableHeader(viewModel: RunWorkoutViewModel) {
+    val exerciseHistory = viewModel.exerciseHistory.collectAsStateWithLifecycle()
+    Spacer(modifier = Modifier.height(8.dp))
+    // Header Row
+    Row(modifier = Modifier.height(70.dp)) {
+        Column(modifier = Modifier.weight(0.5f)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                        .background(color = MaterialTheme.colorScheme.tertiary)
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    text =
+                    if (exerciseHistory.value.isNotEmpty())
+                        exerciseHistory
+                            .value[viewModel.currentExerciseIndex]
+                            ?.date
+                            ?.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
+                            ?: stringResource(id = R.string.no_date)
+                    else stringResource(id = R.string.no_date),
+                )
+            }
+            Row(modifier = Modifier.weight(0.5f)) {
+                TableCell(
+                    type = TableCellType.TOP_LEFT,
+                    text = "Weight",
+                    textColor = MaterialTheme.colorScheme.onTertiary,
+                    backgroundColor = MaterialTheme.colorScheme.tertiary
+                )
+                TableCell(
+                    type = TableCellType.TOP_RIGHT,
+                    text = "Reps",
+                    textColor = MaterialTheme.colorScheme.onTertiary,
+                    backgroundColor = MaterialTheme.colorScheme.tertiary
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            modifier = Modifier.weight(0.5f).align(Alignment.Bottom)
+        ) {
+            Row {
+                TableCell(
+                    type = TableCellType.TOP_LEFT,
+                    text = "Weight",
+                    textColor = MaterialTheme.colorScheme.onTertiary,
+                    backgroundColor = MaterialTheme.colorScheme.tertiary
+                )
+                TableCell(
+                    type = TableCellType.TOP_RIGHT,
+                    text = "Reps",
+                    textColor = MaterialTheme.colorScheme.onTertiary,
+                    backgroundColor = MaterialTheme.colorScheme.tertiary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseBlockHeader(viewModel: RunWorkoutViewModel) {
+    val timeoutMillis = 200L
+    val lastActionTime = rememberSaveable{ mutableLongStateOf(0L) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onHorizontalDrag = { _, dragAmount ->
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime.minus(lastActionTime.longValue) >= timeoutMillis) {
+                            lastActionTime.longValue = currentTime
+                            when {
+                                // Dragging left
+                                dragAmount < 0 -> {
+                                    viewModel.goToNextExercise()
+                                }
+                                // Dragging right
+                                dragAmount > 0 -> {
+                                    viewModel.goToPreviousExercise()
+                                }
+                            }
+                        }
+                    }
+                )
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Icon(
+            modifier = Modifier.size(32.dp),
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+            contentDescription = stringResource(id = R.string.arrow_left),
+            tint =
+            if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.secondary
+            else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+        )
+
+        // Exercise Name
+        Text(
+            text = viewModel.currentExercise.name,
+            style = MaterialTheme.typography.titleMedium,
+        )
+
+        Icon(
+            modifier = Modifier.size(32.dp),
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = stringResource(id = R.string.arrow_right),
+            tint =
+            if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.secondary
+            else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+        )
     }
 }
 
@@ -439,23 +516,6 @@ private fun EndWorkoutConfirmationDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun RowScope.TableCell(
-    text: String,
-    textColor: Color = MaterialTheme.colorScheme.onTertiary
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .padding(4.dp)
-            .weight(0.25f)
-            .height(40.dp)
-            .fillMaxSize()
-    ) {
-        Text(text = text, color = textColor)
     }
 }
 

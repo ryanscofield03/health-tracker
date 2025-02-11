@@ -104,6 +104,7 @@
     // Run Workout Screen Error Messages
     <string name="weight_error_message">Weight cannot be empty and must be a valid number.</string>
     <string name="reps_error_message">Reps cannot be empty and must be a valid number.</string>
+    <string name="no_date">No exercise history</string>
 
     //Button Descriptions
     <string name="run_workout">Run Workout</string>

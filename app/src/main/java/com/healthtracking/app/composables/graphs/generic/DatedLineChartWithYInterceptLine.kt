@@ -155,14 +155,15 @@ private fun getHorizontalLine(label: String, height: Double): HorizontalLine {
         y = { height },
         line = LineComponent(fill = fill, thicknessDp = 2f),
         labelComponent =
-        TextComponent(
-            margins = Insets(startDp = 6f),
-            padding = Insets(startDp = 8f, endDp = 8f, bottomDp = 2f),
-            background = ShapeComponent(
-                fill = fill,
-                shape = CorneredShape.rounded(bottomLeftDp = 4f, bottomRightDp = 4f)
+            TextComponent(
+                margins = Insets(startDp = 6f),
+                padding = Insets(startDp = 8f, endDp = 8f, bottomDp = 2f),
+                background = ShapeComponent(
+                    fill = fill,
+                    shape = CorneredShape.rounded(bottomLeftDp = 4f, bottomRightDp = 4f)
+                ),
+                color = Color.White.toArgb()
             ),
-        ),
         label = { label },
         horizontalLabelPosition = Position.Horizontal.End,
         verticalLabelPosition = Position.Vertical.Center,
