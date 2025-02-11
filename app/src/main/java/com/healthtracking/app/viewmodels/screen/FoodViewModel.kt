@@ -31,13 +31,13 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
         .plus(dialogCarbohydratesValue.toInt().times(4))
         .plus(dialogFatsValue.toInt().times(9)).toString()
 
-    private val _dialogProteinValue: MutableState<Float> = mutableFloatStateOf(goalProtein.toFloat())
+    private val _dialogProteinValue: MutableState<Float> = mutableFloatStateOf(goalProtein.value.toFloat())
     val dialogProteinValue: Float get() = _dialogProteinValue.value
 
-    private val _dialogCarbohydratesValue: MutableState<Float> = mutableFloatStateOf(goalCarbohydrates.toFloat())
+    private val _dialogCarbohydratesValue: MutableState<Float> = mutableFloatStateOf(goalCarbohydrates.value.toFloat())
     val dialogCarbohydratesValue: Float get() = _dialogCarbohydratesValue.value
 
-    private val _dialogFatsValue: MutableState<Float> = mutableFloatStateOf(goalFats.toFloat())
+    private val _dialogFatsValue: MutableState<Float> = mutableFloatStateOf(goalFats.value.toFloat())
     val dialogFatsValue: Float get() = _dialogFatsValue.value
 
     private val _currentMealEntries: MutableState<Flow<List<MealWithFoodList>?>> = mutableStateOf(flow{listOf<MealWithFoodList>()})
@@ -114,9 +114,9 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Populate the dialog box with the current goals
      */
     fun populateDialogEntries() {
-        _dialogProteinValue.value = goalProtein.toFloat()
-        _dialogCarbohydratesValue.value = goalCarbohydrates.toFloat()
-        _dialogFatsValue.value = goalFats.toFloat()
+        _dialogProteinValue.value = goalProtein.value.toFloat()
+        _dialogCarbohydratesValue.value = goalCarbohydrates.value.toFloat()
+        _dialogFatsValue.value = goalFats.value.toFloat()
     }
 
     /**

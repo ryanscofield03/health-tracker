@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import com.healthtracking.app.theme.FatsColour
 import com.healthtracking.app.theme.ProteinColour
 import java.time.LocalDate
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.floor
 
 private const val ProteinValue: Int = 0
@@ -45,32 +47,31 @@ fun MacrosEatenGraph(
 ) {
     val currentMacroChart = rememberSaveable() { mutableIntStateOf( 0 ) }
 
-    Row(
+    Column (
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.2f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             MacroSelectionButton(
-                text = stringResource(id = R.string.protein_letter),
+                text = stringResource(id = R.string.protein),
                 onClick = { currentMacroChart.intValue = ProteinValue },
                 isSelected = currentMacroChart.intValue == ProteinValue
             )
             MacroSelectionButton(
-                text = stringResource(id = R.string.carbs_letter),
+                text = stringResource(id = R.string.carbs),
                 onClick = { currentMacroChart.intValue = CarbsValue },
                 isSelected = currentMacroChart.intValue == CarbsValue
             )
             MacroSelectionButton(
-                text = stringResource(id = R.string.fats_letter),
+                text = stringResource(id = R.string.fats),
                 onClick = { currentMacroChart.intValue = FatsValue },
                 isSelected = currentMacroChart.intValue == FatsValue
             )
@@ -104,7 +105,7 @@ fun MacrosEatenGraph(
 }
 
 @Composable
-private fun ColumnScope.MacroSelectionButton(
+private fun RowScope.MacroSelectionButton(
     text: String,
     onClick: () -> Unit,
     isSelected: Boolean
@@ -121,6 +122,7 @@ private fun ColumnScope.MacroSelectionButton(
     ) {
         Text(
             text = text,
+            style = MaterialTheme.typography.labelMedium,
             color =
                 if (isSelected) MaterialTheme.colorScheme.onSecondary
                 else MaterialTheme.colorScheme.onTertiary
@@ -135,18 +137,14 @@ internal fun NutrientProgressGraph(
     goalLabel: String,
     barColour: Color
 ) {
-    if (data.values.isEmpty()) {
-        Text(text = stringResource(id = R.string.missing_graph_data))
-    } else {
-        val stepSize = if (goal > 0) 20*(floor(abs((goal)/(2 * 20)))) else 20.0
+    val stepSize = if (goal > 0) 20*(ceil(abs((goal)/(2 * 20)))) else 20.0
 
-        DatedLineChartWithYInterceptLine(
-            modifier = Modifier,
-            stepSize = stepSize,
-            lineColor = barColour,
-            interceptLineLabel = goalLabel,
-            interceptY = goal,
-            data = data,
-        )
-    }
+    DatedLineChartWithYInterceptLine(
+        modifier = Modifier,
+        stepSize = stepSize,
+        lineColor = barColour,
+        interceptLineLabel = goalLabel,
+        interceptY = goal,
+        data = data,
+    )
 }

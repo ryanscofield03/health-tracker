@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.GraphWithTitle
 import com.healthtracking.app.composables.graphs.workout.ExerciseProgressGraph
 import com.healthtracking.app.composables.graphs.workout.WorkoutAttendanceGraph
 import com.healthtracking.app.entities.Exercise
@@ -37,8 +40,10 @@ fun WorkoutStats(
         }
 
         Box(modifier = Modifier.weight(0.6f)) {
-            BackgroundBorderBox {
-                // graph of increase in weight/sets
+            GraphWithTitle(
+                title = stringResource(id = R.string.exercise_progress_title),
+                modifier = Modifier.fillMaxSize()
+            ) {
                 ExerciseProgressGraph(
                     selectedExercise = selectedExercise,
                     exercises = exercises,

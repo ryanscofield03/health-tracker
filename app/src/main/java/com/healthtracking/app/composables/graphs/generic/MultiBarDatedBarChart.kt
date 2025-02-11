@@ -12,7 +12,6 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
-import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
@@ -50,14 +49,14 @@ internal fun MultiBarDatedBarChart(
     startAxisTitle: String,
 ) {
     val legendLabelComponent = rememberTextComponent(color = MaterialTheme.colorScheme.onSurface)
-    val dates = data.keys.toList()
+    val dates = data.keys.toList().ifEmpty { listOf(LocalDate.now()) }
 
     val modelProducer = remember { CartesianChartModelProducer() }
     val bottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
         context.model.extraStore[BottomAxisLabelKey][x.toInt()]
     }
 
-    val numBars = max(data.values.maxBy{ it.size }.size, 1)
+    val numBars = maxOf(data.values.ifEmpty { listOf(listOf(0f)) }.maxBy{ it.size }.size, 1)
     val columns = List(numBars) { index ->
         LineComponent(
             fill = fill(color = generateColor(index, numBars)),
@@ -143,7 +142,7 @@ private fun getColumnProvider(columns: List<LineComponent>, values: Collection<L
         ) = columns[seriesIndex]
 
         override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore) = run {
-            val longestListIndex = values.withIndex().maxByOrNull { it.value.size }?.index ?: -1
+            val longestListIndex = values.withIndex().maxByOrNull { it.value.size }?.index ?: 0
             columns[longestListIndex]
         }
     }

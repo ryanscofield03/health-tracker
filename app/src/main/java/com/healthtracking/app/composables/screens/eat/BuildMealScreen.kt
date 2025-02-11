@@ -61,7 +61,6 @@ fun BuildMeal(
 ) {
     val mealName = viewModel.name.collectAsStateWithLifecycle().value
     val nameErrorMessageId = viewModel.nameErrorMessageId.collectAsStateWithLifecycle().value
-    val foodItemsErrorMessageId = viewModel.foodItemsErrorMessageId.collectAsStateWithLifecycle().value
 
     val foodDialogOpen = rememberSaveable() { mutableStateOf(false) }
     FoodDialog(
@@ -86,7 +85,8 @@ fun BuildMeal(
         updateCarbs = { viewModel.updateDialogCarbs(it) },
         updateFats = { viewModel.updateDialogFats(it) },
         updateQuantity = { viewModel.updateDialogQuantity(it) },
-        measurementOptions = BuildMealViewModel.MEASUREMENT_OPTIONS
+        measurementOptions = BuildMealViewModel.MEASUREMENT_OPTIONS,
+        nameHasError = viewModel.dialogNameHasError.collectAsStateWithLifecycle().value
     )
 
     Column(
@@ -152,6 +152,10 @@ fun BuildMeal(
             listContent = {
                 FoodItemsList(
                     foodItemsFlow = viewModel.foodItems,
+                    editFoodItem = {
+                        viewModel.populateDialogWithFood(it)
+                        foodDialogOpen.value = true
+                    },
                     removeFoodItem = { viewModel.removeFoodItem(it) }
                 )
             },
@@ -162,7 +166,7 @@ fun BuildMeal(
         // Save and cancel buttons
         SaveAndCancelButtons(
             onSave = {
-                if (viewModel.validateMeal()) {
+                if (viewModel.validMeal()) {
                     navController.navigate("Eat")
                     viewModel.save()
                 }
@@ -178,6 +182,7 @@ fun BuildMeal(
 @Composable
 private fun FoodItemsList(
     foodItemsFlow: StateFlow<List<Food>>,
+    editFoodItem: (Food) -> Unit,
     removeFoodItem: (Food) -> Unit,
 ) {
     val foodItems by foodItemsFlow.collectAsState(emptyList())
@@ -190,6 +195,7 @@ private fun FoodItemsList(
                 protein = food.protein.toDouble(),
                 carbs = food.carbohydrates.toDouble(),
                 fats = food.fats.toDouble(),
+                onClick = { editFoodItem(food) },
                 onDelete = { removeFoodItem(food) }
             )
         }
@@ -235,7 +241,8 @@ private fun FoodDialog(
     updateCarbs: (Float) -> Unit,
     updateFats: (Float) -> Unit,
     updateQuantity: (Float) -> Unit,
-    measurementOptions: List<String>
+    measurementOptions: List<String>,
+    nameHasError: Boolean
 ) {
     if (isOpen) {
         BasicAlertDialog(onDismissRequest = {}) {
@@ -259,8 +266,8 @@ private fun FoodDialog(
                         onValueChange = updateName,
                         labelId = R.string.food_name_label,
                         placeholderId = R.string.food_name_placeholder,
-                        hasError = false,
-                        errorMessageId = null
+                        hasError = nameHasError,
+                        errorMessageId = R.string.food_name_error_message
                     )
 
                     // measurement dropdown
@@ -287,7 +294,8 @@ private fun FoodDialog(
                         value = protein,
                         color = ProteinColour,
                         onValueChange = updateProtein,
-                        maxSliderValue = 100f
+                        maxSliderValue = 100f,
+                        incrementAmount = 0.2f
                     )
 
                     // carbs slider
@@ -296,7 +304,8 @@ private fun FoodDialog(
                         value = carbs,
                         color = CarbsColour,
                         onValueChange = updateCarbs,
-                        maxSliderValue = 100f
+                        maxSliderValue = 100f,
+                        incrementAmount = 0.2f
                     )
 
                     // fats slider
@@ -305,7 +314,8 @@ private fun FoodDialog(
                         value = fats,
                         color = FatsColour,
                         onValueChange = updateFats,
-                        maxSliderValue = 100f
+                        maxSliderValue = 100f,
+                        incrementAmount = 0.2f
                     )
 
                     // quantity slider

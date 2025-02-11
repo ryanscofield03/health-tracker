@@ -9,7 +9,7 @@ import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.entities.MealFoodCrossRef
 import com.healthtracking.app.entities.MealWithFoodList
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * DAO for meal entities
@@ -25,10 +25,9 @@ interface MealDao {
     @Query("""
         SELECT * 
         FROM MEAL 
-        WHERE date >= :startOfDay AND date < :endOfDay
-        ORDER BY date DESC
+        WHERE DATE(date) == DATE(:today)
     """)
-    fun getTodaysMealEntries(startOfDay: LocalDateTime, endOfDay: LocalDateTime): Flow<List<MealWithFoodList>?>
+    fun getTodaysMealEntries(today: LocalDate): Flow<List<MealWithFoodList>?>
 
     @Upsert
     fun upsertMealFoodCrossRef(crossRef: MealFoodCrossRef)
@@ -43,4 +42,7 @@ interface MealDao {
         SELECT * FROM meal 
     """)
     fun getAllMealEntries(): Flow<List<MealWithFoodList>?>
+
+    @Query("DELETE FROM FOOD WHERE id = :foodId")
+    fun deleteFood(foodId: Long): Int
 }

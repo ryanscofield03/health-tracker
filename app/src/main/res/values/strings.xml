@@ -58,6 +58,8 @@
     <string name="food_name_placeholder">Egg</string>
     <string name="search_previous_meals">Search previous meals</string>
 
+    <string name="meal_name_error_message">Meal name is required</string>
+    <string name="food_name_error_message">Food name is required</string>
     <string name="no_existing_meal_entries">No existing meal entries today</string>
     <string name="no_existing_food_entries">Add a food item to complete the meal</string>
 
@@ -94,10 +96,10 @@
     <string name="description_placeholder">Hit chest, triceps, and shoulders</string>
 
     // Workout Screen Error Messages
-    <string name="name_error_message">Name cannot be empty.</string>
-    <string name="description_error_message">Description cannot be empty.</string>
+    <string name="name_error_message">Name is required.</string>
+    <string name="description_error_message">Description is required.</string>
     <string name="exercise_list_error_message">Workout must contain at least one exercise.</string>
-    <string name="exercise_error_message">Exercise name cannot be empty.</string>
+    <string name="exercise_error_message">Exercise name is required.</string>
 
     // Run Workout Screen Error Messages
     <string name="weight_error_message">Weight cannot be empty and must be a valid number.</string>
@@ -136,6 +138,8 @@
     // Content Descriptions (that don't fit elsewhere)
     <string name="arrow_left">Arrow Left</string>
     <string name="arrow_right">Arrow Right</string>
+    <string name="increment">Increment</string>
+    <string name="decrement">Decrement</string>
 
     //Settings
     <string name="select_language_settings">Select language</string>
@@ -146,11 +150,16 @@
     <string name="ask_for_help">Need more help? Click me!</string>
 
     // Stats/progress
-    <string name="select_measurement_stats">Metric</string>
+    <string name="hours_slept_title">Hours Slept</string>
+    <string name="sleep_ratings_title">Sleep Ratings</string>
+    <string name="calories_graph_title">Daily Calories</string>
+    <string name="macros_graph_title">Daily Macros</string>
+    <string name="exercise_progress_title">Exercise Progress</string>
+
     <string name="error_screen">Error</string>
     <string name="error_string">Uh oh.. something went wrong. Try restarting the app.</string>
-    <string name="hours_slept_axis_title">Hours Slept</string>
-    <string name="sleep_ratings_axis_title">Sleep Ratings</string>
+
+    <string name="select_measurement_stats">Metric</string>
     <string name="select_exercise">Exercise</string>
     <string name="missing_graph_data">Insufficient data to be graphed</string>
     <string name="unselected_exercise_graph_error">Select an exercise before it can be displayed</string>

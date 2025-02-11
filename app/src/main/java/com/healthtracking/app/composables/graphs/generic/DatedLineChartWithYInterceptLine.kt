@@ -48,6 +48,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 import kotlin.math.floor
 
+val bottomAxisLabelKey = ExtraStore.Key<List<String>>()
+
 @Composable
 internal fun DatedLineChartWithYInterceptLine(
     modifier: Modifier = Modifier,
@@ -59,11 +61,10 @@ internal fun DatedLineChartWithYInterceptLine(
     data: Map<LocalDate, Double>,
     startAxisTitle: String? = null,
 ) {
-    val hoursSlept = data.values.toList()
-    val dates = data.keys.toList()
+    val hoursSlept = data.values.toList().ifEmpty { listOf(0.0) }
+    val dates = data.keys.toList().ifEmpty { listOf(LocalDate.now()) }
 
     val modelProducer = remember { CartesianChartModelProducer() }
-    val bottomAxisLabelKey = ExtraStore.Key<List<String>>()
     val bottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
         context.model.extraStore[bottomAxisLabelKey][x.toInt()]
     }
@@ -84,10 +85,10 @@ internal fun DatedLineChartWithYInterceptLine(
     val rangeProvider = object : CartesianLayerRangeProvider
     {
         override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-            0.0
+            stepSize * floor((minY / stepSize)) // round down to minimum step
 
         override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
-            maxOf(stepSize * ceil(maxY / stepSize), interceptY) + 20.0
+            stepSize * ceil((maxOf(maxY, interceptY)) / stepSize) // round up to the next step
     }
 
     LaunchedEffect(Unit) {
@@ -157,10 +158,13 @@ private fun getHorizontalLine(label: String, height: Double): HorizontalLine {
         TextComponent(
             margins = Insets(startDp = 6f),
             padding = Insets(startDp = 8f, endDp = 8f, bottomDp = 2f),
-            background =
-            ShapeComponent(fill, CorneredShape.rounded(bottomLeftDp = 4f, bottomRightDp = 4f)),
+            background = ShapeComponent(
+                fill = fill,
+                shape = CorneredShape.rounded(bottomLeftDp = 4f, bottomRightDp = 4f)
+            ),
         ),
         label = { label },
-        verticalLabelPosition = Position.Vertical.Bottom,
+        horizontalLabelPosition = Position.Horizontal.End,
+        verticalLabelPosition = Position.Vertical.Center,
     )
 }

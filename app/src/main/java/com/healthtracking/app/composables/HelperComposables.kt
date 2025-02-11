@@ -22,12 +22,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
@@ -47,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
+import com.healthtracking.app.composables.graphs.sleep.MakeSleepRatingsGraph
 import com.healthtracking.app.theme.CustomCutCornerShape
 
 @Composable
@@ -283,6 +291,7 @@ fun SliderWithLabel(
     color: Color,
     onValueChange: (Float) -> Unit,
     maxSliderValue: Float,
+    incrementAmount: Float = 1f
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -305,16 +314,62 @@ fun SliderWithLabel(
             )
         }
 
-        Slider(
-            value = value,
-            onValueChange = onValueChange,
-            colors = SliderDefaults.colors(
-                thumbColor = color,
-                activeTrackColor = color,
-                inactiveTrackColor = color.copy(alpha = 0.2f)
-            ),
-            valueRange = 0f..maxSliderValue,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Slider(
+                modifier = Modifier.weight(0.9f),
+                value = value,
+                onValueChange = onValueChange,
+                colors = SliderDefaults.colors(
+                    thumbColor = color,
+                    activeTrackColor = color,
+                    inactiveTrackColor = color.copy(alpha = 0.2f)
+                ),
+                valueRange = 0f..maxSliderValue,
+            )
+
+            Column(
+                modifier = Modifier.weight(0.1f).fillMaxWidth(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center
+            ) {
+                IconButton(
+                    modifier = Modifier.size(25.dp),
+                    onClick = {onValueChange(value + incrementAmount)}
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowUp,
+                        tint = color,
+                        contentDescription = stringResource(id = R.string.increment)
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.size(25.dp),
+                    onClick = {onValueChange(value - incrementAmount)}
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        tint = color,
+                        contentDescription = stringResource(id = R.string.decrement)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GraphWithTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+    graph: @Composable () -> Unit
+) {
+    BackgroundBorderBox(modifier = modifier) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            graph()
+        }
     }
 }

@@ -4,16 +4,19 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.MealWithFoodList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel() {
     val allMeals: Flow<List<MealWithFoodList>?> = mealDao.getAllMealEntries()
@@ -26,21 +29,28 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
         private const val CARBOHYDRATES_DEFAULT = 500
 
         private const val FATS_KEY = "FATS"
-        private const val FATS_DEFAULT = 60
+        private const val FATS_DEFAULT = 50
     }
 
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("daily_goal", MODE_PRIVATE)
-    val goalCalories get() = goalProtein*4 + goalCarbohydrates*4 + goalFats*9
 
     private val _goalProtein = MutableStateFlow(sharedPreferences.getInt(PROTEIN_KEY, PROTEIN_DEFAULT))
-    val goalProtein: Int get() = _goalProtein.value
+    val goalProtein: StateFlow<Int> = _goalProtein
 
     private val _goalCarbohydrates = MutableStateFlow(sharedPreferences.getInt(CARBOHYDRATES_KEY, CARBOHYDRATES_DEFAULT))
-    val goalCarbohydrates: Int get() = _goalCarbohydrates.value
+    val goalCarbohydrates: StateFlow<Int> = _goalCarbohydrates
 
     private val _goalFats = MutableStateFlow(sharedPreferences.getInt(FATS_KEY, FATS_DEFAULT))
-    val goalFats: Int get() = _goalFats.value
+    val goalFats: StateFlow<Int> = _goalFats
+
+    val goalCalories: StateFlow<Int> = combine(goalProtein, goalCarbohydrates, goalFats) { protein, carbs, fats ->
+        (protein * 4) + (carbs * 4) + (fats * 9)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = _goalProtein.value * 4 + _goalCarbohydrates.value * 4 + _goalFats.value * 9
+    )
 
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
@@ -86,10 +96,7 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
 
     suspend fun getTodaysMealEntries(): Flow<List<MealWithFoodList>?> {
         return withContext(Dispatchers.IO) {
-            val startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIN)
-            val endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX)
-
-            mealDao.getTodaysMealEntries(startOfDay, endOfDay)
+            mealDao.getTodaysMealEntries(today = LocalDate.now())
         }
     }
 

@@ -44,7 +44,8 @@ fun StatsMain (
         val pagerState = rememberPagerState(pageCount = { 3 })
 
         HorizontalPager(
-            state = pagerState
+            state = pagerState,
+            pageSpacing = 40.dp
         ) { page ->
             val title = when (page) {
                 0 -> stringResource(id = R.string.workout_screen)
@@ -93,10 +94,14 @@ fun StatsMain (
                                 .collectAsStateWithLifecycle(mapOf()).value,
                             fatsData = viewModel.getFatsData()
                                 .collectAsStateWithLifecycle(mapOf()).value,
-                            caloriesGoal = viewModel.caloriesGoal.toDouble(),
-                            proteinGoal = viewModel.proteinGoal.toDouble(),
-                            carbsGoal = viewModel.carbsGoal.toDouble(),
-                            fatsGoal = viewModel.fatsGoal.toDouble()
+                            caloriesGoal = viewModel.caloriesGoal
+                                .collectAsStateWithLifecycle().value.toDouble(),
+                            proteinGoal = viewModel.proteinGoal
+                                .collectAsStateWithLifecycle().value.toDouble(),
+                            carbsGoal = viewModel.carbsGoal
+                                .collectAsStateWithLifecycle().value.toDouble(),
+                            fatsGoal = viewModel.fatsGoal
+                                .collectAsStateWithLifecycle().value.toDouble()
                         )
 
                         2 -> SleepStats(
@@ -121,7 +126,7 @@ private fun PageSelectedIcons(
 
     Row(
         modifier = Modifier
-            .padding(top = 8.dp)
+            .padding(bottom = 8.dp)
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
@@ -144,7 +149,7 @@ private fun PageSelectedIcons(
         repeat(pagerState.pageCount) { index ->
             Box(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(horizontal = 12.dp)
                     .size(8.dp)
                     .clip(shape = CircleShape)
                     .background(

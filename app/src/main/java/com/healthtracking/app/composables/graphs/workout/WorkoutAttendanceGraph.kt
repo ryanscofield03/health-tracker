@@ -2,6 +2,7 @@ package com.healthtracking.app.composables.graphs.workout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +16,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.WorkoutHistory
+import com.healthtracking.app.services.toDecimalPoints
+import com.healthtracking.app.services.toStringWithDecimalPoints
 import com.healthtracking.app.theme.CustomCutCornerShape
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -130,5 +134,21 @@ private fun WorkoutHistoryCard(
 private fun AttendanceData(
     workoutAttendance: Float
 ) {
-    Text(text = "Workout Attendance: $workoutAttendance days/week", style = MaterialTheme.typography.bodyMedium)
+    val attendanceString = workoutAttendance.toDecimalPoints(1).toStringWithDecimalPoints()
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier,
+            text = "Workout Attendance",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Left
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "$attendanceString/7",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Right
+        )
+    }
 }

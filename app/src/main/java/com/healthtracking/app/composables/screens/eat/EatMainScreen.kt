@@ -112,7 +112,7 @@ fun EatMain (
                             onClick = openEditGoalDialog,
                             caloriesCurrent = viewModel.currentCalories
                                 .collectAsStateWithLifecycle(0f).value,
-                            caloriesTotal = viewModel.goalCalories
+                            caloriesTotal = viewModel.goalCalories.collectAsStateWithLifecycle().value
                         )
 
                         WeeklyGraph()
@@ -122,13 +122,16 @@ fun EatMain (
                             onClick = openEditGoalDialog,
                             proteinCurrent = viewModel.currentProtein
                                 .collectAsStateWithLifecycle(0f).value,
-                            proteinTotal = viewModel.goalProtein,
+                            proteinTotal = viewModel.goalProtein
+                                .collectAsStateWithLifecycle().value,
                             carbsCurrent = viewModel.currentCarbohydrates
                                 .collectAsStateWithLifecycle(0f).value,
-                            carbsTotal = viewModel.goalCarbohydrates,
+                            carbsTotal = viewModel.goalCarbohydrates
+                                .collectAsStateWithLifecycle().value,
                             fatsCurrent = viewModel.currentFats
                                 .collectAsStateWithLifecycle(0f).value,
-                            fatsTotal = viewModel.goalFats,
+                            fatsTotal = viewModel.goalFats
+                                .collectAsStateWithLifecycle().value,
                         )
                     }
                 }
@@ -447,12 +450,12 @@ fun CurrentMealEntryList(
             val mealId = mealEntry.meal.id
 
             NutritionCard(
-                modifier = Modifier.clickable { onCardClick(mealId) },
                 title = mealEntry.meal.name,
                 calories = mealEntry.foodItems.sumOf { it.calories.toDouble() },
                 protein = mealEntry.foodItems.sumOf { it.protein.toDouble() },
                 carbs = mealEntry.foodItems.sumOf { it.carbohydrates.toDouble() },
                 fats = mealEntry.foodItems.sumOf { it.fats.toDouble() },
+                onClick = { onCardClick(mealId) },
                 onDelete = { onCardDelete(mealId) }
             )
         }

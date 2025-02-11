@@ -56,34 +56,31 @@ fun ExerciseProgressGraph(
                 )
             }
         }
-        if (selectedExerciseWeightData.isNotEmpty() && selectedExerciseRepsData.isNotEmpty()) {
-            when (selectedExerciseMeasurement.value) {
-                stringResource(id = R.string.weight_measurement_label) -> {
-                    MultiBarDatedBarChart(
-                        modifier = Modifier.fillMaxHeight(),
-                        data = selectedExerciseWeightData,
-                        stepSizeY = 10.0,
-                        startAxisTitle = stringResource(id = R.string.weight_graph_label)
-                    )
-                }
-                stringResource(id = R.string.reps_measurement_label) -> {
-                    MultiBarDatedBarChart(
-                        modifier = Modifier.fillMaxHeight(),
-                        data = selectedExerciseRepsData,
-                        stepSizeY = 1.0,
-                        startAxisTitle = stringResource(id = R.string.reps_graph_label)
-                    )
-                }
-                else -> {
-                    ErrorMessageBox(
-                        errorMessage = stringResource(id = R.string.unselected_exercise_graph_error)
-                    )
-                }
+        when (selectedExerciseMeasurement.value) {
+            stringResource(id = R.string.weight_measurement_label) -> {
+                MultiBarDatedBarChart(
+                    modifier = Modifier.fillMaxHeight(),
+                    data = selectedExerciseWeightData,
+                    stepSizeY = 10.0,
+                    startAxisTitle = stringResource(id = R.string.weight_graph_label)
+                )
             }
-        } else {
-            ErrorMessageBox(
-                errorMessage = stringResource(id = R.string.missing_graph_data)
-            )
+            stringResource(id = R.string.reps_measurement_label) -> {
+                MultiBarDatedBarChart(
+                    modifier = Modifier.fillMaxHeight(),
+                    data = selectedExerciseRepsData,
+                    stepSizeY = 1.0,
+                    startAxisTitle = stringResource(id = R.string.reps_graph_label)
+                )
+            }
+            else -> {
+                MultiBarDatedBarChart(
+                    modifier = Modifier.fillMaxHeight(),
+                    data = mapOf(Pair(LocalDate.now(), listOf(0f))),
+                    stepSizeY = 1.0,
+                    startAxisTitle = ""
+                )
+            }
         }
     }
 }

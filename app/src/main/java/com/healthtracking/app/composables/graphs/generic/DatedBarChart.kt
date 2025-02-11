@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
@@ -28,15 +29,18 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.ceil
 
 private val BottomAxisLabelKey = ExtraStore.Key<List<String>>()
+
 
 @Composable
 internal fun DatedBarChart(
     modifier: Modifier,
     stepSizeY: Float = 1f,
+    maxYValue: Double? = null,
     data: Map<LocalDate, Float>,
-    startAxisTitle: String,
+    startAxisTitle: String? = null,
 ) {
     val hoursSlept = data.values.toList().ifEmpty { listOf(0) }
     val dates = data.keys.toList().ifEmpty { listOf(LocalDate.now()) }
@@ -44,6 +48,15 @@ internal fun DatedBarChart(
     val modelProducer = remember { CartesianChartModelProducer() }
     val bottomAxisValueFormatter = CartesianValueFormatter { context, x, _ ->
         context.model.extraStore[BottomAxisLabelKey][x.toInt()]
+    }
+
+    val rangeProvider = object : CartesianLayerRangeProvider
+    {
+        override fun getMinY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+            0.0
+
+        override fun getMaxY(minY: Double, maxY: Double, extraStore: ExtraStore) =
+            maxYValue ?: (stepSizeY * ceil((maxY) / stepSizeY)) // round up to the next step
     }
 
     LaunchedEffect(Unit) {
@@ -70,7 +83,8 @@ internal fun DatedBarChart(
                             thickness = 30.dp
                         )
                     }
-                )
+                ),
+                rangeProvider = rangeProvider
             )),
             startAxis = VerticalAxis.rememberStart(
                 title = startAxisTitle,

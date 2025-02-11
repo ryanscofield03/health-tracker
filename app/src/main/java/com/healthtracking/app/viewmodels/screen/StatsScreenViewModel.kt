@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -40,10 +39,10 @@ class StatsScreenViewModel(
     private val _selectedExercise: MutableStateFlow<String?> = MutableStateFlow(null)
     val selectedExercise get() = _selectedExercise
 
-    val caloriesGoal get() = mealViewModel.goalCalories
-    val proteinGoal get() = mealViewModel.goalProtein
-    val carbsGoal get() = mealViewModel.goalCarbohydrates
-    val fatsGoal get() = mealViewModel.goalFats
+    val caloriesGoal: StateFlow<Int> = mealViewModel.goalCalories
+    val proteinGoal: StateFlow<Int> = mealViewModel.goalProtein
+    val carbsGoal: StateFlow<Int> = mealViewModel.goalCarbohydrates
+    val fatsGoal: StateFlow<Int> = mealViewModel.goalFats
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

@@ -51,10 +51,12 @@ fun NutritionCard(
     protein: Double,
     carbs: Double,
     fats: Double,
+    onClick: () -> Unit = {},
     onDelete: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
         shape = CustomCutCornerShape,
         elevation = CardDefaults.cardElevation(4.dp)

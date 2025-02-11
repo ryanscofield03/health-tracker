@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.GraphWithTitle
 import com.healthtracking.app.composables.graphs.eat.MacrosEatenGraph
 import com.healthtracking.app.composables.graphs.eat.NutrientProgressGraph
 import com.healthtracking.app.theme.CaloriesColour
@@ -30,8 +31,10 @@ fun EatStats(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        BackgroundBorderBox(Modifier.weight(0.5f).fillMaxWidth()) {
-            // graph of calories eaten
+        GraphWithTitle(
+            modifier = Modifier.weight(0.4f).fillMaxWidth(),
+            title = stringResource(id = R.string.calories_graph_title)
+        ) {
             NutrientProgressGraph(
                 data = caloriesData,
                 goal = caloriesGoal,
@@ -40,8 +43,10 @@ fun EatStats(
             )
         }
 
-        BackgroundBorderBox(Modifier.weight(0.5f).fillMaxWidth()) {
-            // graph of each macro in comparison to goal (x3)
+        GraphWithTitle(
+            modifier = Modifier.weight(0.6f).fillMaxWidth(),
+            title = stringResource(id = R.string.macros_graph_title)
+        ) {
             MacrosEatenGraph(
                 proteinData = proteinData,
                 carbsData = carbsData,

@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.healthtracking.app.R
 import com.healthtracking.app.daos.MealDao
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 class BuildMealViewModel(
@@ -31,11 +31,18 @@ class BuildMealViewModel(
             "1 tbsp"
         )
 
+        enum class EntryStates {
+            NEW,
+            EDIT,
+            REUSE
+        }
+
         private val DEFAULT_MEASUREMENT = MEASUREMENT_OPTIONS[0]
         private const val DEFAULT_PROTEIN = 0f
         private const val DEFAULT_CARBS = 0f
         private const val DEFAULT_FATS = 0f
         private const val DEFAULT_QUANTITY = 1f
+        private val DEFAULT_ENTRY_MODE = EntryStates.NEW
     }
 
     // store meal name
@@ -46,12 +53,13 @@ class BuildMealViewModel(
     private val _foodItems = MutableStateFlow<List<Food>>(emptyList())
     val foodItems: StateFlow<List<Food>> = _foodItems.asStateFlow()
 
+    private val _entryMode = mutableStateOf(DEFAULT_ENTRY_MODE)
+    // for comparing to when saving
+    private val _originalEntry: MutableState<MealWithFoodList?> = mutableStateOf(null)
+
     // store error messages
     private val _nameErrorMessageId = MutableStateFlow<Int?>(null)
     val nameErrorMessageId: StateFlow<Int?> = _nameErrorMessageId.asStateFlow()
-
-    private val _foodItemsErrorMessageId = MutableStateFlow<Int?>(null)
-    val foodItemsErrorMessageId: StateFlow<Int?> = _foodItemsErrorMessageId.asStateFlow()
 
     private val _dialogFoodName = MutableStateFlow<String?>(null)
     val dialogFoodName get() = _dialogFoodName
@@ -74,23 +82,44 @@ class BuildMealViewModel(
     val dialogCalories get() =
         ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9)).toDecimalPoints(0)
 
-    private val _editMealId: MutableState<Long?> = mutableStateOf(null)
-    val editMealId: Long? get() = _editMealId.value
+    private val _dialogNameHasError = MutableStateFlow(false)
+    val dialogNameHasError get() = _dialogNameHasError.asStateFlow()
+
+    private val _dialogEntryMode: MutableState<EntryStates> = mutableStateOf(DEFAULT_ENTRY_MODE)
+    private val _editFoodIndex: MutableState<Int?> = mutableStateOf(null)
 
     /**
      * Initialize data when editing an old entry
      */
     fun editMealInfo(mealWithFoodList: MealWithFoodList) {
-        _editMealId.value = mealWithFoodList.meal.id
-        reuseMealInfo(mealWithFoodList = mealWithFoodList)
+        _entryMode.value = EntryStates.EDIT
+        _originalEntry.value = mealWithFoodList
+        _name.value = mealWithFoodList.meal.name
+        _foodItems.value = mealWithFoodList.foodItems
     }
 
     /**
      * Initialize data when reusing an old entry
      */
     fun reuseMealInfo(mealWithFoodList: MealWithFoodList) {
+        _entryMode.value = EntryStates.REUSE
+        _originalEntry.value = mealWithFoodList
         _name.value = mealWithFoodList.meal.name
         _foodItems.value = mealWithFoodList.foodItems
+    }
+
+    /**
+     * Populate dialog with food data and set entry state to edit
+     */
+    fun populateDialogWithFood(food: Food) {
+        _editFoodIndex.value = _foodItems.value.indexOf(food)
+        _dialogFoodName.value = food.name
+        _dialogMeasurement.value = food.measurement
+        _dialogProtein.value = food.protein
+        _dialogCarbs.value = food.carbohydrates
+        _dialogFats.value = food.fats
+        _dialogQuantity.value = food.quantity
+        _dialogEntryMode.value = EntryStates.EDIT
     }
 
     /**
@@ -98,6 +127,8 @@ class BuildMealViewModel(
      */
     fun updateDialogFoodName(newName: String) {
         _dialogFoodName.value = newName
+
+        validFoodDialog()
     }
 
     /**
@@ -132,7 +163,9 @@ class BuildMealViewModel(
      * Updates the quantity of the food item
      */
     fun updateDialogQuantity(newQuantity: Float) {
-        _dialogQuantity.value = newQuantity.toDecimalPoints(0)
+        if (newQuantity >= 1) {
+            _dialogQuantity.value = newQuantity.toDecimalPoints(0)
+        }
     }
 
     /**
@@ -140,13 +173,21 @@ class BuildMealViewModel(
      */
     fun updateName(name: String) {
         _name.value = name
+
+        validMeal()
     }
 
     /**
      * Return true if food dialog has all valid data
      */
     fun validFoodDialog(): Boolean {
-        return dialogFoodName.value != null && dialogFoodName.value!!.isNotBlank()
+        if (dialogFoodName.value != null && dialogFoodName.value!!.isNotBlank()) {
+            _dialogNameHasError.value = false
+            return true
+        } else {
+            _dialogNameHasError.value = true
+            return false
+        }
     }
 
     /**
@@ -164,11 +205,24 @@ class BuildMealViewModel(
                 quantity = dialogQuantity.value
             )
 
-            _foodItems.value += foodItem
+            when (_dialogEntryMode.value) {
+                EntryStates.NEW -> {
+                    _foodItems.value += foodItem
 
-            clearFoodDialog()
+                    clearFoodDialog()
+                }
+                EntryStates.EDIT -> {
+                    _foodItems.value = foodItems.value.toMutableList().apply {
+                        this[_editFoodIndex.value!!] = foodItem
+                    }
+                    clearFoodDialog()
+                }
+
+                EntryStates.REUSE -> {
+                    // NOT POSSIBLE AS OF CURRENT
+                }
+            }
         }
-
     }
 
     /**
@@ -176,11 +230,13 @@ class BuildMealViewModel(
      */
     fun clearFoodDialog() {
         _dialogFoodName.value = null
+        _dialogNameHasError.value = false
         _dialogMeasurement.value = DEFAULT_MEASUREMENT
         _dialogProtein.value = DEFAULT_PROTEIN
         _dialogCarbs.value = DEFAULT_CARBS
         _dialogFats.value = DEFAULT_FATS
         _dialogQuantity.value = DEFAULT_QUANTITY
+        _dialogEntryMode.value = DEFAULT_ENTRY_MODE
     }
 
     /**
@@ -209,37 +265,93 @@ class BuildMealViewModel(
     }
 
     /**
-     * Validate meal name and items (e.g. has at least 1 item)
+     * true if meal name and items are valid (e.g. has at least 1 item, name not blank)
      */
-    fun validateMeal(): Boolean {
-        return _name.value.isNotBlank() && _foodItems.value.isNotEmpty()
+    fun validMeal(): Boolean {
+        return if (_name.value.isBlank()) {
+            _nameErrorMessageId.value = R.string.meal_name_error_message
+            false
+        } else if (_foodItems.value.isEmpty()) {
+            false
+        } else {
+            true
+        }
     }
 
     /**
      * Save all data into meal and food entities
      */
     fun save() {
-        if (!validateMeal()) return
+        if (validMeal()) return
 
         viewModelScope.launch(Dispatchers.IO) {
-            // TODO handle case where editing is true and meal already exists
+            when (_entryMode.value) {
+                EntryStates.NEW -> {
+                    saveNewEntry()
+                }
+                EntryStates.EDIT -> {
+                    saveEditedEntry()
+                }
+                EntryStates.REUSE -> {
+                    saveReusedEntry()
+                }
+            }
+        }
+    }
 
-            val mealId = mealDao.upsertMealEntity(
-                mealEntity = Meal(
-                    name = _name.value,
-                    date = LocalDate.now(),
-                    time = LocalTime.now()
-                )
-            )
+    private suspend fun saveReusedEntry() {
+        TODO("Not yet implemented")
+    }
 
-            _foodItems.value.forEach { foodItem: Food ->
+    private suspend fun saveEditedEntry() {
+        val updatedFoodItems = _foodItems.value
+
+        mealDao.upsertMealEntity(
+            mealEntity = _originalEntry.value!!.meal.copy(name = _name.value)
+        )
+
+        updatedFoodItems.forEach { foodItem: Food ->
+            if (foodItem.id != 0L) {
+                // update old entry
+                mealDao.upsertFoodEntity(foodEntity = foodItem)
+            } else {
+                // add new entry
                 val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
                 val mealFoodCrossRef = MealFoodCrossRef(
-                    mealId = mealId,
+                    mealId = _originalEntry.value!!.meal.id,
                     foodId = foodId
                 )
                 mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
             }
+        }
+
+        // Remove deleted food items
+        _originalEntry.value!!.foodItems.forEach { foodItem: Food ->
+            if (updatedFoodItems.none { it.id == foodItem.id }) {
+                mealDao.deleteFood(foodId = foodItem.id)
+            }
+        }
+    }
+
+    /**
+     * Save all new data into meal and food entities
+     */
+    private suspend fun saveNewEntry() {
+        val mealId = mealDao.upsertMealEntity(
+            mealEntity = Meal(
+                name = _name.value,
+                date = LocalDate.now(),
+                time = LocalTime.now()
+            )
+        )
+
+        _foodItems.value.forEach { foodItem: Food ->
+            val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
+            val mealFoodCrossRef = MealFoodCrossRef(
+                mealId = mealId,
+                foodId = foodId
+            )
+            mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
         }
     }
 
@@ -247,8 +359,10 @@ class BuildMealViewModel(
      * Clears the view model
      */
     fun clear() {
-        _editMealId.value = null
+        _nameErrorMessageId.value = null
+        _entryMode.value = EntryStates.NEW
         _name.value = ""
         _foodItems.value = listOf()
+        _dialogNameHasError.value = false
     }
 }

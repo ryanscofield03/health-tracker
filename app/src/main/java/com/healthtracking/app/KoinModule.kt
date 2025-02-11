@@ -48,7 +48,7 @@ val dataAccessModule = module {
     viewModel { SleepViewModel(get<SleepDao>()) }
     viewModel { SleepScreenViewModel(get<SleepViewModel>()) }
 
-    viewModel { MealViewModel(get(), get<MealDao>()) }
+    single { MealViewModel(get(), get<MealDao>()) }
     viewModel { FoodViewModel(get<MealViewModel>()) }
 
     viewModel { StatsScreenViewModel(
