@@ -168,7 +168,7 @@ private fun ExerciseCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
+                .padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -176,10 +176,14 @@ private fun ExerciseCard(
                 text = exercise.name,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            IconButton(onClick = { removeExercise() }) {
+            IconButton(
+                modifier = Modifier.size(40.dp),
+                onClick = { removeExercise() })
+            {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.delete),
-                    contentDescription = stringResource(id = R.string.delete)
+                    contentDescription = stringResource(id = R.string.delete),
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }

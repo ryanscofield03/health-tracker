@@ -3,9 +3,11 @@ package com.healthtracking.app.viewmodels.screen
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.healthtracking.app.R
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.entities.Workout
@@ -25,6 +27,8 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.Duration as JavaDuration
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.max
 
 /**
  * ViewModel for storing, handling, and persisting data pertaining to the RunWorkoutScreen
@@ -46,14 +50,6 @@ class RunWorkoutViewModel(
     // name of the workout
     val workoutName = workout.name
 
-    // current index of the workout - user controlled
-    private val _currentExerciseIndex = mutableIntStateOf(savedStateHandle.get<Int>(CURRENT_EXERCISE_INDEX_KEY) ?: 0)
-    val currentExerciseIndex get() = _currentExerciseIndex.intValue
-
-    // current exercise - based on index
-    val currentExercise: Exercise
-        get() = exercises[_currentExerciseIndex.intValue]
-
     // historical data for the workout
     private val _exercisesHistory = MutableStateFlow<List<ExerciseHistory?>>(emptyList())
     val exerciseHistory: StateFlow<List<ExerciseHistory?>> get() = _exercisesHistory.asStateFlow()
@@ -63,7 +59,7 @@ class RunWorkoutViewModel(
         value = savedStateHandle.get<List<MutableList<Pair<Float, Int>>>>(EXERCISE_ENTRIES_KEY)
             ?: exercises.map { mutableListOf() }
     )
-    val exerciseEntries: StateFlow<List<MutableList<Pair<Float, Int>>>> = _exerciseEntries.asStateFlow()
+    private val exerciseEntries: StateFlow<List<MutableList<Pair<Float, Int>>>> = _exerciseEntries.asStateFlow()
 
     // data for new entry
     private val _newWeight = mutableStateOf("")
@@ -134,7 +130,7 @@ class RunWorkoutViewModel(
             viewModelScope.launch {
                 workoutBackupViewModel.addWorkoutBackup(
                     workoutId = workout.id,
-                    exerciseIndex = _currentExerciseIndex.intValue,
+                    exerciseIndex = 0,
                     entries = _exerciseEntries.value,
                     timerStart = _timerStart.value
                 )
@@ -187,7 +183,7 @@ class RunWorkoutViewModel(
      * and then added to the main entries list/table.
      * @return true if data saves, false if the data is not valid and does not save.
      */
-    fun saveEntry(): Boolean {
+    fun saveEntry(exerciseIndex: Int): Boolean {
         _newRepFieldCanError.value = true
         _newWeightFieldCanError.value = true
 
@@ -196,11 +192,11 @@ class RunWorkoutViewModel(
 
             if (_editingEntryIndex.value != null) {
                 val updatedEntries = _exerciseEntries.value.map { it.toMutableList() }.toMutableList()
-                updatedEntries[_currentExerciseIndex.intValue][_editingEntryIndex.value!!] = pair
+                updatedEntries[exerciseIndex][_editingEntryIndex.value!!] = pair
                 _exerciseEntries.value = updatedEntries
             } else {
                 val updatedEntries = _exerciseEntries.value.map { it.toMutableList() }.toMutableList()
-                updatedEntries[_currentExerciseIndex.intValue].add(pair)
+                updatedEntries[exerciseIndex].add(pair)
                 _exerciseEntries.value = updatedEntries
 
                 // only reset timer when we add an entry, not update
@@ -231,16 +227,16 @@ class RunWorkoutViewModel(
     /**
      * Checks to see if given index of current exercise has an entry already
      */
-    fun canEditEntry(index: Int): Boolean {
-        return exerciseEntries.value[currentExerciseIndex].size > index
+    fun canEditEntry(exerciseIndex: Int, entryIndex: Int): Boolean {
+        return exerciseEntries.value[exerciseIndex].size > entryIndex
     }
 
-    fun updateEditingEntryIndex(index: Int) {
-        _editingEntryIndex.value = index
+    fun updateEditingEntryIndex(exerciseIndex: Int, entryIndex: Int) {
+        _editingEntryIndex.value = entryIndex
         updateNewWeight(_exerciseEntries
-            .value[_currentExerciseIndex.intValue][_editingEntryIndex.value!!].first.toString())
+            .value[exerciseIndex][_editingEntryIndex.value!!].first.toString())
         updateNewReps(_exerciseEntries
-            .value[_currentExerciseIndex.intValue][_editingEntryIndex.value!!].second.toString())
+            .value[exerciseIndex][_editingEntryIndex.value!!].second.toString())
     }
 
     fun updateNewWeight(updatedWeight: String) {
@@ -274,8 +270,8 @@ class RunWorkoutViewModel(
      * the exercise list)
      * @return true if user is not on first exercise
      */
-    fun canGoPreviousExercise(): Boolean {
-        return _currentExerciseIndex.intValue > 0
+    fun canGoPreviousExercise(exerciseIndex: Int): Boolean {
+        return exerciseIndex > 0
     }
 
     /**
@@ -283,18 +279,17 @@ class RunWorkoutViewModel(
      * the exercise list)
      * @return true if user is not on last exercise
      */
-    fun canGoNextExercise(): Boolean {
-        return _currentExerciseIndex.intValue < exercises.size - 1
+    fun canGoNextExercise(exerciseIndex: Int): Boolean {
+        return exerciseIndex < exercises.size - 1
     }
 
     /**
      * Attempts to go to the previous exercise.
      * This is not allowed if the user is at the start of the list.
      */
-    fun goToPreviousExercise() {
-        if (canGoPreviousExercise()) {
-            _currentExerciseIndex.intValue -= 1
-            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = _currentExerciseIndex.intValue
+    fun goToPreviousExercise(exerciseIndex: Int) {
+        if (canGoPreviousExercise(exerciseIndex)) {
+            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = exerciseIndex
         }
     }
 
@@ -302,10 +297,9 @@ class RunWorkoutViewModel(
      * Attempts to go to the next exercise.
      * This is not allowed if the user is at the end of the list.
      */
-    fun goToNextExercise() {
-        if (canGoNextExercise()) {
-            _currentExerciseIndex.intValue += 1
-            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = _currentExerciseIndex.intValue
+    fun goToNextExercise(exerciseIndex: Int) {
+        if (canGoNextExercise(exerciseIndex)) {
+            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = exerciseIndex
         }
     }
 
@@ -352,10 +346,51 @@ class RunWorkoutViewModel(
         savedStateHandle[EXERCISE_ENTRIES_KEY] = null
         savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = null
 
-        _currentExerciseIndex.intValue = 0
+        _exercisesHistory.value = listOf()
         _exerciseEntries.value = exercises.map { mutableListOf() }
 
         canBackup = false
         removeBackup()
+    }
+
+    /**
+     * Get the current exercise for a given index
+     */
+    fun getCurrentExercise(pageIndex: Int): Exercise {
+        return exercises[pageIndex]
+    }
+
+    /**
+     * get the current exercise history date for a given index
+     */
+    fun getCurrentExerciseHistoryDate(exerciseIndex: Int): String? {
+        return exerciseHistory
+            .value[exerciseIndex]
+            ?.date
+            ?.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
+    }
+
+    /**
+     * Get the number of rows for a given exercise index
+     */
+    fun getNumberOfRows(exerciseIndex: Int): Int {
+        return max(
+            a = exerciseEntries.value[exerciseIndex].size + 1,
+            b = exerciseHistory.value[exerciseIndex]?.data?.size ?: 0,
+        )
+    }
+
+    /**
+     * Get the exercise entries for a given exercise index
+     */
+    fun getExerciseEntries(exerciseIndex: Int): List<Pair<Float, Int>> {
+        return exerciseEntries.value[exerciseIndex]
+    }
+
+    /**
+     * Get the history entries for a given exercise index
+     */
+    fun getHistoryEntries(pageIndex: Int): List<Pair<Float, Int>?> {
+        return exerciseHistory.value[pageIndex]?.data ?: listOf()
     }
 }

@@ -34,8 +34,8 @@ class AddWorkoutViewModel(
     private val _descriptionErrorMessageId = mutableStateOf<Int?>(null)
     val descriptionErrorMessageId: Int? get() = _descriptionErrorMessageId.value
 
-    private val _exercisesErrorMessageId = mutableStateOf<Int?>(null)
-    val exercisesErrorMessageId: Int? get() = _exercisesErrorMessageId.value
+    private val _exerciseSearch = mutableStateOf("")
+    val exerciseSearch: String get() = _exerciseSearch.value
 
     // initial values which are required when saving an updated workout
     private val _currentWorkoutId = mutableStateOf<Long?>(null)
@@ -44,12 +44,10 @@ class AddWorkoutViewModel(
 
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
-        validateExercises()
     }
 
     fun removeExercise(exercise: Exercise) {
         _exercises.remove(exercise)
-        validateExercises()
     }
 
     fun clearExercises() {
@@ -66,6 +64,10 @@ class AddWorkoutViewModel(
         validateDescription()
     }
 
+    fun updateExerciseSearch(updatedExerciseSearch: String) {
+        _exerciseSearch.value = updatedExerciseSearch
+    }
+
     fun toggleScheduledDay(day: DayOfWeek) {
         if (scheduledDays.contains(day)) _scheduledDays.remove(day) else _scheduledDays.add(day)
     }
@@ -73,7 +75,6 @@ class AddWorkoutViewModel(
     private fun validateFields() {
         validateName()
         validateDescription()
-        validateExercises()
     }
 
     private fun validateName() {
@@ -87,13 +88,6 @@ class AddWorkoutViewModel(
         _descriptionErrorMessageId.value =
             if (_description.value.isBlank())
                 R.string.description_error_message
-            else null
-    }
-
-    private fun validateExercises() {
-        _exercisesErrorMessageId.value =
-            if (_exercises.isEmpty())
-                R.string.exercise_error_message
             else null
     }
 
@@ -149,7 +143,6 @@ class AddWorkoutViewModel(
 
         _nameErrorMessageId.value = null
         _descriptionErrorMessageId.value = null
-        _exercisesErrorMessageId.value = null
 
         _currentWorkoutId.value = null
         _currentExercises.clear()

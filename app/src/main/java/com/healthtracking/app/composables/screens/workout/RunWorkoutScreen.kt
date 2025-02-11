@@ -1,13 +1,11 @@
 package com.healthtracking.app.composables.screens.workout
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -32,18 +32,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -52,14 +47,11 @@ import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.table.TableCell
 import com.healthtracking.app.composables.table.TableCellType
-import com.healthtracking.app.entities.ExerciseHistory
 import com.healthtracking.app.services.toStringWithDecimalPoints
 import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.math.max
 
 @Composable
 fun RunWorkout(
@@ -130,89 +122,97 @@ fun RunWorkout(
 
 @Composable
 private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.88f)
-            .padding(horizontal = 8.dp)
-    ) {
-        val openEntryDialog = rememberSaveable { mutableStateOf(false) }
-        if (openEntryDialog.value) {
-            EntryDialog(
-                saveEntry = { viewModel.saveEntry() },
-                clearEntry = { viewModel.clearEntry() },
-                onDismiss = { openEntryDialog.value = false },
-                weight = viewModel.newWeight,
-                updateWeight = { viewModel.updateNewWeight(it) },
-                validWeight = viewModel.newWeightIsValid(),
-                weightErrorMessageId = R.string.weight_error_message,
-                reps = viewModel.newReps,
-                updateReps = { viewModel.updateNewReps(it) },
-                validReps = viewModel.newRepsIsValid(),
-                repsErrorMessageId = R.string.reps_error_message,
-            )
-        }
+    Box(modifier = Modifier.fillMaxHeight(0.88f)) {
+        val numberOfPages = viewModel.exerciseHistory.collectAsStateWithLifecycle().value.size
+        when {
+            numberOfPages > 0 -> {
+                val pagerState = rememberPagerState { numberOfPages }
 
-        ExerciseBlockHeader(viewModel = viewModel)
+                val openEntryDialog = rememberSaveable { mutableStateOf(false) }
+                if (openEntryDialog.value) {
+                    EntryDialog(
+                        saveEntry = { viewModel.saveEntry(pagerState.currentPage) },
+                        clearEntry = { viewModel.clearEntry() },
+                        onDismiss = { openEntryDialog.value = false },
+                        weight = viewModel.newWeight,
+                        updateWeight = { viewModel.updateNewWeight(it) },
+                        validWeight = viewModel.newWeightIsValid(),
+                        weightErrorMessageId = R.string.weight_error_message,
+                        reps = viewModel.newReps,
+                        updateReps = { viewModel.updateNewReps(it) },
+                        validReps = viewModel.newRepsIsValid(),
+                        repsErrorMessageId = R.string.reps_error_message,
+                    )
+                }
 
-        ExerciseTableHeader(viewModel = viewModel)
-        ExerciseTableData(
-            viewModel = viewModel,
-            editExerciseEntry = {
-                if (viewModel.canEditEntry(index = it)) {
-                    openEntryDialog.value = true
-                    viewModel.updateEditingEntryIndex(index = it)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        pageSpacing = 20.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    ) { pageIndex ->
+                        Column {
+                            ExerciseBlockHeader(
+                                exerciseName = viewModel.getCurrentExercise(pageIndex).name,
+                                canGoPreviousExercise = viewModel.canGoPreviousExercise(pageIndex),
+                                canGoNextExercise = viewModel.canGoNextExercise(pageIndex)
+                            )
+                            ExerciseTableHeader(
+                                exerciseHistoryDate =
+                                viewModel.getCurrentExerciseHistoryDate(pageIndex) ?: stringResource(R.string.no_date)
+                            )
+                            ExerciseTableData(
+                                numRows = viewModel.getNumberOfRows(pageIndex),
+                                exerciseEntries = viewModel.getExerciseEntries(pageIndex),
+                                historyData = viewModel.getHistoryEntries(pageIndex),
+                                editExerciseEntry = {
+                                    if (viewModel.canEditEntry(exerciseIndex = pageIndex, entryIndex = it)) {
+                                        openEntryDialog.value = true
+                                        viewModel.updateEditingEntryIndex(exerciseIndex = pageIndex, entryIndex = it)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.Bottom) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = { openEntryDialog.value = true }
+                    ) {
+                        Text(text = stringResource(id = R.string.add_exercise_entry))
+                    }
                 }
             }
-        )
-
-        Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.Bottom) {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                onClick = { openEntryDialog.value = true }
-            ) {
-                Text(text = stringResource(id = R.string.add_exercise_entry))
-            }
+            else -> {}
         }
     }
 }
 
 @Composable
 private fun ExerciseTableData(
-    viewModel: RunWorkoutViewModel,
+    numRows: Int,
+    exerciseEntries: List<Pair<Float, Int>>,
+    historyData: List<Pair<Float, Int>?>,
     editExerciseEntry: (Int) -> Unit
 ) {
-    val exerciseEntries = viewModel.exerciseEntries.collectAsState().value
-    val exerciseHistory = viewModel.exerciseHistory.collectAsState().value
-
-    var history: ExerciseHistory? = null
-    if (exerciseHistory.size > viewModel.currentExerciseIndex
-        && exerciseHistory[viewModel.currentExerciseIndex] != null)
-    {
-        history = exerciseHistory[viewModel.currentExerciseIndex]!!
-    }
-
     LazyColumn(modifier = Modifier.fillMaxHeight(0.7f)) {
         // Data rows
-        for (i in 0..< max(
-            a = exerciseEntries[viewModel.currentExerciseIndex].size + 1,
-            b = history?.data?.size ?: 0,
-        )) {
+        for (i in 0..<numRows) {
             item {
-                val entry: Pair<Float, Int>? = exerciseEntries[viewModel.currentExerciseIndex].getOrNull(i)
+                val entry: Pair<Float, Int>? = exerciseEntries.getOrNull(i)
                 val weight: String = entry?.first?.toStringWithDecimalPoints() ?: "-"
                 val reps: String = entry?.second?.toString() ?: "-"
-
-                var historyWeight: String = "-"
-                var historyReps: String = "-"
-                if (exerciseHistory.size > viewModel.currentExerciseIndex &&
-                    exerciseHistory[viewModel.currentExerciseIndex] != null)
-                {
-                    val historyData = exerciseHistory[viewModel.currentExerciseIndex]!!.data.getOrNull(i)
-                    historyWeight = historyData?.first?.toStringWithDecimalPoints() ?: "-"
-                    historyReps = historyData?.second?.toString() ?: "-"
-                }
+                val historyEntry: Pair<Float, Int>? = historyData.getOrNull(i)
+                val historyWeight = historyEntry?.first?.toStringWithDecimalPoints() ?: "-"
+                val historyReps = historyEntry?.second?.toString() ?: "-"
 
                 Row(
                     Modifier
@@ -250,8 +250,9 @@ private fun ExerciseTableData(
 }
 
 @Composable
-private fun ExerciseTableHeader(viewModel: RunWorkoutViewModel) {
-    val exerciseHistory = viewModel.exerciseHistory.collectAsStateWithLifecycle()
+private fun ExerciseTableHeader(
+    exerciseHistoryDate: String = "",
+) {
     Spacer(modifier = Modifier.height(8.dp))
     // Header Row
     Row(modifier = Modifier.height(70.dp)) {
@@ -263,14 +264,7 @@ private fun ExerciseTableHeader(viewModel: RunWorkoutViewModel) {
                         .background(color = MaterialTheme.colorScheme.tertiary)
                         .padding(horizontal = 4.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.labelSmall,
-                    text =
-                    if (exerciseHistory.value.isNotEmpty())
-                        exerciseHistory
-                            .value[viewModel.currentExerciseIndex]
-                            ?.date
-                            ?.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
-                            ?: stringResource(id = R.string.no_date)
-                    else stringResource(id = R.string.no_date),
+                    text = exerciseHistoryDate,
                 )
             }
             Row(modifier = Modifier.weight(0.5f)) {
@@ -290,7 +284,9 @@ private fun ExerciseTableHeader(viewModel: RunWorkoutViewModel) {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Column(
-            modifier = Modifier.weight(0.5f).align(Alignment.Bottom)
+            modifier = Modifier
+                .weight(0.5f)
+                .align(Alignment.Bottom)
         ) {
             Row {
                 TableCell(
@@ -311,33 +307,15 @@ private fun ExerciseTableHeader(viewModel: RunWorkoutViewModel) {
 }
 
 @Composable
-private fun ExerciseBlockHeader(viewModel: RunWorkoutViewModel) {
-    val timeoutMillis = 200L
-    val lastActionTime = rememberSaveable{ mutableLongStateOf(0L) }
+private fun ExerciseBlockHeader(
+    exerciseName: String,
+    canGoPreviousExercise: Boolean,
+    canGoNextExercise: Boolean
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp)
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onHorizontalDrag = { _, dragAmount ->
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime.minus(lastActionTime.longValue) >= timeoutMillis) {
-                            lastActionTime.longValue = currentTime
-                            when {
-                                // Dragging left
-                                dragAmount < 0 -> {
-                                    viewModel.goToNextExercise()
-                                }
-                                // Dragging right
-                                dragAmount > 0 -> {
-                                    viewModel.goToPreviousExercise()
-                                }
-                            }
-                        }
-                    }
-                )
-            },
+            .height(40.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
@@ -346,13 +324,13 @@ private fun ExerciseBlockHeader(viewModel: RunWorkoutViewModel) {
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
             contentDescription = stringResource(id = R.string.arrow_left),
             tint =
-            if (viewModel.canGoPreviousExercise()) MaterialTheme.colorScheme.secondary
+            if (canGoPreviousExercise) MaterialTheme.colorScheme.secondary
             else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
         )
 
         // Exercise Name
         Text(
-            text = viewModel.currentExercise.name,
+            text = exerciseName,
             style = MaterialTheme.typography.titleMedium,
         )
 
@@ -361,7 +339,7 @@ private fun ExerciseBlockHeader(viewModel: RunWorkoutViewModel) {
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = stringResource(id = R.string.arrow_right),
             tint =
-            if (viewModel.canGoNextExercise()) MaterialTheme.colorScheme.secondary
+            if (canGoNextExercise) MaterialTheme.colorScheme.secondary
             else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
         )
     }

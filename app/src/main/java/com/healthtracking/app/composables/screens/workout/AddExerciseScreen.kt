@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,11 +32,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,10 +46,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.BackgroundBorderBox
+import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.composables.SaveAndCancelButtons
+import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.services.getExerciseList
+import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
 
 @Composable
@@ -61,9 +63,7 @@ fun AddExercise(
     val context = LocalContext.current
     val exerciseGroups = stringArrayResource(id = R.array.exercise_groups)
 
-    var selectedExerciseGroup by rememberSaveable {
-        mutableStateOf(exerciseGroups[0])
-    }
+    val selectedExerciseGroup = rememberSaveable { mutableStateOf(exerciseGroups[0]) }
     val selectedExercises = rememberSaveable (
         saver = listSaver(
             save = { it.toList() },
@@ -78,24 +78,15 @@ fun AddExercise(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            itemsIndexed(exerciseGroups) { _, exerciseGroup ->
-                Button(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    onClick = { selectedExerciseGroup = exerciseGroup },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =
-                            if (selectedExerciseGroup == exerciseGroup)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.secondary
-                    ),
-                    shape = RoundedCornerShape(15.dp)
-                ) {
-                    Text(text = exerciseGroup)
-                }
-            }
-        }
+        TextFieldWithErrorMessage(
+            modifier = Modifier.fillMaxWidth(),
+            value = viewModel.exerciseSearch,
+            onValueChange = { viewModel.updateExerciseSearch(it) },
+            labelId = R.string.exercise_search_label,
+            placeholderId = R.string.exercise_search_placeholder,
+            hasError = false,
+            errorMessageId = null
+        )
 
         AnimatedContent(
             targetState = selectedExerciseGroup,
@@ -105,26 +96,24 @@ fun AddExercise(
                     .togetherWith(slideOutVertically { -it } + fadeOut())
             }
         ) { currentGroup ->
-            val exerciseList = getExerciseList(context, currentGroup)
-            BackgroundBorderBox {
-                LazyColumn(modifier = Modifier.fillMaxHeight(0.85f)) {
-                    if (exerciseList != null) {
-                        itemsIndexed(exerciseList) { _, exerciseName: String ->
-                            ExerciseDisplayItem(
-                                name = exerciseName,
-                                onClick = {
-                                    if (selectedExercises.contains(exerciseName)) {
-                                        selectedExercises.removeAll{it == exerciseName}
-                                    } else {
-                                        selectedExercises.add(exerciseName)
-                                    }
-                                },
-                                isCurrentlySelected = selectedExercises.contains(exerciseName)
-                            )
-                        }
-                    }
+            val exerciseList = getExerciseList(context, currentGroup.value)
+                ?.filter { it.contains(viewModel.exerciseSearch) }
+
+            HeaderAndListBox(
+                modifier = Modifier.fillMaxHeight(0.85f),
+                header = {
+                    ExerciseCategorySelector(
+                        exerciseGroups = exerciseGroups,
+                        selectedExerciseGroup = selectedExerciseGroup
+                    )
+                },
+                listContent = {
+                    ExerciseList(
+                        exerciseList = exerciseList,
+                        selectedExercises = selectedExercises
+                    )
                 }
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -150,6 +139,60 @@ fun AddExercise(
 }
 
 @Composable
+fun ExerciseList(
+    exerciseList: List<String>?,
+    selectedExercises: MutableList<String>
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (exerciseList != null) {
+            itemsIndexed(exerciseList) { _, exerciseName: String ->
+                ExerciseDisplayItem(
+                    name = exerciseName,
+                    onClick = {
+                        if (selectedExercises.contains(exerciseName)) {
+                            selectedExercises.removeAll{it == exerciseName}
+                        } else {
+                            selectedExercises.add(exerciseName)
+                        }
+                    },
+                    isCurrentlySelected = selectedExercises.contains(exerciseName)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ExerciseCategorySelector(
+    exerciseGroups: Array<String>,
+    selectedExerciseGroup: MutableState<String>,
+
+) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        itemsIndexed(exerciseGroups) { _, exerciseGroup ->
+            Button(
+                modifier = Modifier.padding(vertical = 8.dp),
+                onClick = { selectedExerciseGroup.value = exerciseGroup },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor =
+                    if (selectedExerciseGroup.value == exerciseGroup)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.secondary
+                ),
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                Text(text = exerciseGroup)
+            }
+        }
+    }
+}
+
+@Composable
 fun ExerciseDisplayItem(
     name: String,
     onClick: (String) -> Unit,
@@ -161,7 +204,7 @@ fun ExerciseDisplayItem(
             .height(65.dp)
             .padding(4.dp)
             .clickable(onClick = { onClick(name) }),
-        shape = RoundedCornerShape(5.dp),
+        shape = CustomCutCornerShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiary,
             contentColor = MaterialTheme.colorScheme.onTertiary
@@ -171,20 +214,22 @@ fun ExerciseDisplayItem(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = name,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(0.85f)
+                modifier = Modifier.fillMaxWidth(0.9f)
             )
-
             Icon(
-                imageVector = if (isCurrentlySelected) Icons.Default.CheckCircle else Icons.Outlined.CheckCircle,
+                modifier = Modifier.size(20.dp),
+                imageVector =
+                if (isCurrentlySelected) Icons.Default.CheckCircle
+                else Icons.Outlined.CheckCircle,
                 contentDescription = stringResource(id = R.string.add),
                 tint = MaterialTheme.colorScheme.onTertiary
             )
