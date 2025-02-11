@@ -45,7 +45,7 @@ fun StatsMain (
 
         HorizontalPager(
             state = pagerState,
-            pageSpacing = 40.dp
+            pageSpacing = 24.dp
         ) { page ->
             val title = when (page) {
                 0 -> stringResource(id = R.string.workout_screen)
@@ -56,7 +56,6 @@ fun StatsMain (
 
             // use passed in modifier here because we want to be able to see a gap between each page
             Column(modifier = Modifier
-                .padding(horizontal = 24.dp)
                 .fillMaxHeight(0.93f)
                 .fillMaxWidth()
             ) {

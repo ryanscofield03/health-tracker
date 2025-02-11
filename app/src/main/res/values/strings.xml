@@ -20,6 +20,7 @@
     <string name="no_existing_sleep_entries">No existing sleep entries, add one below!</string>
     <string name="save_sleep_entry">Save Entry</string>
     <string name="cannot_add_sleep_entry">Today\'s entry saved</string>
+    <string name="sleep_entry_title">Sleep Entry</string>
 
     // Sleep Rating Button Descriptions
     <string name="terrible">Terrible</string>

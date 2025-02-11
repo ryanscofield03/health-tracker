@@ -143,13 +143,6 @@ class MainActivity : ComponentActivity() {
                         bottom = 144.dp
                     )
 
-                    val verticalPadding = PaddingValues(
-                        start = 0.dp,
-                        top = 48.dp,
-                        end = 0.dp,
-                        bottom = 144.dp
-                    )
-
                     val routeList = listOf("Workout", "Eat", "Sleep", "Progress", "Settings")
 
                     NavHost(
@@ -304,7 +297,7 @@ class MainActivity : ComponentActivity() {
                         composable("Progress"){
                             val statsScreenViewModel: StatsScreenViewModel by koinViewModel()
                             StatsMain(
-                                modifier = Modifier.padding(verticalPadding),
+                                modifier = Modifier.padding(padding),
                                 viewModel = statsScreenViewModel
                             )
                         }

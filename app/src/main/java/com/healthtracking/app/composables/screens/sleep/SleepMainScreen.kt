@@ -270,7 +270,6 @@ private fun AddSleepEntry(
     val startTimePickerOpened = rememberSaveable { mutableStateOf(false) }
     val endTimePickerOpened = rememberSaveable { mutableStateOf(false) }
 
-
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = dateOfEntry.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
@@ -281,8 +280,6 @@ private fun AddSleepEntry(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Spacer(modifier = Modifier)
-
         if (startTimePickerOpened.value){
             TimeInputDialog(
                 title = stringResource(id = R.string.start_time_title),
