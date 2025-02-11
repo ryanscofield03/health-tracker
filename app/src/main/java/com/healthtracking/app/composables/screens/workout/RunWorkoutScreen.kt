@@ -261,7 +261,7 @@ private fun ExerciseTableHeader(
                 Text(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                        .background(color = MaterialTheme.colorScheme.tertiary)
+                        .background(color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
                         .padding(horizontal = 4.dp, vertical = 4.dp),
                     style = MaterialTheme.typography.labelSmall,
                     text = exerciseHistoryDate,
