@@ -74,10 +74,11 @@
     <string name="workout_description">Description</string>
     <string name="enter_workout_description">Enter a short description</string>
     <string name="schedule_workout">Schedule Workout</string>
-    <string name="exercise_search_label">Search Exercise</string>
+    <string name="exercise_search_label">Search or Add Exercise</string>
     <string name="exercise_search_placeholder">Dumbbell</string>
     <string name="search_exercise">Search for an Exercise</string>
     <string name="exercises_title">Exercises</string>
+    <string name="exercise_name_search_invalid">Exercise cannot be empty to be added</string>
 
     // Run Workout Screen
     <string name="add_exercise_entry">Add Exercise Entry</string>

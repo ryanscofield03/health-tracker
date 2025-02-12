@@ -6,9 +6,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Button
@@ -29,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,11 +43,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.HeaderAndListBox
@@ -61,8 +67,9 @@ fun AddExercise(
     viewModel: AddWorkoutViewModel
 ) {
     val context = LocalContext.current
-    val exerciseGroups = stringArrayResource(id = R.array.exercise_groups)
 
+    // should ideally be in viewmodel
+    val exerciseGroups = stringArrayResource(id = R.array.exercise_groups)
     val selectedExerciseGroup = rememberSaveable { mutableStateOf(exerciseGroups[0]) }
     val selectedExercises = rememberSaveable (
         saver = listSaver(
@@ -78,15 +85,34 @@ fun AddExercise(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        TextFieldWithErrorMessage(
-            modifier = Modifier.fillMaxWidth(),
-            value = viewModel.exerciseSearch,
-            onValueChange = { viewModel.updateExerciseSearch(it) },
-            labelId = R.string.exercise_search_label,
-            placeholderId = R.string.exercise_search_placeholder,
-            hasError = false,
-            errorMessageId = null
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextFieldWithErrorMessage(
+                modifier = Modifier.weight(0.8f),
+                value = viewModel.exerciseSearch,
+                onValueChange = { viewModel.updateExerciseSearch(it) },
+                labelId = R.string.exercise_search_label,
+                placeholderId = R.string.exercise_search_placeholder,
+                hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
+                errorMessageId = R.string.exercise_name_search_invalid
+            )
+
+            AddNewExerciseButton(
+                addNewExercise = {
+                    if (viewModel.validExerciseSearch()) {
+                        selectedExercises.add(viewModel.exerciseSearch)
+                        viewModel.clearExerciseScreen()
+                    } else {
+                        viewModel.updateExerciseAddToError(true)
+                    }
+                }
+            )
+        }
 
         AnimatedContent(
             targetState = selectedExerciseGroup,
@@ -96,8 +122,11 @@ fun AddExercise(
                     .togetherWith(slideOutVertically { -it } + fadeOut())
             }
         ) { currentGroup ->
-            val exerciseList = getExerciseList(context, currentGroup.value)
-                ?.filter { it.contains(viewModel.exerciseSearch) }
+            var exerciseList = getExerciseList(context, currentGroup.value)
+                ?.filter { it.contains(viewModel.exerciseSearch) } ?: emptyList()
+            if (currentGroup.value == "Selected") {
+                exerciseList = exerciseList.plus(selectedExercises)
+            }
 
             HeaderAndListBox(
                 modifier = Modifier.fillMaxHeight(0.85f),
@@ -131,6 +160,7 @@ fun AddExercise(
                     navController.popBackStack()
                 },
                 onCancel = {
+                    viewModel.clearExerciseScreen()
                     navController.popBackStack()
                 }
             )
@@ -139,7 +169,27 @@ fun AddExercise(
 }
 
 @Composable
-fun ExerciseList(
+private fun AddNewExerciseButton(
+    addNewExercise: () -> Unit
+) {
+    IconButton(
+        modifier = Modifier
+            .fillMaxWidth(0.2f)
+            .fillMaxHeight()
+            .padding(top = 8.dp, bottom = 15.dp)
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.tertiary),
+        onClick = addNewExercise
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(id = R.string.add_exercise)
+        )
+    }
+}
+
+@Composable
+private fun ExerciseList(
     exerciseList: List<String>?,
     selectedExercises: MutableList<String>
 ) {
@@ -167,7 +217,7 @@ fun ExerciseList(
 }
 
 @Composable
-fun ExerciseCategorySelector(
+private fun ExerciseCategorySelector(
     exerciseGroups: Array<String>,
     selectedExerciseGroup: MutableState<String>,
 
@@ -193,7 +243,7 @@ fun ExerciseCategorySelector(
 }
 
 @Composable
-fun ExerciseDisplayItem(
+private fun ExerciseDisplayItem(
     name: String,
     onClick: (String) -> Unit,
     isCurrentlySelected: Boolean

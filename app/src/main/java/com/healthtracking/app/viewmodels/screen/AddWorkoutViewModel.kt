@@ -9,6 +9,8 @@ import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.viewmodels.database.ExerciseViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 
@@ -37,46 +39,84 @@ class AddWorkoutViewModel(
     private val _exerciseSearch = mutableStateOf("")
     val exerciseSearch: String get() = _exerciseSearch.value
 
+    private val _exerciseAddHasError = MutableStateFlow(false)
+    val exerciseAddHasExercise: StateFlow<Boolean> = _exerciseAddHasError
+
     // initial values which are required when saving an updated workout
     private val _currentWorkoutId = mutableStateOf<Long?>(null)
     private val _currentExercises = mutableStateListOf<Exercise>()
     private val _loaded = mutableStateOf(false)
 
+    /**
+     * Adds exercise to the list of exercises
+     */
     fun addExercise(exercise: Exercise) {
         _exercises.add(exercise)
     }
 
+    fun updateExerciseAddToError(hasError: Boolean) {
+        _exerciseAddHasError.value = hasError
+    }
+
+    /**
+     * Removes exercise from the list of exercises
+     */
     fun removeExercise(exercise: Exercise) {
         _exercises.remove(exercise)
     }
 
+    /**
+     * Clears the list of exercises
+     */
     fun clearExercises() {
         _exercises.clear()
     }
 
+    /**
+     * Updates the name of the workout
+     */
     fun updateName(updatedName: String) {
         _name.value = updatedName
         validateName()
     }
 
+    /**
+     * Updates the description of the workout
+     */
     fun updateDescription(updatedDescription: String) {
         _description.value = updatedDescription
         validateDescription()
     }
 
+    /**
+     * Updates the search on the exercise screen
+     */
     fun updateExerciseSearch(updatedExerciseSearch: String) {
         _exerciseSearch.value = updatedExerciseSearch
+
+        if (updatedExerciseSearch.isNotBlank()) {
+            updateExerciseAddToError(false)
+        }
     }
 
+    /**
+     * Toggles a scheduled day on or off
+     */
     fun toggleScheduledDay(day: DayOfWeek) {
         if (scheduledDays.contains(day)) _scheduledDays.remove(day) else _scheduledDays.add(day)
     }
 
+    /**
+     * Validates the workout name and description fields (e.g. updates the error messages & isError))
+     */
     private fun validateFields() {
         validateName()
         validateDescription()
     }
 
+    /**
+     * Validates the workout name field
+     */
     private fun validateName() {
         _nameErrorMessageId.value =
             if (_name.value.isBlank())
@@ -84,6 +124,9 @@ class AddWorkoutViewModel(
             else null
     }
 
+    /**
+     * Validates the workout description field
+     */
     private fun validateDescription() {
         _descriptionErrorMessageId.value =
             if (_description.value.isBlank())
@@ -91,6 +134,16 @@ class AddWorkoutViewModel(
             else null
     }
 
+    /**
+     * Validates the exercise search field
+     */
+    fun validExerciseSearch(): Boolean {
+        return exerciseSearch.isNotBlank()
+    }
+
+    /**
+     * Saves the workout
+     */
     fun save() {
         val workout = Workout(
             id = _currentWorkoutId.value ?: 0,
@@ -130,11 +183,17 @@ class AddWorkoutViewModel(
         }
     }
 
+    /**
+     * Validates the workout and returns true if it is valid
+     */
     fun isValid(): Boolean {
         validateFields()
         return name.isNotBlank() && description.isNotBlank() && _exercises.isNotEmpty()
     }
 
+    /**
+     * Clears the entire viewmodel
+     */
     fun clear() {
         _exercises.clear()
         _name.value = ""
@@ -147,8 +206,20 @@ class AddWorkoutViewModel(
         _currentWorkoutId.value = null
         _currentExercises.clear()
         _loaded.value = false
+
+        clearExerciseScreen()
     }
 
+    /**
+     * Clears the exercise adding/editing screen
+     */
+    fun clearExerciseScreen() {
+        _exerciseSearch.value = ""
+    }
+
+    /**
+     * Populates viewmodel with workout data for editing
+     */
     fun addWorkoutInfo(workout: Workout) {
         if (!_loaded.value) {
             _loaded.value = true
@@ -161,6 +232,9 @@ class AddWorkoutViewModel(
         }
     }
 
+    /**
+     * Loads exercises for a workout
+     */
     private fun loadExercisesForWorkout(workoutId: Long) {
         viewModelScope.launch {
             val exercises = workoutViewModel.getExercisesForWorkout(workoutId)
