@@ -62,7 +62,6 @@ val dataAccessModule = module {
     viewModel { BuildMealViewModel(mealDao = get<MealDao>()) }
 
     viewModel { parameters -> RunWorkoutViewModel(
-        savedStateHandle = get(),
         workout = parameters[0],
         exercises = parameters[1],
         exerciseHistoryViewModel = get(),

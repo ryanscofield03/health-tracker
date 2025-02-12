@@ -27,8 +27,8 @@ class WorkoutBackupViewModel(
         }
     }
 
-    fun deleteWorkoutBackup(workoutId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+    suspend fun deleteWorkoutBackup(workoutId: Long): Int {
+        return withContext(Dispatchers.IO) {
             workoutBackupDao.deleteWorkoutBackup(workoutId)
         }
     }

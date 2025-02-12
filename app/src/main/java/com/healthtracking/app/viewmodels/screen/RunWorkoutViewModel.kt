@@ -16,6 +16,7 @@ import com.healthtracking.app.entities.WorkoutHistory
 import com.healthtracking.app.viewmodels.database.ExerciseHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Duration as JavaDuration
@@ -34,19 +36,12 @@ import kotlin.math.max
  * ViewModel for storing, handling, and persisting data pertaining to the RunWorkoutScreen
  */
 class RunWorkoutViewModel(
-    private val savedStateHandle: SavedStateHandle,
     private val workout: Workout,
     private var exercises: List<Exercise>,
     private val exerciseHistoryViewModel: ExerciseHistoryViewModel,
     private val workoutBackupViewModel: WorkoutBackupViewModel,
     private val workoutHistoryViewModel: WorkoutHistoryViewModel
 ) : ViewModel() {
-    // store constants for savesStateHandle keys
-    companion object {
-        const val CURRENT_EXERCISE_INDEX_KEY = "currentExerciseIndex"
-        const val EXERCISE_ENTRIES_KEY = "exerciseEntries"
-    }
-
     // name of the workout
     val workoutName = workout.name
 
@@ -55,10 +50,7 @@ class RunWorkoutViewModel(
     val exerciseHistory: StateFlow<List<ExerciseHistory?>> get() = _exercisesHistory.asStateFlow()
 
     // user entries for the workout - user controlled
-    private val _exerciseEntries = MutableStateFlow(
-        value = savedStateHandle.get<List<MutableList<Pair<Float, Int>>>>(EXERCISE_ENTRIES_KEY)
-            ?: exercises.map { mutableListOf() }
-    )
+    private val _exerciseEntries = MutableStateFlow<List<MutableList<Pair<Float, Int>>>>(exercises.map { mutableListOf() })
     private val exerciseEntries: StateFlow<List<MutableList<Pair<Float, Int>>>> = _exerciseEntries.asStateFlow()
 
     // data for new entry
@@ -94,7 +86,7 @@ class RunWorkoutViewModel(
      * Loads historical data for exercises asynchronously.
      */
     private fun loadExerciseHistories() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val tempList = exercises.map { exercise ->
                 exerciseHistoryViewModel.getMostRecentHistoryForExercise(exercise.id)
             }
@@ -107,7 +99,7 @@ class RunWorkoutViewModel(
      * (this is automatically backed up and is useful for recovering data).
      */
     private fun loadBackup() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val backedUpData: WorkoutBackup? =
                 workoutBackupViewModel.getWorkoutBackup(workoutId = workout.id)
 
@@ -127,14 +119,12 @@ class RunWorkoutViewModel(
      */
     private fun saveBackup() {
         if (canBackup) {
-            viewModelScope.launch {
-                workoutBackupViewModel.addWorkoutBackup(
-                    workoutId = workout.id,
-                    exerciseIndex = 0,
-                    entries = _exerciseEntries.value,
-                    timerStart = _timerStart.value
-                )
-            }
+            workoutBackupViewModel.addWorkoutBackup(
+                workoutId = workout.id,
+                exerciseIndex = 0,
+                entries = _exerciseEntries.value,
+                timerStart = _timerStart.value
+            )
         }
     }
 
@@ -142,7 +132,7 @@ class RunWorkoutViewModel(
      * Removes the backup (when viewmodel is saved or canceled)
      */
     private fun removeBackup() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutBackupViewModel.deleteWorkoutBackup(workoutId = workout.id)
         }
     }
@@ -153,11 +143,10 @@ class RunWorkoutViewModel(
     private fun startTimer() {
         if (job?.isActive == true) return
 
-        job = viewModelScope.launch {
+        job = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
                 timer.value = JavaDuration.between(_timerStart.value, LocalDateTime.now())
                 delay(1000L)
-                saveBackup()
             }
         }
     }
@@ -203,7 +192,6 @@ class RunWorkoutViewModel(
                 resetTimer()
             }
 
-            savedStateHandle[EXERCISE_ENTRIES_KEY] = _exerciseEntries.value
             clearEntry()
             saveBackup()
             return true
@@ -284,26 +272,6 @@ class RunWorkoutViewModel(
     }
 
     /**
-     * Attempts to go to the previous exercise.
-     * This is not allowed if the user is at the start of the list.
-     */
-    fun goToPreviousExercise(exerciseIndex: Int) {
-        if (canGoPreviousExercise(exerciseIndex)) {
-            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = exerciseIndex
-        }
-    }
-
-    /**
-     * Attempts to go to the next exercise.
-     * This is not allowed if the user is at the end of the list.
-     */
-    fun goToNextExercise(exerciseIndex: Int) {
-        if (canGoNextExercise(exerciseIndex)) {
-            savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = exerciseIndex
-        }
-    }
-
-    /**
      * Validate that each exercise has at least one entry
      */
     fun validateEntries(): Boolean {
@@ -345,9 +313,6 @@ class RunWorkoutViewModel(
     fun clearViewModel() {
         resetTimer()
         stopTimer()
-
-        savedStateHandle[EXERCISE_ENTRIES_KEY] = null
-        savedStateHandle[CURRENT_EXERCISE_INDEX_KEY] = null
 
         _exercisesHistory.value = listOf()
         _exerciseEntries.value = exercises.map { mutableListOf() }
