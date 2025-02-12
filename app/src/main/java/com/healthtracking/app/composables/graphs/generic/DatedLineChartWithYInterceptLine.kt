@@ -84,7 +84,7 @@ internal fun DatedLineChartWithYInterceptLine(
             stepSize * ceil((maxOf(maxY, interceptY)) / stepSize) // round up to the next step
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         modelProducer.runTransaction {
             lineSeries {
                 series(hoursSlept)

@@ -53,8 +53,8 @@ fun BuildWorkout(
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.name,
             onValueChange = { viewModel.updateName(it) },
-            labelId = R.string.workout_name_label,
-            placeholderId = R.string.workout_name_placeholder,
+            label = stringResource(id = R.string.workout_name_label),
+            placeholder = stringResource(id = R.string.workout_name_placeholder),
             hasError = viewModel.nameErrorMessageId != null,
             errorMessageId = viewModel.nameErrorMessageId
         )
@@ -63,8 +63,8 @@ fun BuildWorkout(
             modifier = Modifier.fillMaxWidth(),
             value = viewModel.description,
             onValueChange = { viewModel.updateDescription(it) },
-            labelId = R.string.description_label,
-            placeholderId = R.string.description_placeholder,
+            label = stringResource(id = R.string.description_label),
+            placeholder = stringResource(id = R.string.description_placeholder),
             hasError = viewModel.descriptionErrorMessageId != null,
             errorMessageId = viewModel.descriptionErrorMessageId
         )

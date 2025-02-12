@@ -108,8 +108,8 @@ fun AddExercise(
                 modifier = Modifier.weight(1f),
                 value = viewModel.exerciseSearch,
                 onValueChange = { viewModel.updateExerciseSearch(it) },
-                labelId = R.string.exercise_search_label,
-                placeholderId = R.string.exercise_search_placeholder,
+                label = stringResource(id = R.string.exercise_search_label),
+                placeholder = stringResource(id = R.string.exercise_search_placeholder),
                 hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
                 errorMessageId = R.string.exercise_name_search_invalid
             )

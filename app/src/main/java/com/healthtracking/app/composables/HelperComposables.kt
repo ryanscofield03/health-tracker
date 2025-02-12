@@ -20,11 +20,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -51,13 +49,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.graphs.sleep.MakeSleepRatingsGraph
 import com.healthtracking.app.theme.CustomCutCornerShape
 
 @Composable
@@ -65,8 +63,8 @@ fun TextFieldWithErrorMessage(
     modifier: Modifier = Modifier,
     value: String?,
     onValueChange: (String) -> Unit,
-    labelId: Int,
-    placeholderId: Int,
+    label: String,
+    placeholder: String,
     hasError: Boolean,
     errorMessageId: Int?
 ) {
@@ -77,8 +75,8 @@ fun TextFieldWithErrorMessage(
             modifier = Modifier.fillMaxWidth(),
             value = value ?: "",
             onValueChange = { onValueChange(it) },
-            label = { Text(stringResource(id = labelId)) },
-            placeholder = { Text(stringResource(id = placeholderId)) },
+            label = { Text(text = label) },
+            placeholder = { Text(text = placeholder) },
             maxLines = 1,
             isError = hasError,
             shape = CustomCutCornerShape,
@@ -252,7 +250,7 @@ fun HeaderAndListBox(
         Column(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             header()
 
@@ -340,7 +338,8 @@ fun SliderWithLabel(
                     onClick = {onValueChange(value + incrementAmount)}
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.KeyboardArrowUp,
+                        modifier = Modifier.rotate(180f).size(30.dp),
+                        imageVector = Icons.Filled.ArrowDropDown,
                         tint = color,
                         contentDescription = stringResource(id = R.string.increment)
                     )
@@ -350,7 +349,8 @@ fun SliderWithLabel(
                     onClick = {onValueChange(value - incrementAmount)}
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        modifier = Modifier.rotate(0f).size(30.dp),
+                        imageVector = Icons.Filled.ArrowDropDown,
                         tint = color,
                         contentDescription = stringResource(id = R.string.decrement)
                     )

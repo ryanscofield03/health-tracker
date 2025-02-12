@@ -107,4 +107,13 @@ class MealViewModel(context: Context, private val mealDao: MealDao): ViewModel()
             mealDao.deleteMeal(mealId)
         }
     }
+
+    suspend fun getWeeklyMealEntries(): Flow<List<MealWithFoodList>?> {
+        return withContext(Dispatchers.IO) {
+            mealDao.getThisWeeksMealEntries(
+                firstDayOfWeek = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1),
+                today = LocalDate.now()
+            )
+        }
+    }
 }

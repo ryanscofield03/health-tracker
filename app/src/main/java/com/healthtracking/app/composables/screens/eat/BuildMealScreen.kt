@@ -39,7 +39,6 @@ import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.screens.workout.FoodEntryDialog
-import com.healthtracking.app.composables.screens.workout.MealSearchDialog
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -84,8 +83,10 @@ fun BuildMeal(
     MealSearchDialog(
         isOpen = mealSearchDialogOpen.value,
         onDismissRequest = { mealSearchDialogOpen.value = false },
-        mealList = listOf(),
-        onMealSelected = {}
+        mealSearch = viewModel.mealSearch.collectAsStateWithLifecycle().value ?: "",
+        updateMealSearch = { viewModel.updateMealSearch(it) },
+        mealList = viewModel.mealsFilteredBySearch().collectAsStateWithLifecycle().value,
+        onMealSelected = { viewModel.reuseMealInfo(it); mealSearchDialogOpen.value = false }
     )
 
     Column(
@@ -112,8 +113,8 @@ fun BuildMeal(
                 modifier = Modifier.fillMaxWidth(1f),
                 value = mealName,
                 onValueChange = { viewModel.updateName(it) },
-                labelId = R.string.meal_name_label,
-                placeholderId = R.string.meal_name_placeholder,
+                label = stringResource(id = R.string.meal_name_label),
+                placeholder = stringResource(id = R.string.meal_name_placeholder),
                 hasError = nameErrorMessageId != null,
                 errorMessageId = nameErrorMessageId
             )

@@ -59,7 +59,7 @@ internal fun DatedBarChart(
             maxYValue ?: (stepSizeY * ceil((maxY) / stepSizeY)) // round up to the next step
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         modelProducer.runTransaction {
             columnSeries {
                 series(hoursSlept)

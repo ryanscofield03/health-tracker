@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,7 +110,16 @@ fun EatMain (
                             caloriesTotal = viewModel.goalCalories.collectAsStateWithLifecycle().value
                         )
 
-                        WeeklyGraph()
+                        WeeklyGraph(
+                            caloriesProgressPercent = viewModel.weeklyCaloriesPercent
+                                .collectAsStateWithLifecycle(0f).value,
+                            proteinProgressPercent = viewModel.weeklyProteinPercent
+                                .collectAsStateWithLifecycle(0f).value,
+                            carbsProgressPercent = viewModel.weeklyProteinPercent
+                                .collectAsStateWithLifecycle(0f).value,
+                            fatsProgressPercent = viewModel.weeklyFatsPercent
+                                .collectAsStateWithLifecycle(0f).value
+                        )
                     }
                     Box(modifier = Modifier.weight(0.35f)) {
                         MacroCards(
@@ -159,14 +169,19 @@ fun EatMain (
                     )
                 },
                 isContentEmpty = viewModel.currentMealEntries.collectAsState(listOf()).value?.isEmpty() ?: false,
-                contentPlaceholderText = stringResource(id = R.string.no_existing_meal_entries)
+                contentPlaceholderText = stringResource(id = R.string.no_existing_meal_entries_today)
             )
         }
     }
 }
 
 @Composable
-private fun ColumnScope.WeeklyGraph() {
+private fun ColumnScope.WeeklyGraph(
+    caloriesProgressPercent: Float,
+    proteinProgressPercent: Float,
+    carbsProgressPercent: Float,
+    fatsProgressPercent: Float
+) {
     Card(
         modifier = Modifier
             .weight(2 / 3f)
@@ -189,10 +204,10 @@ private fun ColumnScope.WeeklyGraph() {
             )
 
             BarChart(
-                caloriesProgressPercent = 60L,
-                proteinProgressPercent = 30L,
-                carbsProgressPercent = 20L,
-                fatsProgressPercent = 10L
+                caloriesProgressPercent = caloriesProgressPercent,
+                proteinProgressPercent = proteinProgressPercent,
+                carbsProgressPercent = carbsProgressPercent,
+                fatsProgressPercent = fatsProgressPercent
             )
         }
     }

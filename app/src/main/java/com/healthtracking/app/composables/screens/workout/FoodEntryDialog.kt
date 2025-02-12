@@ -60,8 +60,8 @@ internal fun FoodEntryDialog(
                 TextFieldWithErrorMessage(
                     value = name,
                     onValueChange = updateName,
-                    labelId = R.string.food_name_label,
-                    placeholderId = R.string.food_name_placeholder,
+                    label = stringResource(id = R.string.food_name_label),
+                    placeholder = stringResource(id = R.string.food_name_placeholder),
                     hasError = nameHasError,
                     errorMessageId = R.string.food_name_error_message
                 )
@@ -133,7 +133,7 @@ internal fun FoodEntryDialog(
                         onClick = onSave
                     ) {
                         Text(
-                            text = "Save",
+                            text = stringResource(id = R.string.save),
                             color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.labelLarge
                         )
@@ -143,7 +143,7 @@ internal fun FoodEntryDialog(
                         onDismissRequest()
                     }) {
                         Text(
-                            text = "Cancel",
+                            text = stringResource(id = R.string.cancel),
                             color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.labelLarge
                         )

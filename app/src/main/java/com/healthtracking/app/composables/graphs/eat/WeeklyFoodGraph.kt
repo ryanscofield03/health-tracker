@@ -70,10 +70,10 @@ private val MarkerValueFormatter =
 
 @Composable
 fun BarChart(
-    caloriesProgressPercent: Long,
-    proteinProgressPercent: Long,
-    carbsProgressPercent: Long,
-    fatsProgressPercent: Long
+    caloriesProgressPercent: Float,
+    proteinProgressPercent: Float,
+    carbsProgressPercent: Float,
+    fatsProgressPercent: Float
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
     val data = mapOf(
@@ -83,7 +83,7 @@ fun BarChart(
         "F" to fatsProgressPercent
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         modelProducer.runTransaction {
             columnSeries { series(data.values) }
             extras { it[BottomAxisLabelKey] = data.keys.toList() }

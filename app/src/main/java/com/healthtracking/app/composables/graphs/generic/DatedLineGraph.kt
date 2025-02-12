@@ -41,7 +41,7 @@ internal fun DatedLineGraph(
         context.model.extraStore[bottomAxisLabelKey][x.toInt()]
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         modelProducer.runTransaction {
             lineSeries {
                 series(hoursSlept)

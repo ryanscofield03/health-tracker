@@ -84,12 +84,3 @@ fun ExerciseProgressGraph(
         }
     }
 }
-
-@Composable
-private fun ErrorMessageBox(
-    errorMessage: String
-) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Text(text = errorMessage)
-    }
-}

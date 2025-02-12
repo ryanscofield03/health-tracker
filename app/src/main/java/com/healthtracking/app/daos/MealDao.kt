@@ -29,6 +29,16 @@ interface MealDao {
     """)
     fun getTodaysMealEntries(today: LocalDate): Flow<List<MealWithFoodList>?>
 
+    @Query("SELECT * FROM meal")
+    fun getAllMealEntries(): Flow<List<MealWithFoodList>?>
+
+    @Query("""
+        SELECT *
+        FROM MEAL
+        WHERE DATE(date) <= DATE(:today) AND DATE(date) >= DATE(:firstDayOfWeek)
+    """)
+    fun getThisWeeksMealEntries(firstDayOfWeek: LocalDate, today: LocalDate): Flow<List<MealWithFoodList>?>
+
     @Upsert
     fun upsertMealFoodCrossRef(crossRef: MealFoodCrossRef)
 
@@ -37,11 +47,6 @@ interface MealDao {
 
     @Query("DELETE FROM MEAL WHERE id = :mealId")
     fun deleteMeal(mealId: Long): Int
-
-    @Query("""
-        SELECT * FROM meal 
-    """)
-    fun getAllMealEntries(): Flow<List<MealWithFoodList>?>
 
     @Query("DELETE FROM FOOD WHERE id = :foodId")
     fun deleteFood(foodId: Long): Int

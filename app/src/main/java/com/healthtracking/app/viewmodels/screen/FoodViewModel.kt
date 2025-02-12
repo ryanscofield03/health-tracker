@@ -2,16 +2,17 @@ package com.healthtracking.app.viewmodels.screen
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.services.toDecimalPoints
 import com.healthtracking.app.viewmodels.database.MealViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
@@ -21,6 +22,11 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
     val currentProtein: Flow<Float> get() = calculateCurrentProtein()
     val currentCarbohydrates: Flow<Float> get() = calculateCurrentCarbohydrates()
     val currentFats: Flow<Float> get() = calculateCurrentFats()
+
+    val weeklyCaloriesPercent: Flow<Float> get() = calculateWeeklyCaloriesProgress()
+    val weeklyProteinPercent: Flow<Float> get() = calculateWeeklyProteinProgress()
+    val weeklyCarbohydratesPercent: Flow<Float> get() = calculateWeeklyCarbohydratesProgress()
+    val weeklyFatsPercent: Flow<Float> get() = calculateWeeklyFatsProgress()
 
     val goalCalories get() = mealViewModel.goalCalories
     val goalProtein get() = mealViewModel.goalProtein
@@ -40,12 +46,22 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
     private val _dialogFatsValue: MutableState<Float> = mutableFloatStateOf(goalFats.value.toFloat())
     val dialogFatsValue: Float get() = _dialogFatsValue.value
 
-    private val _currentMealEntries: MutableState<Flow<List<MealWithFoodList>?>> = mutableStateOf(flow{listOf<MealWithFoodList>()})
-    val currentMealEntries: Flow<List<MealWithFoodList>?> get() = _currentMealEntries.value
+    private val _currentMealEntries: MutableStateFlow<List<MealWithFoodList>?> = MutableStateFlow(listOf())
+    val currentMealEntries: StateFlow<List<MealWithFoodList>?> = _currentMealEntries
+
+    private val _weeklyMealEntries: MutableStateFlow<List<MealWithFoodList>?> = MutableStateFlow(listOf())
 
     init {
-        viewModelScope.launch {
-            _currentMealEntries.value = mealViewModel.getTodaysMealEntries()
+        viewModelScope.launch(Dispatchers.IO) {
+            mealViewModel.getTodaysMealEntries().collect {
+                _currentMealEntries.value = it
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            mealViewModel.getWeeklyMealEntries().collect {
+                _weeklyMealEntries.value = it
+            }
         }
     }
 
@@ -53,7 +69,7 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Deletes the meal from the database where id = mealId
      */
     fun deleteMeal(mealId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             mealViewModel.deleteMeal(mealId)
         }
     }
@@ -62,7 +78,7 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Calculate the current calories consumed by the user on this day
      */
     private fun calculateCurrentCalories(): Flow<Float> {
-        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+        return _currentMealEntries.map { mealList: List<MealWithFoodList>? ->
             mealList?.map { mealWithFood: MealWithFoodList ->
                 mealWithFood.foodItems.map { foodItem: Food ->
                     foodItem.calories.times(foodItem.quantity)
@@ -75,7 +91,7 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Calculate the current protein consumed by the user on this day
      */
     private fun calculateCurrentProtein(): Flow<Float> {
-        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+        return _currentMealEntries.map { mealList: List<MealWithFoodList>? ->
             mealList?.map { mealWithFood: MealWithFoodList ->
                 mealWithFood.foodItems.map { foodItem: Food ->
                     foodItem.protein.times(foodItem.quantity)
@@ -88,7 +104,7 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Calculate the current carbs consumed by the user on this day
      */
     private fun calculateCurrentCarbohydrates(): Flow<Float> {
-        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+        return _currentMealEntries.map { mealList: List<MealWithFoodList>? ->
             mealList?.map { mealWithFood: MealWithFoodList ->
                 mealWithFood.foodItems.map { foodItem: Food ->
                     foodItem.carbohydrates.times(foodItem.quantity)
@@ -101,12 +117,64 @@ class FoodViewModel(private val mealViewModel: MealViewModel): ViewModel() {
      * Calculate the current fats consumed by the user on this day
      */
     private fun calculateCurrentFats(): Flow<Float> {
-        return currentMealEntries.map { mealList: List<MealWithFoodList>? ->
+        return _currentMealEntries.map { mealList: List<MealWithFoodList>? ->
             mealList?.map { mealWithFood: MealWithFoodList ->
                 mealWithFood.foodItems.map { foodItem: Food ->
                     foodItem.fats.times(foodItem.quantity)
                 }
             }?.flatten()?.sum() ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Returns a StateFlow of the weekly calories progress (percent of calories met this week)
+     */
+    private fun calculateWeeklyCaloriesProgress(): Flow<Float> {
+        return _weeklyMealEntries.map { mealList: List<MealWithFoodList>? ->
+            (mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.calories.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum()?.div(goalCalories.value.times(7))?.times(100)) ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Returns a StateFlow of the weekly protein progress (percent of calories met this week)
+     */
+    private fun calculateWeeklyProteinProgress(): Flow<Float> {
+        return _weeklyMealEntries.map { mealList: List<MealWithFoodList>? ->
+            (mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.protein.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum()?.div(goalProtein.value.times(7))?.times(100)) ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Returns a StateFlow of the weekly carbs progress (percent of calories met this week)
+     */
+    private fun calculateWeeklyCarbohydratesProgress(): Flow<Float> {
+        return _weeklyMealEntries.map { mealList: List<MealWithFoodList>? ->
+            (mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.carbohydrates.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum()?.div(goalCarbohydrates.value.times(7))?.times(100)) ?: 0f
+        }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
+    }
+
+    /**
+     * Returns a StateFlow of the weekly calories progress (percent of calories met this week)
+     */
+    private fun calculateWeeklyFatsProgress(): Flow<Float> {
+        return _weeklyMealEntries.map { mealList: List<MealWithFoodList>? ->
+            (mealList?.map { mealWithFood: MealWithFoodList ->
+                mealWithFood.foodItems.map { foodItem: Food ->
+                    foodItem.fats.times(foodItem.quantity)
+                }
+            }?.flatten()?.sum()?.div(goalFats.value.times(7))?.times(100)) ?: 0f
         }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 1)
     }
 

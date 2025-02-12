@@ -13,8 +13,12 @@ import com.healthtracking.app.entities.MealWithFoodList
 import com.healthtracking.app.services.toDecimalPoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -44,6 +48,11 @@ class BuildMealViewModel(
         private const val DEFAULT_QUANTITY = 1f
         private val DEFAULT_ENTRY_MODE = EntryStates.NEW
     }
+
+    private val _mealSearch = MutableStateFlow("")
+    val mealSearch: StateFlow<String> = _mealSearch.asStateFlow()
+
+    private val _allMeals = MutableStateFlow<List<MealWithFoodList>>(emptyList())
 
     // store meal name
     private val _name = MutableStateFlow("")
@@ -88,13 +97,19 @@ class BuildMealViewModel(
     private val _dialogEntryMode: MutableState<EntryStates> = mutableStateOf(DEFAULT_ENTRY_MODE)
     private val _editFoodIndex: MutableState<Int?> = mutableStateOf(null)
 
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            mealDao.getAllMealEntries().collect { _allMeals.value  = it ?: listOf() }
+        }
+    }
+
     /**
      * Initialize data when editing an old entry
      */
     fun editMealInfo(mealWithFoodList: MealWithFoodList) {
         _entryMode.value = EntryStates.EDIT
         _originalEntry.value = mealWithFoodList
-        _name.value = mealWithFoodList.meal.name
+        updateName(mealWithFoodList.meal.name)
         _foodItems.value = mealWithFoodList.foodItems
     }
 
@@ -104,7 +119,7 @@ class BuildMealViewModel(
     fun reuseMealInfo(mealWithFoodList: MealWithFoodList) {
         _entryMode.value = EntryStates.REUSE
         _originalEntry.value = mealWithFoodList
-        _name.value = mealWithFoodList.meal.name
+        updateName(mealWithFoodList.meal.name)
         _foodItems.value = mealWithFoodList.foodItems
     }
 
@@ -112,14 +127,18 @@ class BuildMealViewModel(
      * Populate dialog with food data and set entry state to edit
      */
     fun populateDialogWithFood(food: Food) {
+        updateDialogFoodName(food.name)
+        updateDialogMeasurement(food.measurement)
+        updateDialogProtein(food.protein)
+        updateDialogCarbs(food.carbohydrates)
+        updateDialogFats(food.fats)
+        updateDialogQuantity(food.quantity)
         _editFoodIndex.value = _foodItems.value.indexOf(food)
-        _dialogFoodName.value = food.name
-        _dialogMeasurement.value = food.measurement
-        _dialogProtein.value = food.protein
-        _dialogCarbs.value = food.carbohydrates
-        _dialogFats.value = food.fats
-        _dialogQuantity.value = food.quantity
         _dialogEntryMode.value = EntryStates.EDIT
+    }
+
+    fun updateMealSearch(newMealSearch: String) {
+        _mealSearch.value = newMealSearch
     }
 
     /**
@@ -173,6 +192,7 @@ class BuildMealViewModel(
      */
     fun updateName(name: String) {
         _name.value = name
+        _nameErrorMessageId.value = null
 
         validMeal()
     }
@@ -264,6 +284,18 @@ class BuildMealViewModel(
         )
     }
 
+    fun mealsFilteredBySearch(): StateFlow<List<MealWithFoodList>> {
+        return _allMeals.map { meals ->
+            meals.filter { it.meal.name.contains(_mealSearch.value) ||
+                    it.foodItems.any { food -> food.name.contains(_mealSearch.value) }
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+    }
+
     /**
      * true if meal name and items are valid (e.g. has at least 1 item, name not blank)
      */
@@ -282,7 +314,7 @@ class BuildMealViewModel(
      * Save all data into meal and food entities
      */
     fun save() {
-        if (validMeal()) return
+        if (!validMeal()) return
 
         viewModelScope.launch(Dispatchers.IO) {
             when (_entryMode.value) {
@@ -300,7 +332,25 @@ class BuildMealViewModel(
     }
 
     private suspend fun saveReusedEntry() {
-        TODO("Not yet implemented")
+        val mealId = mealDao.upsertMealEntity(
+            mealEntity = Meal(
+                name = _name.value,
+                date = LocalDate.now(),
+                time = LocalTime.now()
+            )
+        )
+
+        _foodItems.value.forEach { foodItem: Food ->
+            // TODO - perhaps check if this has changed and reuse the same entity if it hasn't changed
+            //  (especially makes sense when quantity is moved to cross ref as 100g of egg always
+            //  has the same nutrients)
+            val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem.copy(id = 0))
+            val mealFoodCrossRef = MealFoodCrossRef(
+                mealId = mealId,
+                foodId = foodId
+            )
+            mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
+        }
     }
 
     private suspend fun saveEditedEntry() {

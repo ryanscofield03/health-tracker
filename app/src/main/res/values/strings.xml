@@ -55,15 +55,21 @@
     <string name="meal_name_placeholder">Pesto Pasta</string>
     <string name="add_food_button">Add a food item</string>
     <string name="food_items_title">Food items</string>
+    <string name="expand_meal_card">Expand Meal</string>
 
     <string name="food_name_label">Food name</string>
     <string name="food_name_placeholder">Egg</string>
     <string name="search_previous_meals">Search previous meals</string>
 
+    <string name="search_past_meals_label">Search Previous Meals</string>
+    <string name="search_past_meals_placeholder">Breakfast Bagel</string>
+
     <string name="meal_name_error_message">Meal name is required</string>
     <string name="food_name_error_message">Food name is required</string>
-    <string name="no_existing_meal_entries">No existing meal entries today</string>
+    <string name="no_existing_meal_entries_today">No existing meal entries today</string>
+    <string name="no_existing_meal_entries">No existing meal entries</string>
     <string name="no_existing_food_entries">Add a food item to complete the meal</string>
+    <string name="no_meals_found_from_search">Could not find any meals named or containing food named %1$s</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

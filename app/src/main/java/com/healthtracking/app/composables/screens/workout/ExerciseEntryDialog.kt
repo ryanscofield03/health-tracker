@@ -48,8 +48,8 @@ internal fun ExerciseEntryDialog(
                 modifier = Modifier.fillMaxWidth(),
                 value = weight,
                 onValueChange = updateWeight,
-                labelId = R.string.weight_label,
-                placeholderId = R.string.weight_label,
+                label = stringResource(id = R.string.weight_label),
+                placeholder = stringResource(id = R.string.weight_label),
                 hasError = !validWeight,
                 errorMessageId = weightErrorMessageId
             )
@@ -59,8 +59,8 @@ internal fun ExerciseEntryDialog(
                 modifier = Modifier.fillMaxWidth(),
                 value = reps,
                 onValueChange = updateReps,
-                labelId = R.string.reps_label,
-                placeholderId = R.string.reps_placeholder,
+                label = stringResource(id = R.string.reps_label),
+                placeholder = stringResource(id = R.string.reps_placeholder),
                 hasError = !validReps,
                 errorMessageId = repsErrorMessageId
             )
