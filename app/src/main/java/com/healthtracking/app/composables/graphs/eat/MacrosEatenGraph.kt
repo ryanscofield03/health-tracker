@@ -3,12 +3,10 @@ package com.healthtracking.app.composables.graphs.eat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,7 +28,6 @@ import com.healthtracking.app.theme.ProteinColour
 import java.time.LocalDate
 import kotlin.math.abs
 import kotlin.math.ceil
-import kotlin.math.floor
 
 private const val ProteinValue: Int = 0
 private const val CarbsValue: Int = 1
