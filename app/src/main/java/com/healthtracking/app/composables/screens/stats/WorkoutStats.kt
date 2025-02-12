@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.GraphWithTitle
 import com.healthtracking.app.composables.graphs.workout.ExerciseProgressGraph
 import com.healthtracking.app.composables.graphs.workout.WorkoutAttendanceGraph
