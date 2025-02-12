@@ -44,7 +44,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.SaveAndCancelButtons
-import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.table.TableCell
 import com.healthtracking.app.composables.table.TableCellType
 import com.healthtracking.app.services.toStringWithDecimalPoints
@@ -133,7 +132,7 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                     ExerciseEntryDialog(
                         saveEntry = { viewModel.saveEntry(pagerState.currentPage) },
                         clearEntry = { viewModel.clearEntry() },
-                        onDismiss = { openEntryDialog.value = false },
+                        onDismissRequest = { openEntryDialog.value = false },
                         weight = viewModel.newWeight,
                         updateWeight = { viewModel.updateNewWeight(it) },
                         validWeight = viewModel.newWeightIsValid(),
