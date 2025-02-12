@@ -322,15 +322,18 @@ class RunWorkoutViewModel(
         )
 
         exercises.forEachIndexed { index, exercise ->
-            val exerciseHistory = ExerciseHistory(
-                date = LocalDateTime.now(),
-                data = _exerciseEntries.value[index]
-            )
+            // only add if the exercise has at least 1 exercise entry
+            if (_exerciseEntries.value[index].isNotEmpty()) {
+                val exerciseHistory = ExerciseHistory(
+                    date = LocalDateTime.now(),
+                    data = _exerciseEntries.value[index]
+                )
 
-            exerciseHistoryViewModel.addExerciseHistory(
-                exerciseId = exercise.id,
-                exerciseHistory = exerciseHistory
-            )
+                exerciseHistoryViewModel.addExerciseHistory(
+                    exerciseId = exercise.id,
+                    exerciseHistory = exerciseHistory
+                )
+            }
         }
 
         clearViewModel()
