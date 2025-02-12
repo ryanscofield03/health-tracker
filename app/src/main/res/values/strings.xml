@@ -187,4 +187,8 @@
 
     <string name="weight_graph_label">Weight (kg)</string>
     <string name="reps_graph_label">Reps</string>
+
+    // Notifications
+    <string name="workout_reminder_title">Workout reminder for %1$s</string>
+    <string name="workout_reminder_subtitle">It\'s time to %1$s</string>
 </resources>
