@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HealthTracking</string>
+    <string name="app_name">Health Tracking</string>
 
     <string name="cannot_find_error_message">Cannot find error message.</string>
 

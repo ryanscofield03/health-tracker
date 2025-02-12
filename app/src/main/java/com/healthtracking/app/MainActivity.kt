@@ -205,6 +205,7 @@ class MainActivity : ComponentActivity() {
                             val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
                             val workout = workoutViewModel
                                 .allWorkouts
+                                .collectAsStateWithLifecycle()
                                 .value
                                 ?.find { it.id == parsedId }
                             workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
@@ -233,6 +234,7 @@ class MainActivity : ComponentActivity() {
                             val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
                             val workout = workoutViewModel
                                 .allWorkouts
+                                .collectAsStateWithLifecycle()
                                 .value
                                 ?.find { it.id == parsedId }
 

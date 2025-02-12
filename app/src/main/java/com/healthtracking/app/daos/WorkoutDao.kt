@@ -7,6 +7,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.Workout
+import kotlinx.coroutines.flow.Flow
 
 /**
  * DAO for workouts, this allows CRUD operations on workouts in DB
@@ -48,7 +49,7 @@ interface WorkoutDao {
     suspend fun deleteWorkoutExerciseCrossRef(workoutId: Long, exerciseId: Long)
 
     @Query("SELECT * FROM workout")
-    fun getAllWorkouts(): LiveData<List<Workout>>
+    fun getAllWorkouts(): Flow<List<Workout>?>
 
     @Query("""
         SELECT e.* 

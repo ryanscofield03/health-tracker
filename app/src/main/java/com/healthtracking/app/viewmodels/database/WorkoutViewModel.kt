@@ -9,13 +9,18 @@ import kotlinx.coroutines.withContext
 import com.healthtracking.app.daos.WorkoutDao
 import com.healthtracking.app.entities.Exercise
 import com.healthtracking.app.entities.Workout
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class WorkoutViewModel(
     private val workoutDao: WorkoutDao,
 ) : ViewModel() {
-    val allWorkouts: LiveData<List<Workout>> = workoutDao.getAllWorkouts()
+    val allWorkouts: StateFlow<List<Workout>?> = workoutDao
+        .getAllWorkouts().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun addWorkout(workout: Workout, onResult: (Long) -> Unit) {
         viewModelScope.launch {
