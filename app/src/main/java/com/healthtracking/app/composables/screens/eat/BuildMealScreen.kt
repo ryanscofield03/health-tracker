@@ -45,6 +45,8 @@ import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.SelectionDropDown
 import com.healthtracking.app.composables.SliderWithLabel
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.composables.screens.workout.FoodEntryDialog
+import com.healthtracking.app.composables.screens.workout.MealSearchDialog
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.theme.CarbsColour
 import com.healthtracking.app.theme.FatsColour
@@ -63,7 +65,7 @@ fun BuildMeal(
     val nameErrorMessageId = viewModel.nameErrorMessageId.collectAsStateWithLifecycle().value
 
     val foodDialogOpen = rememberSaveable() { mutableStateOf(false) }
-    FoodDialog(
+    FoodEntryDialog(
         isOpen = foodDialogOpen.value,
         onDismissRequest = { foodDialogOpen.value = false; viewModel.clearFoodDialog() },
         onSave = {
@@ -89,6 +91,14 @@ fun BuildMeal(
         nameHasError = viewModel.dialogNameHasError.collectAsStateWithLifecycle().value
     )
 
+    val mealSearchDialogOpen = rememberSaveable() { mutableStateOf(false) }
+    MealSearchDialog(
+        isOpen = mealSearchDialogOpen.value,
+        onDismissRequest = { mealSearchDialogOpen.value = false },
+        mealList = listOf(),
+        onMealSelected = {}
+    )
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,12 +111,12 @@ fun BuildMeal(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Placed on LHS so the user doesn't think they are searching when they type in a meal name
-            // (maybe a different icon would be better)
             MealSearcher(
                 modifier = Modifier
                     .fillMaxWidth(0.2f)
                     .fillMaxHeight()
-                    .padding(top = 8.dp, bottom = 15.dp)
+                    .padding(top = 8.dp, bottom = 15.dp),
+                openMealSearchDialog = { mealSearchDialogOpen.value = true }
             )
 
             TextFieldWithErrorMessage(
@@ -204,170 +214,18 @@ private fun FoodItemsList(
 
 @Composable
 private fun MealSearcher(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openMealSearchDialog: () -> Unit
 ) {
-    val mealSearcherDialogOpen = rememberSaveable() { mutableStateOf( false) }
-
     IconButton(
         modifier = modifier
             .clip(shape = RoundedCornerShape(8.dp))
             .background(color = MaterialTheme.colorScheme.tertiary),
-        onClick = { mealSearcherDialogOpen.value = true }
+        onClick = openMealSearchDialog
     ) {
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = stringResource(id = R.string.search_previous_meals)
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FoodDialog(
-    modifier: Modifier = Modifier,
-    isOpen: Boolean,
-    onDismissRequest: () -> Unit,
-    onSave: () -> Unit,
-    name: String?,
-    measurement: String,
-    protein: Float,
-    carbs: Float,
-    fats: Float,
-    quantity: Float,
-    calories: Float,
-    updateName: (String) -> Unit,
-    updateMeasurement: (String) -> Unit,
-    updateProtein: (Float) -> Unit,
-    updateCarbs: (Float) -> Unit,
-    updateFats: (Float) -> Unit,
-    updateQuantity: (Float) -> Unit,
-    measurementOptions: List<String>,
-    nameHasError: Boolean
-) {
-    if (isOpen) {
-        BasicAlertDialog(onDismissRequest = {}) {
-            Surface(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(16.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 4.dp
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    // food name
-                    TextFieldWithErrorMessage(
-                        value = name,
-                        onValueChange = updateName,
-                        labelId = R.string.food_name_label,
-                        placeholderId = R.string.food_name_placeholder,
-                        hasError = nameHasError,
-                        errorMessageId = R.string.food_name_error_message
-                    )
-
-                    // measurement dropdown
-                    MeasurementDropdown(
-                        measurementOptions = measurementOptions,
-                        measurement = measurement,
-                        updateMeasurement = updateMeasurement
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // display calculation of calories
-                    Text(
-                        text = "Total calories: ${String.format(Locale.US, "%.0f", calories.times(quantity))}kcal",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onTertiary
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // protein slider
-                    SliderWithLabel(
-                        label = stringResource(id = R.string.protein_formatted, String.format(Locale.US, "%.1f", protein)),
-                        value = protein,
-                        color = ProteinColour,
-                        onValueChange = updateProtein,
-                        maxSliderValue = 100f,
-                        incrementAmount = 0.2f
-                    )
-
-                    // carbs slider
-                    SliderWithLabel(
-                        label = stringResource(id = R.string.carbs_formatted, String.format(Locale.US, "%.1f", carbs)),
-                        value = carbs,
-                        color = CarbsColour,
-                        onValueChange = updateCarbs,
-                        maxSliderValue = 100f,
-                        incrementAmount = 0.2f
-                    )
-
-                    // fats slider
-                    SliderWithLabel(
-                        label = stringResource(id = R.string.fats_formatted, String.format(Locale.US, "%.1f", fats)),
-                        value = fats,
-                        color = FatsColour,
-                        onValueChange = updateFats,
-                        maxSliderValue = 100f,
-                        incrementAmount = 0.2f
-                    )
-
-                    // quantity slider
-                    SliderWithLabel(
-                        label = stringResource(id = R.string.quantity_formatted, String.format(Locale.US, "%.0f", quantity)),
-                        value = quantity,
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        onValueChange = updateQuantity,
-                        maxSliderValue = 10f
-                    )
-
-                    // save and cancel buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(
-                            onClick = onSave
-                        ) {
-                            Text(
-                                text = "Save",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-
-                        TextButton(onClick = {
-                            onDismissRequest()
-                        }) {
-                            Text(
-                                text = "Cancel",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MeasurementDropdown(
-    measurement: String,
-    measurementOptions: List<String>,
-    updateMeasurement: (String) -> Unit
-) {
-    SelectionDropDown(
-        label = stringResource(id = R.string.select_measurement_settings),
-        items = measurementOptions,
-        selectedText = measurement,
-        onItemClick = updateMeasurement
-    )
 }

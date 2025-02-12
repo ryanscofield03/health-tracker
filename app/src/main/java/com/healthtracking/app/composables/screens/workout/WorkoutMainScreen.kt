@@ -1,6 +1,5 @@
 package com.healthtracking.app.composables.screens.workout
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,13 +32,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
-import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.theme.CustomCutCornerShape

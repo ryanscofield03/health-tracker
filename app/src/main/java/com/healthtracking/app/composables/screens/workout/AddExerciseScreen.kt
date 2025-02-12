@@ -92,17 +92,8 @@ fun AddExercise(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextFieldWithErrorMessage(
-                modifier = Modifier.weight(0.8f),
-                value = viewModel.exerciseSearch,
-                onValueChange = { viewModel.updateExerciseSearch(it) },
-                labelId = R.string.exercise_search_label,
-                placeholderId = R.string.exercise_search_placeholder,
-                hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
-                errorMessageId = R.string.exercise_name_search_invalid
-            )
-
             AddNewExerciseButton(
+                modifier = Modifier.weight(0.2f),
                 addNewExercise = {
                     if (viewModel.validExerciseSearch()) {
                         selectedExercises.add(viewModel.exerciseSearch)
@@ -111,6 +102,16 @@ fun AddExercise(
                         viewModel.updateExerciseAddToError(true)
                     }
                 }
+            )
+
+            TextFieldWithErrorMessage(
+                modifier = Modifier.weight(1f),
+                value = viewModel.exerciseSearch,
+                onValueChange = { viewModel.updateExerciseSearch(it) },
+                labelId = R.string.exercise_search_label,
+                placeholderId = R.string.exercise_search_placeholder,
+                hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
+                errorMessageId = R.string.exercise_name_search_invalid
             )
         }
 
@@ -170,11 +171,11 @@ fun AddExercise(
 
 @Composable
 private fun AddNewExerciseButton(
+    modifier: Modifier = Modifier,
     addNewExercise: () -> Unit
 ) {
     IconButton(
-        modifier = Modifier
-            .fillMaxWidth(0.2f)
+        modifier = modifier
             .fillMaxHeight()
             .padding(top = 8.dp, bottom = 15.dp)
             .clip(shape = RoundedCornerShape(8.dp))
