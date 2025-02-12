@@ -87,15 +87,9 @@ fun ToggleDayButton(
 
     // Use animateColorAsState to smoothly animate color changes based on the state
     val containerColor by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.secondary
-        else MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
+        targetValue = if (selected) MaterialTheme.colorScheme.primary
+        else MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
         label = "AnimateColourChange",
-    )
-
-    val contentColor by animateColorAsState(
-        targetValue = if (selected) MaterialTheme.colorScheme.onSecondary
-        else MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.5f),
-        label = "AnimateColourChange"
     )
 
     Button(
@@ -104,7 +98,7 @@ fun ToggleDayButton(
             .fillMaxWidth()
             .height(50.dp),
         shape = MaterialTheme.shapes.small,
-        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor)
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = MaterialTheme.colorScheme.onSecondary)
     ) {
         Text(text = dayName)
     }
