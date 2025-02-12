@@ -1,5 +1,6 @@
 package com.healthtracking.app
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,18 +11,29 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationDrawerItemDefaults
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,7 +42,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -102,53 +116,70 @@ class MainActivity : ComponentActivity() {
                     title = stringResource(R.string.settings_screen),
                     icon = Icons.Filled.Settings
                 )
-                val tabBarItems: List<TabBarItem> = listOf(workoutTab, eatTab, sleepTab, historyTab, settingsTab)
 
-                var selectedTabIndex by rememberSaveable {
-                    mutableIntStateOf(0)
+                val tabBarItems: List<TabBarItem> = listOf(workoutTab, eatTab, sleepTab, historyTab, settingsTab)
+                val navSuiteType = with(LocalConfiguration.current) {
+                    if (screenHeightDp >= 600) {
+                        NavigationSuiteType.NavigationBar
+                    } else {
+                        NavigationSuiteType.NavigationRail
+                    }
                 }
 
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
-                    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
-                    if (currentDestination != stringResource(R.string.welcome_screen)) {
-                        NavigationBar(containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)) {
-                            tabBarItems.forEachIndexed {index, item ->
-                                NavigationBarItem(
-                                    colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = MaterialTheme.colorScheme.secondary
-                                    ),
-                                    label = { Text(text = item.title, style = MaterialTheme.typography.labelSmall)},
-                                    selected = selectedTabIndex == index,
-                                    onClick = {
-                                        if (selectedTabIndex != index) {
-                                            navController.navigate(item.title)
-                                            selectedTabIndex = index
-                                        }
-                                    },
-                                    icon = {
-                                        Icon(
-                                            imageVector = item.icon,
-                                            contentDescription = title.toString()
-                                        )
+                val navBarItemColours = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onTertiary,
+                    selectedTextColor = MaterialTheme.colorScheme.onTertiary,
+                    indicatorColor = MaterialTheme.colorScheme.secondary
+                )
+                val navRailItemColours = NavigationRailItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onTertiary,
+                    selectedTextColor = MaterialTheme.colorScheme.onTertiary,
+                    indicatorColor = MaterialTheme.colorScheme.secondary
+                )
+                val navDrawerColours = NavigationDrawerItemDefaults.colors()
+
+                val selectedTabIndex = rememberSaveable { mutableIntStateOf(0) }
+                NavigationSuiteScaffold(
+                    layoutType = navSuiteType,
+                    navigationSuiteColors = NavigationSuiteDefaults.colors(
+                        navigationBarContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.6f),
+                        navigationRailContainerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.6f),
+                    ),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    navigationSuiteItems = {
+                        tabBarItems.forEachIndexed { index, navItem ->
+                            item(
+                                icon = { Icon(imageVector = navItem.icon, contentDescription = navItem.title) },
+                                label = { Text(navItem.title) },
+                                selected = selectedTabIndex.intValue == index,
+                                onClick = {
+                                    if (selectedTabIndex.intValue != index) {
+                                        navController.navigate(navItem.title)
+                                        selectedTabIndex.intValue = index
                                     }
+                                },
+                                colors = NavigationSuiteItemColors(
+                                    navigationBarItemColors = navBarItemColours,
+                                    navigationRailItemColors = navRailItemColours,
+                                    navigationDrawerItemColors = navDrawerColours
                                 )
-                            }
+                            )
                         }
                     }
-                }) { innerPadding ->
+                ) {
                     val padding = PaddingValues(
                         start = 24.dp,
-                        top = 48.dp,
+                        top = 40.dp,
                         end = 24.dp,
-                        bottom = 144.dp
+                        bottom = 16.dp
                     )
 
                     val routeList = listOf("Workout", "Eat", "Sleep", "Progress", "Settings")
 
                     NavHost(
+                        modifier = Modifier.fillMaxSize(),
                         navController = navController,
                         startDestination = "Workout",
-                        modifier = Modifier.fillMaxSize(),
                         enterTransition = {
                             val initialRoute = navController.previousBackStackEntry?.destination?.route
                             val destinationRoute = navController.currentBackStackEntry?.destination?.route
