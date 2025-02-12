@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TimeInputDisplay(
+    modifier: Modifier = Modifier,
     title: String,
     state: TimePickerState,
     colors: TimePickerColors,
     enabled: Boolean = false
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)

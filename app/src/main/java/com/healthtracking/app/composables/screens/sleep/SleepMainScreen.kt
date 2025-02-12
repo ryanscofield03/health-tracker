@@ -280,6 +280,7 @@ private fun AddSleepEntry(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // start timer
         if (startTimePickerOpened.value){
             TimeInputDialog(
                 title = stringResource(id = R.string.start_time_title),
@@ -288,20 +289,19 @@ private fun AddSleepEntry(
                 colors = timeInputColours
             )
         }
-        Box(modifier = Modifier
-            .clickable(
-                enabled = canAddNewEntry,
-                onClick = { startTimePickerOpened.value = true }
-            )
-        ) {
-            TimeInputDisplay(
-                title = stringResource(id = R.string.start_time_title),
-                state = startTimePickerState,
-                colors = timeInputColours,
-                enabled = canAddNewEntry
-            )
-        }
+        TimeInputDisplay(
+            modifier = Modifier
+                .clickable(
+                    enabled = canAddNewEntry,
+                    onClick = { startTimePickerOpened.value = true }
+                ),
+            title = stringResource(id = R.string.start_time_title),
+            state = startTimePickerState,
+            colors = timeInputColours,
+            enabled = canAddNewEntry
+        )
 
+        // end timer
         if (endTimePickerOpened.value){
             TimeInputDialog(
                 title = stringResource(id = R.string.end_time_title),
@@ -310,19 +310,17 @@ private fun AddSleepEntry(
                 colors = timeInputColours
             )
         }
-        Box(modifier = Modifier
-            .clickable(
-                enabled = canAddNewEntry,
-                onClick = { startTimePickerOpened.value = true }
-            )
-        ) {
-            TimeInputDisplay(
-                title = stringResource(id = R.string.end_time_title),
-                state = endTimePickerState,
-                colors = timeInputColours,
-                enabled = canAddNewEntry
-            )
-        }
+        TimeInputDisplay(
+            modifier = Modifier
+                .clickable(
+                    enabled = canAddNewEntry,
+                    onClick = { endTimePickerOpened.value = true }
+                ),
+            title = stringResource(id = R.string.end_time_title),
+            state = endTimePickerState,
+            colors = timeInputColours,
+            enabled = canAddNewEntry
+        )
 
         RatingPicker(
             rating = rating,
