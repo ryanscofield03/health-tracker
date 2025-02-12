@@ -12,21 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,18 +37,12 @@ import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
-import com.healthtracking.app.composables.SelectionDropDown
-import com.healthtracking.app.composables.SliderWithLabel
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.composables.screens.workout.FoodEntryDialog
 import com.healthtracking.app.composables.screens.workout.MealSearchDialog
 import com.healthtracking.app.entities.Food
-import com.healthtracking.app.theme.CarbsColour
-import com.healthtracking.app.theme.FatsColour
-import com.healthtracking.app.theme.ProteinColour
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
 
 @Composable
 fun BuildMeal(
