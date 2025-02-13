@@ -21,14 +21,14 @@ class ExerciseHistoryViewModel(
     }
 
     fun addExerciseHistory(exerciseId: Long, exerciseHistory: ExerciseHistory) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val workoutHistoryId = workoutHistoryDao.upsertWorkoutHistory(exerciseHistory)
             addWorkoutHistoryToWorkout(workoutId = exerciseId, workoutHistoryId = workoutHistoryId)
         }
     }
 
     private fun addWorkoutHistoryToWorkout(workoutId: Long, workoutHistoryId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val crossRef = ExerciseHistoryCrossRef(workoutId, workoutHistoryId)
             workoutHistoryDao.upsertWorkoutHistoryCrossRef(crossRef)
         }

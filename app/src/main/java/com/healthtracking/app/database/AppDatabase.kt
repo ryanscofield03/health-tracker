@@ -42,7 +42,7 @@ import com.healthtracking.app.entities.WorkoutHistoryWorkoutCrossRef
                         Meal::class,
                         Food::class,
                         MealFoodCrossRef::class
-                     ], version = 2, exportSchema = false)
+                     ], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao

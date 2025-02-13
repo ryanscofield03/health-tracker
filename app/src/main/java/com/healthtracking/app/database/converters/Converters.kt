@@ -34,17 +34,25 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromDaysList(value: List<DayOfWeek>): String {
-        return value.joinToString(separator = ",") { it.name }
+    fun fromDaysList(value: List<Pair<DayOfWeek, LocalDate>>): String {
+        println(value)
+
+        return value.joinToString(separator = ",") { "${it.first}:${fromLocalDate(it.second)}" }
     }
 
     @TypeConverter
-    fun toDaysList(value: String): List<DayOfWeek> {
-        return if (value.isBlank()) {
-            emptyList()
-        } else {
-            value.split(",").map { DayOfWeek.valueOf(it) }
+    fun toDaysList(value: String): List<Pair<DayOfWeek, LocalDate>> {
+        println(value)
+
+        if (value.isBlank()) {
+            return emptyList()
         }
+
+        return value.split(",")
+            .map {
+                val (first, second) = it.split(":")
+                Pair(DayOfWeek.valueOf(first), toLocalDate(second))
+            }
     }
 
     @TypeConverter

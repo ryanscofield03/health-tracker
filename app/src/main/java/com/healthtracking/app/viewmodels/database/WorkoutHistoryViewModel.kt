@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.daos.WorkoutHistoryDao
 import com.healthtracking.app.entities.WorkoutHistory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -13,7 +14,7 @@ class WorkoutHistoryViewModel(
     val allWorkoutHistory: Flow<List<WorkoutHistory>?> = workoutHistoryDao.getAllWorkoutHistory()
 
     fun addWorkoutHistory(workoutHistory: WorkoutHistory) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutHistoryDao.upsertWorkoutHistory(workoutHistory)
         }
     }

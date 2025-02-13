@@ -113,40 +113,70 @@ private fun WorkoutCards(
     deleteWorkout: (workout: Workout) -> Unit,
     navController: NavController
 ) {
-    val workoutDateMap = (0L..6L).associate { daysAhead ->
-        val date = LocalDate.now().plusDays(daysAhead)
-        date to workoutList.filter { workout -> workout.schedule.any { it == date.dayOfWeek } }
+    val workoutDateMap = remember(workoutList) {
+        (0L..6L).associate { daysAhead ->
+            val date = LocalDate.now().plusDays(daysAhead)
+            date to workoutList.filter { workout -> workout.schedule.any { it.first == date.dayOfWeek } }
+        }.entries.sortedBy { it.key }.toList()
+    }
+
+    val unscheduledWorkouts = remember(workoutList) {
+        workoutList.filter { workout -> workout.schedule.isEmpty() }
     }
 
     LazyColumn {
-        itemsIndexed(workoutDateMap.entries.sortedBy { it.key }.toList()) { _, (date, workouts) ->
+        itemsIndexed(workoutDateMap) { _, (date, workouts) ->
             if (workouts.isNotEmpty()) {
-                Text(
-                    text = date.format(DateTimeFormatter.ofPattern("EEEE")),
-                    style = MaterialTheme.typography.bodyMedium
+                WorkoutDateCardsBlock(
+                    dateString = date.format(DateTimeFormatter.ofPattern("EEEE")),
+                    workouts = workouts,
+                    deleteWorkout = { deleteWorkout(it) },
+                    editWorkout = { navController.navigate("EditWorkout/${it}") },
+                    runWorkout = { navController.navigate("RunWorkout/${it}") }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(
-                    thickness = 1.2.dp,
-                    color = Color.Gray.copy(alpha = 0.5f)
+            }
+        }
+        item {
+            if (unscheduledWorkouts.isNotEmpty()) {
+                WorkoutDateCardsBlock(
+                    workouts = unscheduledWorkouts,
+                    deleteWorkout = { deleteWorkout(it) },
+                    editWorkout = { navController.navigate("EditWorkout/${it}") },
+                    runWorkout = { navController.navigate("RunWorkout/${it}") }
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                workouts.forEach { workout ->
-                    WorkoutCard(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        workout = workout,
-                        deleteWorkout = { deleteWorkout(workout) },
-                        editWorkout = { navController.navigate("EditWorkout/${workout.id}") },
-                        runWorkout = {
-                            navController.navigate("RunWorkout/${workout.id}")
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
 }
+
+@Composable
+private fun WorkoutDateCardsBlock(
+    dateString: String = stringResource(id = R.string.unscheduled_workouts_title),
+    workouts: List<Workout>,
+    editWorkout: (Long) -> Unit,
+    deleteWorkout: (Workout) -> Unit,
+    runWorkout: (Long) -> Unit,
+) {
+    Text(
+        text = dateString,
+        style = MaterialTheme.typography.bodyMedium
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    HorizontalDivider(
+        thickness = 1.2.dp,
+        color = Color.Gray.copy(alpha = 0.5f)
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+    workouts.forEach { workout ->
+        WorkoutCard(
+            modifier = Modifier.padding(bottom = 12.dp),
+            workout = workout,
+            deleteWorkout = { deleteWorkout(workout) },
+            editWorkout = { editWorkout(workout.id) },
+            runWorkout = { runWorkout(workout.id) }
+        )
+    }
+    Spacer(modifier = Modifier.height(8.dp))}
 
 @Composable
 private fun WorkoutCard(

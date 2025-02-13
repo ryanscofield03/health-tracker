@@ -24,7 +24,7 @@ class SleepViewModel(
         endTime: LocalTime,
         rating: Int
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val sleep = Sleep(
                 date = date,
                 startTime = startTime,
@@ -42,7 +42,7 @@ class SleepViewModel(
         rating: Int
     ) {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val date = getSleepEntry(sleepId = id)?.date
             if (date != null) {
                 val sleep = Sleep(

@@ -22,15 +22,15 @@ class WorkoutViewModel(
     val allWorkouts: StateFlow<List<Workout>?> = workoutDao
         .getAllWorkouts().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    fun addWorkout(workout: Workout, onResult: (Long) -> Unit) {
-        viewModelScope.launch {
+    private fun addWorkout(workout: Workout, onResult: (Long) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
             val workoutId = workoutDao.upsertWorkout(workout)
             onResult(workoutId)
         }
     }
 
     fun deleteWorkout(workout: Workout) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
                 workoutDao.deleteWorkoutAndAssociatedData(
                     workout = workout
@@ -40,13 +40,13 @@ class WorkoutViewModel(
     }
 
     fun editWorkout(workout: Workout) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutDao.upsertWorkout(workout)
         }
     }
 
     fun removeExerciseFromWorkout(workoutId: Long, exerciseId: Long) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutDao.deleteWorkoutExerciseCrossRef(workoutId, exerciseId)
         }
     }

@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalDate
 
-class AddWorkoutViewModel(
+class BuildWorkoutViewModel(
     private val workoutViewModel: WorkoutViewModel,
     private val exerciseViewModel: ExerciseViewModel
 ) : ViewModel() {
@@ -149,7 +150,7 @@ class AddWorkoutViewModel(
             id = _currentWorkoutId.value ?: 0,
             name = name,
             description = description,
-            schedule = scheduledDays
+            schedule = scheduledDays.map { Pair(it, LocalDate.now()) }
         )
 
         viewModelScope.launch {
@@ -225,7 +226,7 @@ class AddWorkoutViewModel(
             _loaded.value = true
             updateName(workout.name)
             updateDescription(workout.description)
-            workout.schedule.forEach { toggleScheduledDay(it) }
+            workout.schedule.forEach { toggleScheduledDay(it.first) }
             loadExercisesForWorkout(workout.id)
 
             _currentWorkoutId.value = workout.id

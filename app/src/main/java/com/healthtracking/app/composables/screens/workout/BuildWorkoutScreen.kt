@@ -36,13 +36,13 @@ import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.theme.CustomCutCornerShape
-import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
 
 @Composable
 fun BuildWorkout(
     modifier: Modifier,
     navController: NavController,
-    viewModel: AddWorkoutViewModel,
+    viewModel: BuildWorkoutViewModel,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),

@@ -58,13 +58,13 @@ import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
 import com.healthtracking.app.services.getExerciseList
 import com.healthtracking.app.theme.CustomCutCornerShape
-import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
 
 @Composable
 fun AddExercise(
     modifier: Modifier,
     navController: NavController,
-    viewModel: AddWorkoutViewModel
+    viewModel: BuildWorkoutViewModel
 ) {
     val context = LocalContext.current
 

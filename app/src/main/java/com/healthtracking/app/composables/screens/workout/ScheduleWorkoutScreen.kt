@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
-import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
 import java.time.DayOfWeek
 
 val daysOfWeek = listOf(
@@ -37,7 +37,7 @@ val daysOfWeek = listOf(
 fun ScheduleWorkout(
     modifier: Modifier,
     navController: NavController,
-    viewModel: AddWorkoutViewModel
+    viewModel: BuildWorkoutViewModel
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(top = 20.dp),

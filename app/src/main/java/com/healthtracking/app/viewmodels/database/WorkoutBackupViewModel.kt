@@ -16,7 +16,7 @@ class WorkoutBackupViewModel(
                          exerciseIndex: Int,
                          entries: List<List<Pair<Float, Int>>>,
                          timerStart: LocalDateTime) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val workoutBackup = WorkoutBackup(
                 id = workoutId,
                 exerciseIndex = exerciseIndex,

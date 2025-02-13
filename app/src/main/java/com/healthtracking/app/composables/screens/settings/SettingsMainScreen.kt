@@ -30,7 +30,7 @@ import com.healthtracking.app.R
 import com.healthtracking.app.composables.BackgroundBorderBox
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.theme.CustomCutCornerShape
-import com.healthtracking.app.viewmodels.screen.SettingsViewModel
+import com.healthtracking.app.viewmodels.database.SettingsViewModel
 
 @Composable
 fun SettingsMain (

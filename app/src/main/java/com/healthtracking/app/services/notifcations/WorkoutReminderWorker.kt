@@ -12,6 +12,7 @@ import com.healthtracking.app.entities.Workout
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.time.DayOfWeek
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -34,13 +35,22 @@ class WorkoutReminderWorker(
             if (!workouts.isNullOrEmpty()) {
                 // find workout that is scheduled for today
                 val workout: Workout? = workouts.find { workout ->
-                    workout.schedule.any { day ->
-                        LocalDate.now().dayOfWeek == day
+                    workout.schedule.any { day: Pair<DayOfWeek, LocalDate> ->
+                        LocalDate.now().dayOfWeek == day.first && day.second != LocalDate.now()
                     }
                 }
 
                 if (workout != null) {
                     sendNotification(workout)
+
+                    // update workout to mark notification as sent
+                    workoutDao.upsertWorkout(workout.copy(schedule = workout.schedule.map {
+                        if (it.first == LocalDate.now().dayOfWeek) {
+                            it.copy(second = LocalDate.now())
+                        } else {
+                            it
+                        }
+                    }))
                 }
             }
         }

@@ -17,11 +17,11 @@ import com.healthtracking.app.viewmodels.database.SleepViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutBackupViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutHistoryViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.SettingsViewModel
+import com.healthtracking.app.viewmodels.database.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -42,7 +42,7 @@ val dataAccessModule = module {
     viewModel { ExerciseViewModel(get<ExerciseDao>()) }
     viewModel { WorkoutHistoryViewModel(get<WorkoutHistoryDao>()) }
     viewModel { ExerciseHistoryViewModel(get<ExerciseHistoryDao>()) }
-    viewModel { AddWorkoutViewModel(get<WorkoutViewModel>(), get<ExerciseViewModel>()) }
+    viewModel { BuildWorkoutViewModel(get<WorkoutViewModel>(), get<ExerciseViewModel>()) }
     viewModel { WorkoutBackupViewModel(get<WorkoutBackupDao>()) }
 
     viewModel { SleepViewModel(get<SleepDao>()) }

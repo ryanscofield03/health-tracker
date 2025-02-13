@@ -1,6 +1,5 @@
 package com.healthtracking.app
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,28 +10,20 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItemColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -51,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.healthtracking.app.composables.screens.eat.BuildMeal
 import com.healthtracking.app.entities.Exercise
@@ -67,11 +56,11 @@ import com.healthtracking.app.composables.screens.workout.WorkoutMain
 import com.healthtracking.app.theme.HealthTrackingTheme
 import com.healthtracking.app.viewmodels.database.MealViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.AddWorkoutViewModel
+import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 import com.healthtracking.app.viewmodels.screen.FoodViewModel
 import com.healthtracking.app.viewmodels.screen.RunWorkoutViewModel
-import com.healthtracking.app.viewmodels.screen.SettingsViewModel
+import com.healthtracking.app.viewmodels.database.SettingsViewModel
 import com.healthtracking.app.viewmodels.screen.SleepScreenViewModel
 import com.healthtracking.app.viewmodels.screen.StatsScreenViewModel
 import org.koin.androidx.compose.getViewModel
@@ -93,7 +82,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HealthTrackingTheme {
                 val navController = rememberNavController()
-                val addWorkoutViewModel: AddWorkoutViewModel by koinViewModel()
+                val addWorkoutViewModel: BuildWorkoutViewModel by koinViewModel()
                 val buildMealViewModel: BuildMealViewModel by koinViewModel()
 
                 val workoutTab = TabBarItem(

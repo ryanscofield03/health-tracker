@@ -1,4 +1,4 @@
-package com.healthtracking.app.viewmodels.screen
+package com.healthtracking.app.viewmodels.database
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
@@ -14,6 +14,7 @@ class SettingsViewModel(context: Context) : ViewModel() {
 
         const val MEASUREMENTS_KEY = "measurements"
         const val MEASUREMENTS_METRIC = "metric"
+        const val MEASUREMENTS_DEFAULT = MEASUREMENTS_METRIC
         const val MEASUREMENTS_IMPERIAL = "imperial"
 
         const val NOTIFICATIONS_KEY = "notifications"
@@ -24,15 +25,20 @@ class SettingsViewModel(context: Context) : ViewModel() {
         context.getSharedPreferences("settings", MODE_PRIVATE)
 
     private val _languageSetting = MutableStateFlow(sharedPreferences.getString(
-        LANGUAGE_KEY, LANGUAGE_DEFAULT) ?: LANGUAGE_DEFAULT)
+        LANGUAGE_KEY, LANGUAGE_DEFAULT
+    ) ?: LANGUAGE_DEFAULT
+    )
     val languageSetting: StateFlow<String> = _languageSetting
 
     private val _measurementsSetting = MutableStateFlow(sharedPreferences.getString(
-        MEASUREMENTS_KEY, MEASUREMENTS_METRIC) ?: MEASUREMENTS_METRIC)
+        MEASUREMENTS_KEY, MEASUREMENTS_DEFAULT
+    ) ?: MEASUREMENTS_DEFAULT
+    )
     val measurementsSetting: StateFlow<String> = _measurementsSetting
 
     private val _notificationsSetting = MutableStateFlow(sharedPreferences.getBoolean(
-        NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT))
+        NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT
+    ))
     val notificationsSetting: StateFlow<Boolean> = _notificationsSetting
 
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -40,7 +46,7 @@ class SettingsViewModel(context: Context) : ViewModel() {
             LANGUAGE_KEY -> _languageSetting.value = sharedPreferences.getString(
                 LANGUAGE_KEY, LANGUAGE_DEFAULT) ?: LANGUAGE_DEFAULT
             MEASUREMENTS_KEY -> _measurementsSetting.value = sharedPreferences.getString(
-                MEASUREMENTS_KEY, MEASUREMENTS_METRIC) ?: MEASUREMENTS_METRIC
+                MEASUREMENTS_KEY, MEASUREMENTS_DEFAULT) ?: MEASUREMENTS_DEFAULT
             NOTIFICATIONS_KEY -> _notificationsSetting.value = sharedPreferences.getBoolean(
                 NOTIFICATIONS_KEY, NOTIFICATIONS_DEFAULT)
         }
