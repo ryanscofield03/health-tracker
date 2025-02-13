@@ -10,13 +10,13 @@ import com.healthtracking.app.entities.Food
 import com.healthtracking.app.entities.Meal
 import com.healthtracking.app.entities.MealFoodCrossRef
 import com.healthtracking.app.entities.MealWithFoodList
+import com.healthtracking.app.services.nutritiondata.NutritionalDataAPI
 import com.healthtracking.app.services.toDecimalPoints
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -49,6 +49,8 @@ class BuildMealViewModel(
         private val DEFAULT_ENTRY_MODE = EntryStates.NEW
     }
 
+    private val nutritionalDataAPI: NutritionalDataAPI = NutritionalDataAPI()
+
     private val _mealSearch = MutableStateFlow("")
     val mealSearch: StateFlow<String> = _mealSearch.asStateFlow()
 
@@ -65,10 +67,6 @@ class BuildMealViewModel(
     private val _entryMode = mutableStateOf(DEFAULT_ENTRY_MODE)
     // for comparing to when saving
     private val _originalEntry: MutableState<MealWithFoodList?> = mutableStateOf(null)
-
-    // store error messages
-    private val _nameErrorMessageId = MutableStateFlow<Int?>(null)
-    val nameErrorMessageId: StateFlow<Int?> = _nameErrorMessageId.asStateFlow()
 
     private val _dialogFoodName = MutableStateFlow<String?>(null)
     val dialogFoodName get() = _dialogFoodName
@@ -91,11 +89,10 @@ class BuildMealViewModel(
     val dialogCalories get() =
         ((dialogProtein.value * 4 + dialogCarbs.value * 4 + dialogFats.value * 9)).toDecimalPoints(0)
 
-    private val _dialogNameHasError = MutableStateFlow(false)
-    val dialogNameHasError get() = _dialogNameHasError.asStateFlow()
-
     private val _dialogEntryMode: MutableState<EntryStates> = mutableStateOf(DEFAULT_ENTRY_MODE)
     private val _editFoodIndex: MutableState<Int?> = mutableStateOf(null)
+
+    val isLoadingApiData: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -146,8 +143,6 @@ class BuildMealViewModel(
      */
     fun updateDialogFoodName(newName: String) {
         _dialogFoodName.value = newName
-
-        validFoodDialog()
     }
 
     /**
@@ -192,22 +187,13 @@ class BuildMealViewModel(
      */
     fun updateName(name: String) {
         _name.value = name
-        _nameErrorMessageId.value = null
-
-        validMeal()
     }
 
     /**
      * Return true if food dialog has all valid data
      */
     fun validFoodDialog(): Boolean {
-        if (dialogFoodName.value != null && dialogFoodName.value!!.isNotBlank()) {
-            _dialogNameHasError.value = false
-            return true
-        } else {
-            _dialogNameHasError.value = true
-            return false
-        }
+        return dialogFoodName.value != null && dialogFoodName.value!!.isNotBlank()
     }
 
     /**
@@ -250,7 +236,6 @@ class BuildMealViewModel(
      */
     fun clearFoodDialog() {
         _dialogFoodName.value = null
-        _dialogNameHasError.value = false
         _dialogMeasurement.value = DEFAULT_MEASUREMENT
         _dialogProtein.value = DEFAULT_PROTEIN
         _dialogCarbs.value = DEFAULT_CARBS
@@ -267,21 +252,27 @@ class BuildMealViewModel(
     }
 
     /**
-     * Get a list of foods that match the user's inputted name
-     * e.g. eggs -> 1 egg, 100g, 1 cup, etc (and have attached macros + calories)
+     * Get and populate dialog fields with nutritional data
      */
-    fun getNutritionalDataList(foodName: String): List<Food> {
-        return listOf(
-            Food(
-                name = "egg",
-                calories = 155f,
-                measurement = "1 Unit",
-                protein = 12f,
-                carbohydrates = 15f,
-                fats = 10f,
-                quantity = 1f
+    fun populateDialogWithFoodNutrients() {
+        if (_dialogFoodName.value == null || _dialogFoodName.value!!.isBlank()) return
+
+        viewModelScope.launch(Dispatchers.IO) {
+            isLoadingApiData.value = true
+
+            val foodData = nutritionalDataAPI.getNutritionalData(
+                foodItem = _dialogFoodName.value!!,
+                measurement = _dialogMeasurement.value
             )
-        )
+
+            if (foodData != null) {
+                _dialogProtein.value = foodData.protein
+                _dialogCarbs.value = foodData.carbohydrates
+                _dialogFats.value = foodData.fats
+            }
+
+            isLoadingApiData.value = false
+        }
     }
 
     fun mealsFilteredBySearch(): StateFlow<List<MealWithFoodList>> {
@@ -301,7 +292,6 @@ class BuildMealViewModel(
      */
     fun validMeal(): Boolean {
         return if (_name.value.isBlank()) {
-            _nameErrorMessageId.value = R.string.meal_name_error_message
             false
         } else if (_foodItems.value.isEmpty()) {
             false
@@ -331,6 +321,31 @@ class BuildMealViewModel(
         }
     }
 
+    /**
+     * Save all new data into meal and food entities
+     */
+    private suspend fun saveNewEntry() {
+        val mealId = mealDao.upsertMealEntity(
+            mealEntity = Meal(
+                name = _name.value,
+                date = LocalDate.now(),
+                time = LocalTime.now()
+            )
+        )
+
+        _foodItems.value.forEach { foodItem: Food ->
+            val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
+            val mealFoodCrossRef = MealFoodCrossRef(
+                mealId = mealId,
+                foodId = foodId
+            )
+            mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
+        }
+    }
+
+    /**
+     * Save all new data into meal and food entities but update foodItems to use new id
+     */
     private suspend fun saveReusedEntry() {
         val mealId = mealDao.upsertMealEntity(
             mealEntity = Meal(
@@ -344,7 +359,15 @@ class BuildMealViewModel(
             // TODO - perhaps check if this has changed and reuse the same entity if it hasn't changed
             //  (especially makes sense when quantity is moved to cross ref as 100g of egg always
             //  has the same nutrients)
-            val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem.copy(id = 0))
+            val foodId = mealDao.upsertFoodEntity(foodEntity = Food(
+                name = foodItem.name,
+                measurement = foodItem.measurement,
+                calories = foodItem.calories,
+                protein = foodItem.protein,
+                fats = foodItem.fats,
+                carbohydrates = foodItem.carbohydrates,
+                quantity = foodItem.quantity)
+            )
             val mealFoodCrossRef = MealFoodCrossRef(
                 mealId = mealId,
                 foodId = foodId
@@ -353,6 +376,9 @@ class BuildMealViewModel(
         }
     }
 
+    /**
+     * Save updated data
+     */
     private suspend fun saveEditedEntry() {
         val updatedFoodItems = _foodItems.value
 
@@ -384,35 +410,11 @@ class BuildMealViewModel(
     }
 
     /**
-     * Save all new data into meal and food entities
-     */
-    private suspend fun saveNewEntry() {
-        val mealId = mealDao.upsertMealEntity(
-            mealEntity = Meal(
-                name = _name.value,
-                date = LocalDate.now(),
-                time = LocalTime.now()
-            )
-        )
-
-        _foodItems.value.forEach { foodItem: Food ->
-            val foodId = mealDao.upsertFoodEntity(foodEntity = foodItem)
-            val mealFoodCrossRef = MealFoodCrossRef(
-                mealId = mealId,
-                foodId = foodId
-            )
-            mealDao.upsertMealFoodCrossRef(crossRef = mealFoodCrossRef)
-        }
-    }
-
-    /**
      * Clears the view model
      */
     fun clear() {
-        _nameErrorMessageId.value = null
         _entryMode.value = EntryStates.NEW
         _name.value = ""
         _foodItems.value = listOf()
-        _dialogNameHasError.value = false
     }
 }

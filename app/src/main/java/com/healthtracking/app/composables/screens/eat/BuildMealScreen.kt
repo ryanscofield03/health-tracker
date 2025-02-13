@@ -38,7 +38,6 @@ import com.healthtracking.app.R
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
-import com.healthtracking.app.composables.screens.workout.FoodEntryDialog
 import com.healthtracking.app.entities.Food
 import com.healthtracking.app.viewmodels.screen.BuildMealViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -50,7 +49,6 @@ fun BuildMeal(
     viewModel: BuildMealViewModel,
 ) {
     val mealName = viewModel.name.collectAsStateWithLifecycle().value
-    val nameErrorMessageId = viewModel.nameErrorMessageId.collectAsStateWithLifecycle().value
 
     val foodDialogOpen = rememberSaveable() { mutableStateOf(false) }
     FoodEntryDialog(
@@ -71,12 +69,14 @@ fun BuildMeal(
         calories = viewModel.dialogCalories,
         updateName = { viewModel.updateDialogFoodName(it) },
         updateMeasurement = { viewModel.updateDialogMeasurement(it) },
+        loadNutrientData = { viewModel.populateDialogWithFoodNutrients() },
+        isLoadingNutrientData = viewModel.isLoadingApiData.value,
         updateProtein = { viewModel.updateDialogProtein(it) },
         updateCarbs = { viewModel.updateDialogCarbs(it) },
         updateFats = { viewModel.updateDialogFats(it) },
         updateQuantity = { viewModel.updateDialogQuantity(it) },
         measurementOptions = BuildMealViewModel.MEASUREMENT_OPTIONS,
-        nameHasError = viewModel.dialogNameHasError.collectAsStateWithLifecycle().value
+        nameHasError = !viewModel.validFoodDialog()
     )
 
     val mealSearchDialogOpen = rememberSaveable() { mutableStateOf(false) }
@@ -115,8 +115,8 @@ fun BuildMeal(
                 onValueChange = { viewModel.updateName(it) },
                 label = stringResource(id = R.string.meal_name_label),
                 placeholder = stringResource(id = R.string.meal_name_placeholder),
-                hasError = nameErrorMessageId != null,
-                errorMessageId = nameErrorMessageId
+                hasError = mealName.isBlank(),
+                errorMessage = stringResource(id = R.string.meal_name_error_message)
             )
 
         }

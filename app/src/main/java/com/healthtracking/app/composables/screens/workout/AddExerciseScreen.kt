@@ -111,7 +111,7 @@ fun AddExercise(
                 label = stringResource(id = R.string.exercise_search_label),
                 placeholder = stringResource(id = R.string.exercise_search_placeholder),
                 hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
-                errorMessageId = R.string.exercise_name_search_invalid
+                errorMessage = stringResource(id = R.string.exercise_name_search_invalid)
             )
         }
 

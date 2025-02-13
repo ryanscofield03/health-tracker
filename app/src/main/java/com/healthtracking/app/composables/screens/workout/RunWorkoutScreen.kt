@@ -136,11 +136,9 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                         weight = viewModel.newWeight,
                         updateWeight = { viewModel.updateNewWeight(it) },
                         validWeight = viewModel.newWeightIsValid(),
-                        weightErrorMessageId = R.string.weight_error_message,
                         reps = viewModel.newReps,
                         updateReps = { viewModel.updateNewReps(it) },
                         validReps = viewModel.newRepsIsValid(),
-                        repsErrorMessageId = R.string.reps_error_message,
                     )
                 }
 

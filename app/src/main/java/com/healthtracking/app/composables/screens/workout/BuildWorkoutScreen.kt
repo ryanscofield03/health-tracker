@@ -56,7 +56,7 @@ fun BuildWorkout(
             label = stringResource(id = R.string.workout_name_label),
             placeholder = stringResource(id = R.string.workout_name_placeholder),
             hasError = viewModel.nameErrorMessageId != null,
-            errorMessageId = viewModel.nameErrorMessageId
+            errorMessage = stringResource(id = R.string.name_error_message)
         )
 
         TextFieldWithErrorMessage(
@@ -66,7 +66,7 @@ fun BuildWorkout(
             label = stringResource(id = R.string.description_label),
             placeholder = stringResource(id = R.string.description_placeholder),
             hasError = viewModel.descriptionErrorMessageId != null,
-            errorMessageId = viewModel.descriptionErrorMessageId
+            errorMessage = stringResource(id = R.string.description_error_message)
         )
 
         Spacer(modifier = Modifier.height(7.dp))

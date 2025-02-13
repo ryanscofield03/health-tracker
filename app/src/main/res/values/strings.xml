@@ -40,6 +40,7 @@
     <string name="carbs">Carbs</string>
     <string name="fats">Fats</string>
 
+    <string name="total_calories_formatted">"Total calories: %1$skcal"</string>
     <string name="protein_formatted">Protein: %1$sg</string>
     <string name="carbs_formatted">Carbs: %1$sg</string>
     <string name="fats_formatted">Fats: %1$sg</string>
@@ -69,7 +70,8 @@
     <string name="no_existing_meal_entries_today">No existing meal entries today</string>
     <string name="no_existing_meal_entries">No existing meal entries</string>
     <string name="no_existing_food_entries">Add a food item to complete the meal</string>
-    <string name="no_meals_found_from_search">Could not find any meals named or containing food named %1$s</string>
+    <string name="no_meals_found_from_search">Could not find any meals named or containing food named \"%1$s\"</string>
+    <string name="refresh_nutrient_data">Refresh nutrients data</string>
 
     // Workout Screens Text
     <string name="my_workouts_title">Your Workouts</string>

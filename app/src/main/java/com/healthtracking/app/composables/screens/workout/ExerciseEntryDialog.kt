@@ -24,11 +24,9 @@ internal fun ExerciseEntryDialog(
     weight: String, // TODO make this and other lines dynamic later
     updateWeight: (String) -> Unit,
     validWeight: Boolean,
-    weightErrorMessageId: Int,
     reps: String,
     updateReps: (String) -> Unit,
     validReps: Boolean,
-    repsErrorMessageId: Int
 ) {
     CustomDialog(onDismissRequest = onDismissRequest) {
         Column(modifier = Modifier
@@ -51,7 +49,7 @@ internal fun ExerciseEntryDialog(
                 label = stringResource(id = R.string.weight_label),
                 placeholder = stringResource(id = R.string.weight_label),
                 hasError = !validWeight,
-                errorMessageId = weightErrorMessageId
+                errorMessage = stringResource(id = R.string.weight_error_message)
             )
 
             // Reps Input Field
@@ -62,7 +60,7 @@ internal fun ExerciseEntryDialog(
                 label = stringResource(id = R.string.reps_label),
                 placeholder = stringResource(id = R.string.reps_placeholder),
                 hasError = !validReps,
-                errorMessageId = repsErrorMessageId
+                errorMessage = stringResource(id = R.string.reps_error_message)
             )
 
             Row(

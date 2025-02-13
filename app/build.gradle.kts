@@ -106,4 +106,10 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    // Retrofit with Scalar Converter
+    implementation(libs.converter.scalars)
+
 }

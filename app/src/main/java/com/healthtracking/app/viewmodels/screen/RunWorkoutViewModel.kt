@@ -61,10 +61,6 @@ class RunWorkoutViewModel(
     private val _newReps = mutableStateOf("")
     val newReps get() = _newReps.value
 
-    // data for new entry
-    private val _newRepFieldCanError = mutableStateOf(false)
-    private val _newWeightFieldCanError = mutableStateOf(false)
-
     // data for editing old entry
     private val _editingEntryIndex = mutableStateOf<Int?>(null)
 
@@ -173,9 +169,6 @@ class RunWorkoutViewModel(
      * @return true if data saves, false if the data is not valid and does not save.
      */
     fun saveEntry(exerciseIndex: Int): Boolean {
-        _newRepFieldCanError.value = true
-        _newWeightFieldCanError.value = true
-
         if (newRepsIsValid() && newWeightIsValid()) {
             val pair = Pair(newWeight.toFloat(), newReps.toInt())
 
@@ -207,9 +200,6 @@ class RunWorkoutViewModel(
     fun clearEntry() {
         updateNewReps("")
         updateNewWeight("")
-        _newWeightFieldCanError.value = false
-        _newRepFieldCanError.value = false
-        _editingEntryIndex.value = null
     }
 
     /**
@@ -228,12 +218,10 @@ class RunWorkoutViewModel(
     }
 
     fun updateNewWeight(updatedWeight: String) {
-        _newWeightFieldCanError.value = true
         _newWeight.value = updatedWeight
     }
 
     fun updateNewReps(updatedReps: String) {
-        _newRepFieldCanError.value = true
         _newReps.value = updatedReps
     }
 
@@ -242,7 +230,7 @@ class RunWorkoutViewModel(
      * @return true if it is not null and it can currently error
      */
     fun newRepsIsValid(): Boolean {
-        return !_newRepFieldCanError.value || newReps.toIntOrNull() != null
+        return newReps.toIntOrNull() != null
     }
 
     /**
@@ -250,7 +238,7 @@ class RunWorkoutViewModel(
      * @return true if it is not null and it can currently error
      */
     fun newWeightIsValid(): Boolean {
-        return !_newWeightFieldCanError.value || newWeight.toFloatOrNull() != null
+        return newWeight.toFloatOrNull() != null
     }
 
     /**

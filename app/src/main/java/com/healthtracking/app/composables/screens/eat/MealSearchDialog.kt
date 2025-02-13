@@ -66,8 +66,8 @@ internal fun MealSearchDialog(
                             onValueChange = { updateMealSearch(it) },
                             label = stringResource(id = R.string.search_past_meals_label),
                             placeholder = stringResource(id = R.string.search_past_meals_placeholder),
-                            hasError = mealList.isEmpty(),
-                            errorMessageId = R.string.no_meals_found_from_search
+                            hasError = mealList.isEmpty() && mealSearch.isNotBlank(),
+                            errorMessage = stringResource(R.string.no_meals_found_from_search, mealSearch.lowercase())
                         )
                     },
                     listContent = {

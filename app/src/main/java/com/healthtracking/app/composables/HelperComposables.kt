@@ -24,8 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -66,19 +64,21 @@ fun TextFieldWithErrorMessage(
     label: String,
     placeholder: String,
     hasError: Boolean,
-    errorMessageId: Int?
+    errorMessage: String?
 ) {
+    val canError = rememberSaveable { mutableStateOf(false) }
+
     Column (
         modifier = modifier
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value ?: "",
-            onValueChange = { onValueChange(it) },
+            onValueChange = { onValueChange(it); if (hasError) { canError.value = true } },
             label = { Text(text = label) },
             placeholder = { Text(text = placeholder) },
             maxLines = 1,
-            isError = hasError,
+            isError = hasError && canError.value,
             shape = CustomCutCornerShape,
             colors = TextFieldDefaults.colors(
                 errorContainerColor = MaterialTheme.colorScheme.background,
@@ -87,12 +87,12 @@ fun TextFieldWithErrorMessage(
             ),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
-        ErrorMessageComponent(hasError = hasError, errorMessageId = errorMessageId)
+        ErrorMessageComponent(hasError = hasError && canError.value, errorMessage = errorMessage)
     }
 }
 
 @Composable
-fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
+fun ErrorMessageComponent(hasError: Boolean, errorMessage: String?) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(5.dp))
         AnimatedVisibility(
@@ -101,7 +101,7 @@ fun ErrorMessageComponent(hasError: Boolean, errorMessageId: Int?) {
             exit = fadeOut() + slideOutVertically(targetOffsetY = { -it / 2 })
         ) {
             Text(
-                text = stringResource(id = errorMessageId ?: R.string.cannot_find_error_message),
+                text = errorMessage ?: stringResource(id = R.string.cannot_find_error_message),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -183,7 +183,7 @@ fun SelectionDropDown(
 
         ExposedDropdownMenu(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface),
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false }
@@ -292,8 +292,11 @@ fun SliderWithLabel(
     color: Color,
     onValueChange: (Float) -> Unit,
     maxSliderValue: Float,
-    incrementAmount: Float = 1f
+    incrementAmount: Float = 1f,
+    enabled: Boolean = true
 ) {
+    val colourWithEnabled = if (enabled) color else MaterialTheme.colorScheme.surfaceVariant
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.End
@@ -305,7 +308,9 @@ fun SliderWithLabel(
             Box(
                 modifier = Modifier
                     .size(12.dp)
-                    .background(color, shape = CircleShape)
+                    .background(
+                        color = colourWithEnabled,
+                        shape = CircleShape)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
@@ -318,12 +323,16 @@ fun SliderWithLabel(
         Row(modifier = Modifier.fillMaxWidth()) {
             Slider(
                 modifier = Modifier.weight(0.9f),
+                enabled = enabled,
                 value = value,
                 onValueChange = onValueChange,
                 colors = SliderDefaults.colors(
                     thumbColor = color,
+                    disabledThumbColor = MaterialTheme.colorScheme.surfaceVariant,
                     activeTrackColor = color,
-                    inactiveTrackColor = color.copy(alpha = 0.2f)
+                    disabledActiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    inactiveTrackColor = color.copy(alpha = 0.2f),
+                    disabledInactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 valueRange = 0f..maxSliderValue,
             )
@@ -335,23 +344,25 @@ fun SliderWithLabel(
             ) {
                 IconButton(
                     modifier = Modifier.size(25.dp),
+                    enabled = enabled,
                     onClick = {onValueChange(value + incrementAmount)}
                 ) {
                     Icon(
                         modifier = Modifier.rotate(180f).size(30.dp),
                         imageVector = Icons.Filled.ArrowDropDown,
-                        tint = color,
+                        tint = colourWithEnabled,
                         contentDescription = stringResource(id = R.string.increment)
                     )
                 }
                 IconButton(
                     modifier = Modifier.size(25.dp),
+                    enabled = enabled,
                     onClick = {onValueChange(value - incrementAmount)}
                 ) {
                     Icon(
                         modifier = Modifier.rotate(0f).size(30.dp),
                         imageVector = Icons.Filled.ArrowDropDown,
-                        tint = color,
+                        tint = colourWithEnabled,
                         contentDescription = stringResource(id = R.string.decrement)
                     )
                 }
