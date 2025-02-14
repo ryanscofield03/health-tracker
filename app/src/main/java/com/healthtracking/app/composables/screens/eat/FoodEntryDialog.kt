@@ -55,6 +55,7 @@ internal fun FoodEntryDialog(
     calories: Float,
     updateName: (String) -> Unit,
     updateMeasurement: (String) -> Unit,
+    hasSaved: Boolean,
     isLoadingNutrientData: Boolean,
     loadNutrientData: () -> Unit,
     updateProtein: (Float) -> Unit,
@@ -80,6 +81,7 @@ internal fun FoodEntryDialog(
                     onValueChange = updateName,
                     label = stringResource(id = R.string.food_name_label),
                     placeholder = stringResource(id = R.string.food_name_placeholder),
+                    hasSaved = hasSaved,
                     hasError = nameHasError,
                     errorMessage = stringResource(id = R.string.food_name_error_message)
                 )

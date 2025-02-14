@@ -86,7 +86,7 @@
     <string name="exercise_search_placeholder">Dumbbell</string>
     <string name="search_exercise">Search for an Exercise</string>
     <string name="exercises_title">Exercises</string>
-    <string name="exercise_name_search_invalid">Exercise cannot be empty to be added</string>
+    <string name="exercise_name_search_invalid">Exercise name is required to be added</string>
     <string name="unscheduled_workouts_title">Unscheduled</string>
 
     // Run Workout Screen

@@ -55,7 +55,8 @@ fun BuildWorkout(
             onValueChange = { viewModel.updateName(it) },
             label = stringResource(id = R.string.workout_name_label),
             placeholder = stringResource(id = R.string.workout_name_placeholder),
-            hasError = viewModel.nameErrorMessageId != null,
+            hasSaved = viewModel.alreadySaved,
+            hasError = !viewModel.isNameValid(),
             errorMessage = stringResource(id = R.string.name_error_message)
         )
 
@@ -65,7 +66,8 @@ fun BuildWorkout(
             onValueChange = { viewModel.updateDescription(it) },
             label = stringResource(id = R.string.description_label),
             placeholder = stringResource(id = R.string.description_placeholder),
-            hasError = viewModel.descriptionErrorMessageId != null,
+            hasSaved = viewModel.alreadySaved,
+            hasError = !viewModel.isDescriptionValid(),
             errorMessage = stringResource(id = R.string.description_error_message)
         )
 
@@ -123,9 +125,9 @@ fun BuildWorkout(
         // Save and cancel buttons
         SaveAndCancelButtons(
             onSave = {
+                viewModel.save()
                 if (viewModel.isValid()) {
                     navController.navigate("Workout")
-                    viewModel.save()
                 }
             },
             onCancel = {

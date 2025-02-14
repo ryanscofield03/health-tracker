@@ -38,9 +38,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,13 +48,12 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.healthtracking.app.R
 import com.healthtracking.app.composables.HeaderAndListBox
 import com.healthtracking.app.entities.Exercise
-import com.healthtracking.app.composables.SaveAndCancelButtons
 import com.healthtracking.app.composables.TextFieldWithErrorMessage
+import com.healthtracking.app.entities.Metric
 import com.healthtracking.app.services.getExerciseList
 import com.healthtracking.app.theme.CustomCutCornerShape
 import com.healthtracking.app.viewmodels.screen.BuildWorkoutViewModel
@@ -71,15 +69,6 @@ fun AddExercise(
     // should ideally be in viewmodel
     val exerciseGroups = stringArrayResource(id = R.array.exercise_groups)
     val selectedExerciseGroup = rememberSaveable { mutableStateOf(exerciseGroups[0]) }
-    val selectedExercises = rememberSaveable (
-        saver = listSaver(
-            save = { it.toList() },
-            restore = { it.toMutableStateList() }
-        )
-    ){
-        viewModel.exercises.map { it.name }.toMutableStateList()
-    }
-
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -95,11 +84,14 @@ fun AddExercise(
             AddNewExerciseButton(
                 modifier = Modifier.weight(0.2f),
                 addNewExercise = {
-                    if (viewModel.validExerciseSearch()) {
-                        selectedExercises.add(viewModel.exerciseSearch)
+                    if (viewModel.isExerciseSearchValid()) {
+                        viewModel.addExercise(exercise = Exercise(
+                            name = viewModel.exerciseSearch,
+                            metrics = listOf(Metric.REPS, Metric.WEIGHT)
+                        ))
                         viewModel.clearExerciseScreen()
                     } else {
-                        viewModel.updateExerciseAddToError(true)
+                        viewModel.failedToAddExercise()
                     }
                 }
             )
@@ -110,7 +102,8 @@ fun AddExercise(
                 onValueChange = { viewModel.updateExerciseSearch(it) },
                 label = stringResource(id = R.string.exercise_search_label),
                 placeholder = stringResource(id = R.string.exercise_search_placeholder),
-                hasError = viewModel.exerciseAddHasExercise.collectAsStateWithLifecycle().value,
+                hasSaved = true,
+                hasError = viewModel.alreadyAddedExercise,
                 errorMessage = stringResource(id = R.string.exercise_name_search_invalid)
             )
         }
@@ -123,10 +116,12 @@ fun AddExercise(
                     .togetherWith(slideOutVertically { -it } + fadeOut())
             }
         ) { currentGroup ->
-            var exerciseList = getExerciseList(context, currentGroup.value)
-                ?.filter { it.contains(viewModel.exerciseSearch) } ?: emptyList()
+            var exerciseList = remember(currentGroup.value, viewModel.exerciseSearch) {
+                getExerciseList(context, currentGroup.value)
+                    ?.filter { it.contains(viewModel.exerciseSearch) } ?: emptyList()
+            }
             if (currentGroup.value == "Selected") {
-                exerciseList = exerciseList.plus(selectedExercises)
+                exerciseList = exerciseList.plus(viewModel.exercises.map { it.name })
             }
 
             HeaderAndListBox(
@@ -140,7 +135,9 @@ fun AddExercise(
                 listContent = {
                     ExerciseList(
                         exerciseList = exerciseList,
-                        selectedExercises = selectedExercises
+                        selectedExercises = viewModel.exercises,
+                        addExercise = { viewModel.addExercise(it)},
+                        removeExercise = { viewModel.removeExercise(it) }
                     )
                 }
             )
@@ -152,19 +149,13 @@ fun AddExercise(
                 .fillMaxSize(),
             verticalAlignment = Alignment.Bottom
         ) {
-            SaveAndCancelButtons(
-                onSave = {
-                    viewModel.clearExercises()
-                    selectedExercises.forEach { exerciseName ->
-                        viewModel.addExercise(Exercise(name = exerciseName))
-                    }
-                    navController.popBackStack()
-                },
-                onCancel = {
-                    viewModel.clearExerciseScreen()
-                    navController.popBackStack()
-                }
-            )
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                onClick = { navController.popBackStack(); viewModel.clearExerciseScreen() }
+            ) {
+                Text(text = stringResource(id = R.string.close))
+            }
         }
     }
 }
@@ -191,28 +182,29 @@ private fun AddNewExerciseButton(
 
 @Composable
 private fun ExerciseList(
-    exerciseList: List<String>?,
-    selectedExercises: MutableList<String>
+    exerciseList: List<String>,
+    selectedExercises: List<Exercise>,
+    removeExercise: (Exercise) -> Unit,
+    addExercise: (Exercise) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (exerciseList != null) {
-            itemsIndexed(exerciseList) { _, exerciseName: String ->
-                ExerciseDisplayItem(
-                    name = exerciseName,
-                    onClick = {
-                        if (selectedExercises.contains(exerciseName)) {
-                            selectedExercises.removeAll{it == exerciseName}
-                        } else {
-                            selectedExercises.add(exerciseName)
-                        }
-                    },
-                    isCurrentlySelected = selectedExercises.contains(exerciseName)
-                )
-            }
+        itemsIndexed(exerciseList) { _, exerciseName: String ->
+            val isSelected = selectedExercises.any { it.name == exerciseName }
+            ExerciseDisplayItem(
+                name = exerciseName,
+                onClick = {
+                    if (isSelected) {
+                        removeExercise(selectedExercises.find { it.name == exerciseName }!!)
+                    } else {
+                        addExercise(Exercise(name = exerciseName, metrics = listOf(Metric.REPS, Metric.WEIGHT)))
+                    }
+                },
+                isCurrentlySelected = isSelected
+            )
         }
     }
 }
@@ -253,7 +245,6 @@ private fun ExerciseDisplayItem(
         modifier = Modifier
             .fillMaxWidth(0.95f)
             .height(65.dp)
-            .padding(4.dp)
             .clickable(onClick = { onClick(name) }),
         shape = CustomCutCornerShape,
         colors = CardDefaults.cardColors(

@@ -63,6 +63,7 @@ fun TextFieldWithErrorMessage(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String,
+    hasSaved: Boolean = false,
     hasError: Boolean,
     errorMessage: String?
 ) {
@@ -78,7 +79,7 @@ fun TextFieldWithErrorMessage(
             label = { Text(text = label) },
             placeholder = { Text(text = placeholder) },
             maxLines = 1,
-            isError = hasError && canError.value,
+            isError = hasError && (canError.value || hasSaved),
             shape = CustomCutCornerShape,
             colors = TextFieldDefaults.colors(
                 errorContainerColor = MaterialTheme.colorScheme.background,
@@ -87,7 +88,7 @@ fun TextFieldWithErrorMessage(
             ),
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
-        ErrorMessageComponent(hasError = hasError && canError.value, errorMessage = errorMessage)
+        ErrorMessageComponent(hasError = hasError && (canError.value || hasSaved), errorMessage = errorMessage)
     }
 }
 

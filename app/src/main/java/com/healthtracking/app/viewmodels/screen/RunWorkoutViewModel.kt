@@ -64,6 +64,9 @@ class RunWorkoutViewModel(
     // data for editing old entry
     private val _editingEntryIndex = mutableStateOf<Int?>(null)
 
+    private val _alreadySavedEntry: MutableState<Boolean> = mutableStateOf(false)
+    val alreadySavedEntry: Boolean get() = _alreadySavedEntry.value
+
     // for displaying time since last entry
     private var job: Job? = null
     private val _timerStart: MutableState<LocalDateTime> = mutableStateOf(LocalDateTime.now())
@@ -169,6 +172,8 @@ class RunWorkoutViewModel(
      * @return true if data saves, false if the data is not valid and does not save.
      */
     fun saveEntry(exerciseIndex: Int): Boolean {
+        _alreadySavedEntry.value = true
+
         if (newRepsIsValid() && newWeightIsValid()) {
             val pair = Pair(newWeight.toFloat(), newReps.toInt())
 
@@ -200,6 +205,8 @@ class RunWorkoutViewModel(
     fun clearEntry() {
         updateNewReps("")
         updateNewWeight("")
+
+        _alreadySavedEntry.value = false
     }
 
     /**

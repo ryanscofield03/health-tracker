@@ -14,4 +14,12 @@ import androidx.room.PrimaryKey
 data class Exercise(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
+    val metrics: List<Metric>
 )
+
+enum class Metric {
+    WEIGHT,
+    REPS,
+    TIME,
+    DISTANCE
+}

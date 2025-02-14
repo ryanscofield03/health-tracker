@@ -133,6 +133,7 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                         saveEntry = { viewModel.saveEntry(pagerState.currentPage) },
                         clearEntry = { viewModel.clearEntry() },
                         onDismissRequest = { openEntryDialog.value = false },
+                        hasSaved = viewModel.alreadySavedEntry,
                         weight = viewModel.newWeight,
                         updateWeight = { viewModel.updateNewWeight(it) },
                         validWeight = viewModel.newWeightIsValid(),

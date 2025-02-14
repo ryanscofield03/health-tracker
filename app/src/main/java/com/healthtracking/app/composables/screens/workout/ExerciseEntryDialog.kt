@@ -21,6 +21,7 @@ internal fun ExerciseEntryDialog(
     saveEntry: () -> Boolean,
     clearEntry: () -> Unit,
     onDismissRequest: () -> Unit,
+    hasSaved: Boolean,
     weight: String, // TODO make this and other lines dynamic later
     updateWeight: (String) -> Unit,
     validWeight: Boolean,
@@ -48,6 +49,7 @@ internal fun ExerciseEntryDialog(
                 onValueChange = updateWeight,
                 label = stringResource(id = R.string.weight_label),
                 placeholder = stringResource(id = R.string.weight_label),
+                hasSaved = hasSaved,
                 hasError = !validWeight,
                 errorMessage = stringResource(id = R.string.weight_error_message)
             )
@@ -59,6 +61,7 @@ internal fun ExerciseEntryDialog(
                 onValueChange = updateReps,
                 label = stringResource(id = R.string.reps_label),
                 placeholder = stringResource(id = R.string.reps_placeholder),
+                hasSaved = hasSaved,
                 hasError = !validReps,
                 errorMessage = stringResource(id = R.string.reps_error_message)
             )

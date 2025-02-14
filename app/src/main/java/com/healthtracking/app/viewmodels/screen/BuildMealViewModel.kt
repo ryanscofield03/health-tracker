@@ -94,6 +94,12 @@ class BuildMealViewModel(
 
     val isLoadingApiData: MutableState<Boolean> = mutableStateOf(false)
 
+    private val _alreadySaved: MutableState<Boolean> = mutableStateOf(false)
+    val alreadySaved: Boolean get() = _alreadySaved.value
+
+    private val _alreadySavedDialog: MutableState<Boolean> = mutableStateOf(false)
+    val alreadySavedDialog: Boolean get() = _alreadySavedDialog.value
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             mealDao.getAllMealEntries().collect { _allMeals.value  = it ?: listOf() }
@@ -200,6 +206,8 @@ class BuildMealViewModel(
      * Adds a food item to the list of food items
      */
     fun addFoodItem() {
+        _alreadySavedDialog.value = true
+
         if (validFoodDialog()) {
             val foodItem = Food(
                 name = dialogFoodName.value!!,
@@ -242,6 +250,7 @@ class BuildMealViewModel(
         _dialogFats.value = DEFAULT_FATS
         _dialogQuantity.value = DEFAULT_QUANTITY
         _dialogEntryMode.value = DEFAULT_ENTRY_MODE
+        _alreadySavedDialog.value = false
     }
 
     /**
@@ -304,6 +313,8 @@ class BuildMealViewModel(
      * Save all data into meal and food entities
      */
     fun save() {
+        _alreadySaved.value = true
+
         if (!validMeal()) return
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -413,6 +424,7 @@ class BuildMealViewModel(
      * Clears the view model
      */
     fun clear() {
+        _alreadySaved.value = false
         _entryMode.value = EntryStates.NEW
         _name.value = ""
         _foodItems.value = listOf()

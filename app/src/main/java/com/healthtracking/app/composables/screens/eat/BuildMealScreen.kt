@@ -55,8 +55,8 @@ fun BuildMeal(
         isOpen = foodDialogOpen.value,
         onDismissRequest = { foodDialogOpen.value = false; viewModel.clearFoodDialog() },
         onSave = {
+            viewModel.addFoodItem()
             if (viewModel.validFoodDialog()) {
-                viewModel.addFoodItem()
                 foodDialogOpen.value = false
             }
         },
@@ -69,6 +69,7 @@ fun BuildMeal(
         calories = viewModel.dialogCalories,
         updateName = { viewModel.updateDialogFoodName(it) },
         updateMeasurement = { viewModel.updateDialogMeasurement(it) },
+        hasSaved = viewModel.alreadySavedDialog,
         loadNutrientData = { viewModel.populateDialogWithFoodNutrients() },
         isLoadingNutrientData = viewModel.isLoadingApiData.value,
         updateProtein = { viewModel.updateDialogProtein(it) },
@@ -83,7 +84,7 @@ fun BuildMeal(
     MealSearchDialog(
         isOpen = mealSearchDialogOpen.value,
         onDismissRequest = { mealSearchDialogOpen.value = false },
-        mealSearch = viewModel.mealSearch.collectAsStateWithLifecycle().value ?: "",
+        mealSearch = viewModel.mealSearch.collectAsStateWithLifecycle().value,
         updateMealSearch = { viewModel.updateMealSearch(it) },
         mealList = viewModel.mealsFilteredBySearch().collectAsStateWithLifecycle().value,
         onMealSelected = { viewModel.reuseMealInfo(it); mealSearchDialogOpen.value = false }
@@ -116,6 +117,7 @@ fun BuildMeal(
                 label = stringResource(id = R.string.meal_name_label),
                 placeholder = stringResource(id = R.string.meal_name_placeholder),
                 hasError = mealName.isBlank(),
+                hasSaved = viewModel.alreadySaved,
                 errorMessage = stringResource(id = R.string.meal_name_error_message)
             )
 
@@ -166,9 +168,9 @@ fun BuildMeal(
         // Save and cancel buttons
         SaveAndCancelButtons(
             onSave = {
+                viewModel.save()
                 if (viewModel.validMeal()) {
                     navController.navigate("Eat")
-                    viewModel.save()
                 }
             },
             onCancel = {

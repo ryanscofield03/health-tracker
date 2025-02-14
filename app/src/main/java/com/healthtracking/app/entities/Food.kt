@@ -13,9 +13,9 @@ data class Food(
     @PrimaryKey(autoGenerate = true) val id : Long = 0,
     val name: String,
     val measurement: String,
+    val quantity: Float,
     val calories: Float,
     val protein: Float,
     val fats: Float,
-    val carbohydrates: Float,
-    val quantity: Float
+    val carbohydrates: Float
 )

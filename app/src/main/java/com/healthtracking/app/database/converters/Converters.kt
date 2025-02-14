@@ -1,6 +1,7 @@
 package com.healthtracking.app.database.converters
 
 import androidx.room.TypeConverter
+import com.healthtracking.app.entities.Metric
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -117,5 +118,15 @@ class Converters {
     @TypeConverter
     fun toLocalTime(value: String): LocalTime {
         return LocalTime.parse(value)
+    }
+
+    @TypeConverter
+    fun fromListOfMetrics(value: List<Metric>): String {
+        return value.joinToString(",")
+    }
+
+    @TypeConverter
+    fun toListOfMetrics(value: String): List<Metric> {
+        return value.split(",").map { Metric.valueOf(it) }
     }
 }
