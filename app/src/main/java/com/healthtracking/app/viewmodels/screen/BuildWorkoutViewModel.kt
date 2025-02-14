@@ -46,7 +46,6 @@ class BuildWorkoutViewModel(
     // initial values which are required when saving an updated workout
     private val _currentWorkoutId = mutableStateOf<Long?>(null)
     private val _currentExercises = mutableStateListOf<Exercise>()
-    private val _loaded = mutableStateOf(false)
 
     /**
      * Adds exercise to the list of exercises
@@ -192,6 +191,12 @@ class BuildWorkoutViewModel(
         return name.isNotBlank() && description.isNotBlank() && _exercises.isNotEmpty()
     }
 
+    fun clearIfEdited() {
+        if (_currentWorkoutId.value != null) {
+            clear()
+        }
+    }
+
     /**
      * Clears the entire viewmodel
      */
@@ -206,7 +211,6 @@ class BuildWorkoutViewModel(
 
         _currentWorkoutId.value = null
         _currentExercises.clear()
-        _loaded.value = false
 
         clearExerciseScreen()
     }
@@ -222,15 +226,12 @@ class BuildWorkoutViewModel(
      * Populates viewmodel with workout data for editing
      */
     fun addWorkoutInfo(workout: Workout) {
-        if (!_loaded.value) {
-            _loaded.value = true
-            updateName(workout.name)
-            updateDescription(workout.description)
-            workout.schedule.forEach { toggleScheduledDay(it.first) }
-            loadExercisesForWorkout(workout.id)
+        updateName(workout.name)
+        updateDescription(workout.description)
+        workout.schedule.forEach { toggleScheduledDay(it.first) }
+        loadExercisesForWorkout(workout.id)
 
-            _currentWorkoutId.value = workout.id
-        }
+        _currentWorkoutId.value = workout.id
     }
 
     /**

@@ -214,6 +214,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "AddWorkout") {
+                            addWorkoutViewModel.clearIfEdited()
                             BuildWorkout(
                                 modifier = Modifier.padding(padding),
                                 navController = navController,
@@ -222,13 +223,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "EditWorkout/{id}") { navBackStackEntry ->
                             // get id, get workout, insert workout data into viewmodel for screen
-                            val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
-                            val workout = workoutViewModel
-                                .allWorkouts
-                                .collectAsStateWithLifecycle()
-                                .value
-                                ?.find { it.id == parsedId }
-                            workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
+                            LaunchedEffect(Unit) {
+                                val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                                workoutViewModel
+                                    .allWorkouts
+                                    .collect { workouts ->
+                                        val workout = workouts?.find { it.id == parsedId }
+                                        workout?.let { addWorkoutViewModel.addWorkoutInfo(workout = it) }
+                                    }
+                            }
 
                             BuildWorkout(
                                 modifier = Modifier.padding(padding),
