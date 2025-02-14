@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -23,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +47,16 @@ fun BuildWorkout(
     navController: NavController,
     viewModel: BuildWorkoutViewModel,
 ) {
+    val editExerciseDialogOpen = rememberSaveable { mutableStateOf(false) }
+    EditExerciseDialog(
+        onDismissRequest = { editExerciseDialogOpen.value = false; viewModel.clearEditExerciseDialog() },
+        exerciseName = viewModel.editExerciseDialogName,
+        exerciseMetrics = viewModel.editExerciseDialogMetrics,
+        updateMetrics = { viewModel.updateDialogMetrics(it)},
+        onSave = { viewModel.saveEditExerciseDialog() },
+        isOpen = editExerciseDialogOpen.value
+    )
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -92,7 +105,11 @@ fun BuildWorkout(
             listContent = {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     items (viewModel.exercises) { exercise ->
-                        ExerciseCard(exercise = exercise, removeExercise = { viewModel.removeExercise(exercise) })
+                        ExerciseCard(
+                            exercise = exercise,
+                            openEditDialog = { editExerciseDialogOpen.value = true },
+                            populateEditDialog = { viewModel.populateEditDialog(exercise) }
+                        )
                     }
                 }
             },
@@ -155,7 +172,8 @@ private fun AddExerciseButton(
 @Composable
 private fun ExerciseCard(
     exercise: Exercise,
-    removeExercise: () -> Unit
+    openEditDialog: () -> Unit,
+    populateEditDialog: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -170,7 +188,7 @@ private fun ExerciseCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -179,13 +197,12 @@ private fun ExerciseCard(
                 style = MaterialTheme.typography.bodyMedium,
             )
             IconButton(
-                modifier = Modifier.size(40.dp),
-                onClick = { removeExercise() })
+                modifier = Modifier.size(20.dp),
+                onClick = { openEditDialog(); populateEditDialog()})
             {
                 Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.delete),
-                    contentDescription = stringResource(id = R.string.delete),
-                    tint = MaterialTheme.colorScheme.error
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(id = R.string.edit)
                 )
             }
         }

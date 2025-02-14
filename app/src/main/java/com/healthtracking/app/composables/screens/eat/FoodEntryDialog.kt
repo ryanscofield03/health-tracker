@@ -65,77 +65,76 @@ internal fun FoodEntryDialog(
     measurementOptions: List<String>,
     nameHasError: Boolean
 ) {
-    if (isOpen) {
-        CustomDialog(
-            modifier = modifier,
-            onDismissRequest = onDismissRequest
+    CustomDialog(
+        modifier = modifier,
+        isOpen = isOpen,
+        onDismissRequest = onDismissRequest
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+            // food name
+            TextFieldWithErrorMessage(
+                value = name,
+                onValueChange = updateName,
+                label = stringResource(id = R.string.food_name_label),
+                placeholder = stringResource(id = R.string.food_name_placeholder),
+                hasSaved = hasSaved,
+                hasError = nameHasError,
+                errorMessage = stringResource(id = R.string.food_name_error_message)
+            )
+
+            // measurement dropdown
+            SelectionDropDown(
+                label = stringResource(id = R.string.select_measurement_settings),
+                items = measurementOptions,
+                selectedText = measurement,
+                onItemClick = updateMeasurement
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            NutrientsBlock(
+                modifier = Modifier,
+                calories = calories,
+                protein = protein,
+                carbs = carbs,
+                fats = fats,
+                quantity = quantity,
+                isLoadingNutrientData = isLoadingNutrientData,
+                canLoadNutrientData = !isLoadingNutrientData && !nameHasError,
+                loadNutrientData = loadNutrientData,
+                updateProtein = updateProtein,
+                updateCarbs = updateCarbs,
+                updateFats = updateFats,
+                updateQuantity = updateQuantity
+            )
+
+            // save and cancel buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                // food name
-                TextFieldWithErrorMessage(
-                    value = name,
-                    onValueChange = updateName,
-                    label = stringResource(id = R.string.food_name_label),
-                    placeholder = stringResource(id = R.string.food_name_placeholder),
-                    hasSaved = hasSaved,
-                    hasError = nameHasError,
-                    errorMessage = stringResource(id = R.string.food_name_error_message)
-                )
-
-                // measurement dropdown
-                SelectionDropDown(
-                    label = stringResource(id = R.string.select_measurement_settings),
-                    items = measurementOptions,
-                    selectedText = measurement,
-                    onItemClick = updateMeasurement
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                NutrientsBlock(
-                    modifier = Modifier,
-                    calories = calories,
-                    protein = protein,
-                    carbs = carbs,
-                    fats = fats,
-                    quantity = quantity,
-                    isLoadingNutrientData = isLoadingNutrientData,
-                    canLoadNutrientData = !isLoadingNutrientData && !nameHasError,
-                    loadNutrientData = loadNutrientData,
-                    updateProtein = updateProtein,
-                    updateCarbs = updateCarbs,
-                    updateFats = updateFats,
-                    updateQuantity = updateQuantity
-                )
-
-                // save and cancel buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                TextButton(
+                    onClick = onSave
                 ) {
-                    TextButton(
-                        onClick = onSave
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.save),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                    Text(
+                        text = stringResource(id = R.string.save),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
 
-                    TextButton(onClick = {
-                        onDismissRequest()
-                    }) {
-                        Text(
-                            text = stringResource(id = R.string.cancel),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                TextButton(onClick = {
+                    onDismissRequest()
+                }) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
             }
         }

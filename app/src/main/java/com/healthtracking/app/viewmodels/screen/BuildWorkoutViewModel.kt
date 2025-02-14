@@ -1,11 +1,13 @@
 package com.healthtracking.app.viewmodels.screen
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.healthtracking.app.entities.Exercise
+import com.healthtracking.app.entities.Metric
 import com.healthtracking.app.entities.Workout
 import com.healthtracking.app.viewmodels.database.ExerciseViewModel
 import com.healthtracking.app.viewmodels.database.WorkoutViewModel
@@ -41,6 +43,14 @@ class BuildWorkoutViewModel(
 
     private val _alreadyAddedExercise: MutableState<Boolean> = mutableStateOf(false)
     val alreadyAddedExercise: Boolean get() = _alreadyAddedExercise.value
+
+    private val _editExerciseDialogIndex = mutableStateOf<Int?>(null)
+
+    private val _editExerciseDialogName = mutableStateOf("")
+    val editExerciseDialogName: String get() = _editExerciseDialogName.value
+
+    private val _editExerciseDialogMetrics = mutableStateOf<List<Metric>>(listOf())
+    val editExerciseDialogMetrics: List<Metric> get() = _editExerciseDialogMetrics.value
 
     /**
      * Adds exercise to the list of exercises
@@ -202,6 +212,34 @@ class BuildWorkoutViewModel(
         loadExercisesForWorkout(workout.id)
 
         _currentWorkoutId.value = workout.id
+    }
+
+    fun populateEditDialog(exercise: Exercise) {
+        _editExerciseDialogIndex.value = _exercises.indexOf(exercise)
+        _editExerciseDialogName.value = exercise.name
+        _editExerciseDialogMetrics.value = exercise.metrics
+    }
+
+    fun updateDialogMetrics(metrics: List<Metric>) {
+        _editExerciseDialogMetrics.value = metrics
+    }
+
+    fun saveEditExerciseDialog() {
+        if (_editExerciseDialogIndex.value == null) return
+        if (_editExerciseDialogIndex.value!! >= _exercises.size) return
+
+        _exercises[_editExerciseDialogIndex.value!!] = Exercise(
+            name = _editExerciseDialogName.value,
+            metrics = _editExerciseDialogMetrics.value
+        )
+
+        clearEditExerciseDialog()
+    }
+
+    fun clearEditExerciseDialog() {
+        _editExerciseDialogIndex.value = null
+        _editExerciseDialogName.value = ""
+        _editExerciseDialogMetrics.value = listOf()
     }
 
     /**

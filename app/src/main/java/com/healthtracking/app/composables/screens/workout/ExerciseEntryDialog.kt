@@ -18,6 +18,7 @@ import com.healthtracking.app.composables.TextFieldWithErrorMessage
 
 @Composable
 internal fun ExerciseEntryDialog(
+    isOpen: Boolean,
     saveEntry: () -> Boolean,
     clearEntry: () -> Unit,
     onDismissRequest: () -> Unit,
@@ -29,7 +30,7 @@ internal fun ExerciseEntryDialog(
     updateReps: (String) -> Unit,
     validReps: Boolean,
 ) {
-    CustomDialog(onDismissRequest = onDismissRequest) {
+    CustomDialog(isOpen = isOpen, onDismissRequest = onDismissRequest) {
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),

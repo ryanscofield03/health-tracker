@@ -18,6 +18,7 @@ import com.healthtracking.app.composables.CustomDialog
 
 @Composable
 internal fun MacroGoalDialog(
+    isOpen: Boolean,
     onSubmit: () -> Boolean,
     onDismissRequest: () -> Unit,
     caloriesGoal: String,
@@ -31,7 +32,7 @@ internal fun MacroGoalDialog(
     maxCarbs: Float,
     maxFats: Float
 ) {
-    CustomDialog(onDismissRequest = onDismissRequest) {
+    CustomDialog(isOpen = isOpen, onDismissRequest = onDismissRequest) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

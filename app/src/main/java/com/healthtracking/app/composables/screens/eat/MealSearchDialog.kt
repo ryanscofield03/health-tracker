@@ -52,47 +52,46 @@ internal fun MealSearchDialog(
     mealList: List<MealWithFoodList>,
     onMealSelected: (MealWithFoodList) -> Unit
 ) {
-    if (isOpen) {
-        CustomDialog(
-            modifier = Modifier.fillMaxHeight(0.7f),
-            onDismissRequest = onDismissRequest
-        ) {
-            Column(modifier = Modifier.padding(top = 12.dp, start = 12.dp, end = 12.dp)) {
-                HeaderAndListBox(
-                    modifier = Modifier.fillMaxHeight(0.87f),
-                    header = {
-                        TextFieldWithErrorMessage(
-                            value = mealSearch,
-                            onValueChange = { updateMealSearch(it) },
-                            label = stringResource(id = R.string.search_past_meals_label),
-                            placeholder = stringResource(id = R.string.search_past_meals_placeholder),
-                            hasError = mealList.isEmpty() && mealSearch.isNotBlank(),
-                            errorMessage = stringResource(R.string.no_meals_found_from_search, mealSearch.lowercase())
-                        )
-                    },
-                    listContent = {
-                        MealsList(
-                            mealList = mealList,
-                            onMealSelected = onMealSelected
-                        )
-                    },
-                    isContentEmpty = mealList.isEmpty(),
-                    contentPlaceholderText = stringResource(id = R.string.no_existing_meal_entries)
-                )
+    CustomDialog(
+        modifier = Modifier.fillMaxHeight(0.7f),
+        isOpen = isOpen,
+        onDismissRequest = onDismissRequest
+    ) {
+        Column(modifier = Modifier.padding(top = 12.dp, start = 12.dp, end = 12.dp)) {
+            HeaderAndListBox(
+                modifier = Modifier.fillMaxHeight(0.87f),
+                header = {
+                    TextFieldWithErrorMessage(
+                        value = mealSearch,
+                        onValueChange = { updateMealSearch(it) },
+                        label = stringResource(id = R.string.search_past_meals_label),
+                        placeholder = stringResource(id = R.string.search_past_meals_placeholder),
+                        hasError = mealList.isEmpty() && mealSearch.isNotBlank(),
+                        errorMessage = stringResource(R.string.no_meals_found_from_search, mealSearch.lowercase())
+                    )
+                },
+                listContent = {
+                    MealsList(
+                        mealList = mealList,
+                        onMealSelected = onMealSelected
+                    )
+                },
+                isContentEmpty = mealList.isEmpty(),
+                contentPlaceholderText = stringResource(id = R.string.no_existing_meal_entries)
+            )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.End
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = onDismissRequest
                 ) {
-                    TextButton(
-                        onClick = onDismissRequest
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.close),
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                    Text(
+                        text = stringResource(id = R.string.close),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.labelLarge
+                    )
                 }
             }
         }

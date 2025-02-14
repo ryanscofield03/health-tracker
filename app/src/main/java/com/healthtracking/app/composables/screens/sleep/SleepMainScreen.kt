@@ -271,14 +271,13 @@ private fun AddSleepEntry(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // start timer
-        if (startTimePickerOpened.value){
-            SleepInputDialog(
-                title = stringResource(id = R.string.start_time_title),
-                state = startTimePickerState,
-                onDismissRequest = { startTimePickerOpened.value = false },
-                colors = timeInputColours
-            )
-        }
+        SleepInputDialog(
+            isOpen = startTimePickerOpened.value,
+            title = stringResource(id = R.string.start_time_title),
+            state = startTimePickerState,
+            onDismissRequest = { startTimePickerOpened.value = false },
+            colors = timeInputColours
+        )
         TimeInputDisplay(
             modifier = Modifier
                 .clickable(
@@ -292,14 +291,13 @@ private fun AddSleepEntry(
         )
 
         // end timer
-        if (endTimePickerOpened.value){
-            SleepInputDialog(
-                title = stringResource(id = R.string.end_time_title),
-                state = endTimePickerState,
-                onDismissRequest = { endTimePickerOpened.value = false },
-                colors = timeInputColours
-            )
-        }
+        SleepInputDialog(
+            isOpen = endTimePickerOpened.value,
+            title = stringResource(id = R.string.end_time_title),
+            state = endTimePickerState,
+            onDismissRequest = { endTimePickerOpened.value = false },
+            colors = timeInputColours
+        )
         TimeInputDisplay(
             modifier = Modifier
                 .clickable(

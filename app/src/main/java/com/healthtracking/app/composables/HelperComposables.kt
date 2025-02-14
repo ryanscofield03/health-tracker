@@ -392,22 +392,25 @@ fun GraphWithTitle(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDialog(
+    isOpen: Boolean,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    BasicAlertDialog(
-        onDismissRequest = onDismissRequest
-    ) {
-        Surface(
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 4.dp
+    if (isOpen) {
+        BasicAlertDialog(
+            onDismissRequest = onDismissRequest
         ) {
-            content()
+            Surface(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 4.dp
+            ) {
+                content()
+            }
         }
     }
 }

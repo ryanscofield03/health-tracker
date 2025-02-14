@@ -22,12 +22,13 @@ import com.healthtracking.app.composables.CustomDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SleepInputDialog(
+    isOpen: Boolean,
     title: String,
     state: TimePickerState,
     onDismissRequest: () -> Unit,
     colors: TimePickerColors
 ) {
-    CustomDialog(onDismissRequest = onDismissRequest) {
+    CustomDialog(isOpen = isOpen, onDismissRequest = onDismissRequest) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

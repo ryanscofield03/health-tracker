@@ -61,25 +61,24 @@ fun EatMain (
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         val openUpdateDailyGoalDialog = rememberSaveable { mutableStateOf(false) }
-        if (openUpdateDailyGoalDialog.value) {
-            MacroGoalDialog(
-                onSubmit = { viewModel.updateGoals() },
-                onDismissRequest = {
-                    openUpdateDailyGoalDialog.value = false
-                    viewModel.clearDialog()
-                },
-                caloriesGoal = viewModel.dialogCaloriesGoal,
-                proteinGoal = viewModel.dialogProteinValue,
-                updateProteinGoal = { viewModel.updateDialogProtein(it) },
-                carbsGoal = viewModel.dialogCarbohydratesValue,
-                updateCarbsGoal = { viewModel.updateDialogCarbohydrates(it) },
-                fatsGoal = viewModel.dialogFatsValue,
-                updateFatsGoal = { viewModel.updateDialogFats(it) },
-                maxProtein = viewModel.getMaxProtein(),
-                maxCarbs = viewModel.getMaxCarbs(),
-                maxFats = viewModel.getMaxFats()
-            )
-        }
+        MacroGoalDialog(
+            isOpen = openUpdateDailyGoalDialog.value,
+            onSubmit = { viewModel.updateGoals() },
+            onDismissRequest = {
+                openUpdateDailyGoalDialog.value = false
+                viewModel.clearDialog()
+            },
+            caloriesGoal = viewModel.dialogCaloriesGoal,
+            proteinGoal = viewModel.dialogProteinValue,
+            updateProteinGoal = { viewModel.updateDialogProtein(it) },
+            carbsGoal = viewModel.dialogCarbohydratesValue,
+            updateCarbsGoal = { viewModel.updateDialogCarbohydrates(it) },
+            fatsGoal = viewModel.dialogFatsValue,
+            updateFatsGoal = { viewModel.updateDialogFats(it) },
+            maxProtein = viewModel.getMaxProtein(),
+            maxCarbs = viewModel.getMaxCarbs(),
+            maxFats = viewModel.getMaxFats()
+        )
 
         // Display today's calories and macros
         BackgroundBorderBox {

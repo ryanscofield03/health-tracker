@@ -128,20 +128,19 @@ private fun RunExerciseBlock(viewModel: RunWorkoutViewModel) {
                 val pagerState = rememberPagerState { numberOfPages }
 
                 val openEntryDialog = rememberSaveable { mutableStateOf(false) }
-                if (openEntryDialog.value) {
-                    ExerciseEntryDialog(
-                        saveEntry = { viewModel.saveEntry(pagerState.currentPage) },
-                        clearEntry = { viewModel.clearEntry() },
-                        onDismissRequest = { openEntryDialog.value = false },
-                        hasSaved = viewModel.alreadySavedEntry,
-                        weight = viewModel.newWeight,
-                        updateWeight = { viewModel.updateNewWeight(it) },
-                        validWeight = viewModel.newWeightIsValid(),
-                        reps = viewModel.newReps,
-                        updateReps = { viewModel.updateNewReps(it) },
-                        validReps = viewModel.newRepsIsValid(),
-                    )
-                }
+                ExerciseEntryDialog(
+                    isOpen = openEntryDialog.value,
+                    saveEntry = { viewModel.saveEntry(pagerState.currentPage) },
+                    clearEntry = { viewModel.clearEntry() },
+                    onDismissRequest = { openEntryDialog.value = false },
+                    hasSaved = viewModel.alreadySavedEntry,
+                    weight = viewModel.newWeight,
+                    updateWeight = { viewModel.updateNewWeight(it) },
+                    validWeight = viewModel.newWeightIsValid(),
+                    reps = viewModel.newReps,
+                    updateReps = { viewModel.updateNewReps(it) },
+                    validReps = viewModel.newRepsIsValid(),
+                )
 
                 Column(
                     modifier = Modifier
