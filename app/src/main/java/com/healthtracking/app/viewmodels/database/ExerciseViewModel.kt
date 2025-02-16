@@ -28,7 +28,6 @@ class ExerciseViewModel(
                 val exerciseId = exerciseDao.upsertExercise(exercise)
                 onResult(exerciseId)
             } else {
-                println("UPSERTING $savedExercise")
                 exerciseDao.upsertExercise(Exercise(
                     id = savedExercise!!.id,
                     name = exercise.name,
