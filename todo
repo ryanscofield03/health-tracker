@@ -1,8 +1,0 @@
-- Make figma designs for workout pages https://www.figma.com/design/n2Cby1giAQnx14GuBtzPjI/GymHealth?node-id=0-1&node-type=canvas&t=jFo62Mo9Rwe6fFaf-0
-- Implement Room database for workout page
-- Implement each button for workout page
-- Implement functonality for adding new workouts
-- Implement running a workout (& saving this information in a database for later use)
-- Clean up UI of workout page(s), make sure it works well in portrait and landscape
-
-- Do the same for eat, sleep, settings, and then stats.
