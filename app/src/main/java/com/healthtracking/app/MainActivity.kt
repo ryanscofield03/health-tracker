@@ -223,8 +223,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = "EditWorkout/{id}") { navBackStackEntry ->
                             // get id, get workout, insert workout data into viewmodel for screen
-                            LaunchedEffect(Unit) {
-                                val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                            val parsedId = navBackStackEntry.arguments?.getString("id")?.toLong()
+                            LaunchedEffect(parsedId) {
                                 workoutViewModel
                                     .allWorkouts
                                     .collect { workouts ->

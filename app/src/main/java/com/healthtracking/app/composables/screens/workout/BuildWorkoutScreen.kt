@@ -193,6 +193,7 @@ private fun ExerciseCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                modifier = Modifier.fillMaxWidth(0.85f),
                 text = exercise.name,
                 style = MaterialTheme.typography.bodyMedium,
             )
