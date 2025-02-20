@@ -205,6 +205,7 @@ class RunWorkoutViewModel(
     fun clearEntry() {
         updateNewReps("")
         updateNewWeight("")
+        _editingEntryIndex.value = null
 
         _alreadySavedEntry.value = false
     }
