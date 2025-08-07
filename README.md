@@ -32,7 +32,7 @@ Backend: Kotlin + some Java
 
 UI: Jetpack Compose
 
-Database: Uses Room and some sharedpreferences (all local to the device)
+Database: Uses Room and some SharedPreferences (both use local storage)
 
 APIs: CalorieNinjas for fetching macronutrients of food - would possibly be a good idea to have a backup for this in the case that CalorieNinjas is not available 
 
